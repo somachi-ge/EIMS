@@ -112,7 +112,7 @@ const handleLogin = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .login-container {
   padding: 40rpx;
   height: 100vh;

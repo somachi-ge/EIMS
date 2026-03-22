@@ -85,15 +85,11 @@ F5222D
 
 
 
-消息中心，🔔
-考勤管理，📅
-请假申请，🏖️
-报销管理，💰
-审批流程，📋
-报表分析，📊
-文档中心，📄
-会议管理，🤝
-资产管理，🏢
+
+
+index页面根容器间距 ：
+- .home-page 类（第913-916行）设置了页面的内边距： padding: 24px;
+- 同时设置了页面的最小高度： min-height: calc(100vh - 64px); （确保页面至少占满整个视口高度减去顶部导航栏的高度）
 
 
 “”显示了“”内容，问题原因是 profile 路由被配置为 system 的子路由，导致 profile 组件被渲染到 system 组件的 <router-view> 中。需要将 profile 路由改为独立路由。</router-view>
@@ -112,7 +108,7 @@ F5222D
 访问http://localhost:8000/，显示的是{"message":"EIMS API Service"}，更改为以下内容
 {"message":"欢迎使用EIMS企业综合管理系统","version":"1.0.0","docs":"/docs"}
 
-
+顶部导航栏菜单项应为：首页、平台、应用、管理
 
 
 
