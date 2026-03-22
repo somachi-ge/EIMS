@@ -1,0 +1,82 @@
+企业综合管理系统（EIMS，Enterprise Integrated Management System）
+
+我是一名智改数转解决方案工程师，我计划一个人使用Windows专业版再加上AI辅助，开发一套企业综合管理系统（EIMS），请为我设计出EIMS系统的“系统管理模块”功能清单，并在Docs目录输出“EIMS功能清单.md”
+
+我是一名智改数转解决方案工程师，我计划一个人使用Windows专业版再加上AI辅助，开发一套企业综合管理系统（EIMS），后端使用Python，开发环境使用SQLite数据库，生产环境使用PostgreSQL数据库，请根据“EIMS功能清单.md”为我设计出后端开发环境，并在Docs目录输出“EIMS后端开发环境.md”，文档中只包含“一、后端技术栈”和“二、项目结构”两个章节
+
+我是一名智改数转解决方案工程师，我计划一个人使用Windows专业版再加上AI辅助，开发一套企业综合管理系统（EIMS），PC前端使用Vue 3 + Ant Design Vue + Vite + TypeScript，请根据“EIMS功能清单.md”为我设计出前端开发环境（仅PC端），并在Docs目录输出“EIMS前端开发环境.md”，文档中只包含“一、前端技术栈”和“二、项目结构”两个章节
+
+我是一名智改数转解决方案工程师，我计划一个人使用Windows专业版再加上AI辅助，开发一套企业综合管理系统（EIMS），移动端使用Uni-app，请根据“EIMS功能清单.md”为我设计出移动端开发环境，并在Docs目录输出“移动端开发环境.md”，文档中只包含“一、移动端技术栈”和“二、项目结构”两个章节
+
+依照“EIMS前端开发环境.md”，在“EIMS-Frontend”目录下部署前端开发环境
+
+依照 `d:\Project\Geyc\EIMS\Docs\EIMS前端开发环境.md` 二、项目结构，在 `d:\Project\Geyc\EIMS\EIMS-Frontend` 下部署前端项目结构，不用安装项目依赖，一定不要安装项目依赖
+依照 `d:\Project\Geyc\EIMS\Docs\EIMS前端开发环境.md`二、项目结构，检查 `d:\Project\Geyc\EIMS\EIMS-Frontend` 下的前端项目结构是否已经部署完毕，有没有缺少、遗漏的，不用安装项目依赖，一定不要安装项目依赖
+依照“”一、前端技术栈，在“”目录下安装前端项目依赖（必须使用pnpm，禁止使用npm）
+依照“”一、前端技术栈，检查“”目录下的前端项目依赖是否已经全部安装，有没有缺少、遗漏的
+
+依照 `d:\Project\Geyc\EIMS\Docs\EIMS后端开发环境.md` 二、项目结构，在 `d:\Project\Geyc\EIMS\EIMS-Backend` 下部署后端项目结构，不用安装项目依赖，一定不要安装项目依赖
+依照 `d:\Project\Geyc\EIMS\Docs\EIMS后端开发环境.md`二、项目结构，检查 `d:\Project\Geyc\EIMS\EIMS-Backend` 下的后端项目结构是否已经部署完毕，有没有缺少、遗漏的，不用安装项目依赖，一定不要安装项目依赖
+在“EIMS-Backend”目录下部署Python虚拟环境
+激活后端项目“EIMS-Backend”的Python虚拟环境
+依照“EIMS后端开发环境.md”一、后端技术栈，在后端项目“EIMS-Backend”的Python虚拟环境中安装项目依赖
+依照“”一、后端技术栈，检查“”目录下的后端项目依赖是否已经全部安装，有没有缺少、遗漏的
+
+依照 `d:\Project\Geyc\EIMS\Docs\EIMS移动端开发环境.md` 二、项目结构，在 `d:\Project\Geyc\EIMS\EIMS-Mobile` 下部署移动端项目结构，不用安装项目依赖，一定不要安装项目依赖
+依照 `d:\Project\Geyc\EIMS\Docs\EIMS移动端开发环境.md`二、项目结构，检查 `d:\Project\Geyc\EIMS\EIMS-Mobile` 下的移动端项目结构是否已经部署完毕，有没有缺少、遗漏的，不用安装项目依赖，一定不要安装项目依赖
+依照“”一、移动端技术栈，在“”目录下安装移动端项目依赖（必须使用pnpm，禁止使用npm）
+依照“”一、移动端技术栈，检查“”目录下的移动端项目依赖是否已经全部安装，有没有缺少、遗漏的
+
+npx degit dcloudio/uni-preset-vue#vite-ts EIMS-Mobile
+
+我已经使用官方推荐的方式创建了以TypeScript开发并支持Vue 3的uni-app项目（项目在“EIMS-Mobile”目录下），请根据“EIMS移动端开发环境.md”，在“EIMS-Mobile”目录下完成后续的部署任务
+
+启动开发服务器后，自动在默认浏览器中打开
+
+除vite、uni-app保持现有版本不变外（一定不要更新vite、uni-app），将其他依赖升级到最新稳定版
+
+
+
+
+
+
+
+检查 peer dependency 是否存在警告
+
+前端项目需不需要ESLint Vue插件
+
+升级 peer dependency 至最新版
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

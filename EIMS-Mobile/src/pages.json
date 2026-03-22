@@ -1,0 +1,144 @@
+{
+	"pages": [
+		{
+			"path": "pages/auth/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/auth/register",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
+			"path": "pages/auth/forget-password",
+			"style": {
+				"navigationBarTitleText": "忘记密码"
+			}
+		},
+		{
+			"path": "pages/home/index",
+			"style": {
+				"navigationBarTitleText": "企业综合管理系统"
+			}
+		},
+		{
+			"path": "pages/application/application",
+			"style": {
+				"navigationBarTitleText": "应用"
+			}
+		},
+		{
+			"path": "pages/platform/platform",
+			"style": {
+				"navigationBarTitleText": "平台"
+			}
+		},
+		{
+			"path": "pages/system/system",
+			"style": {
+				"navigationBarTitleText": "系统"
+			}
+		},
+		{
+			"path": "pages/system/message/index",
+			"style": {
+				"navigationBarTitleText": "消息中心"
+			}
+		},
+		{
+			"path": "pages/system/message/detail",
+			"style": {
+				"navigationBarTitleText": "消息详情"
+			}
+		},
+		{
+			"path": "pages/system/sysinfo/about",
+			"style": {
+				"navigationBarTitleText": "关于我们"
+			}
+		},
+		{
+			"path": "pages/system/sysinfo/feedback",
+			"style": {
+				"navigationBarTitleText": "意见反馈"
+			}
+		},
+		{
+			"path": "pages/system/sysinfo/help",
+			"style": {
+				"navigationBarTitleText": "帮助中心"
+			}
+		},
+		{
+			"path": "pages/system/sysinfo/notification-settings",
+			"style": {
+				"navigationBarTitleText": "通知设置"
+			}
+		},
+		{
+			"path": "pages/system/user/index",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages/system/user/profile",
+			"style": {
+				"navigationBarTitleText": "个人资料"
+			}
+		},
+		{
+			"path": "pages/system/user/password",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/system/user/avatar",
+			"style": {
+				"navigationBarTitleText": "修改头像"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "企业综合管理系统",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#666666",
+		"selectedColor": "#409EFF",
+		"backgroundColor": "#ffffff",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/home/index",
+				"text": "首页",
+				"iconPath": "static/icon/home/home.png",
+				"selectedIconPath": "static/icon/home/home-active.png"
+			},
+			{
+				"pagePath": "pages/application/application",
+				"text": "应用",
+				"iconPath": "static/icon/home/app.png",
+				"selectedIconPath": "static/icon/home/app-active.png"
+			},
+			{
+				"pagePath": "pages/platform/platform",
+				"text": "平台",
+				"iconPath": "static/icon/home/platform.png",
+				"selectedIconPath": "static/icon/home/platform-active.png"
+			},
+			{
+				"pagePath": "pages/system/system",
+				"text": "系统",
+				"iconPath": "static/icon/home/system.png",
+				"selectedIconPath": "static/icon/home/system-active.png"
+			}
+		]
+	}
+}

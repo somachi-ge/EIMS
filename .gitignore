@@ -1,0 +1,48 @@
+# 依赖目录
+node_modules/
+
+# 构建输出
+dist/
+build/
+
+# 环境文件
+.env
+.env.local
+.env.*.local
+
+# 编辑器相关
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统相关
+.DS_Store
+Thumbs.db
+
+# 日志文件
+logs
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 测试覆盖率
+coverage/
+
+# 类型定义
+*.tsbuildinfo
+
+# 包管理器
+package-lock.json
+pnpm-lock.yaml
+
+# 移动端构建
+EIMS-Mobile/unpackage/
+EIMS-Mobile/dist/
+
+# 后端虚拟环境
+venv/
+env/

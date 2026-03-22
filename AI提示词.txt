@@ -1,0 +1,118 @@
+企业综合管理系统（EIMS，Enterprise Integrated Management System）
+
+PC前端
+cd EIMS-Frontend
+pnpm dev
+
+移动端
+cd EIMS-Mobile
+pnpm dev:h5
+
+后端
+在后端项目中启动Python虚拟环境，然后启动后端开发服务器
+
+# 进入 EIMS-Backend 目录
+cd EIMS-Backend
+# 激活虚拟环境
+venv\Scripts\activate
+# 使用启动脚本启动服务器
+python start_server.py
+
+http://localhost:8000/
+http://localhost:8000/docs
+http://localhost:8000/redoc
+http://localhost:8000/health
+
+在顶部导航栏的“管理”右面增加一个竖线，竖线后面增加“组织架构”按钮，该更改仅对“”页面生效
+
+用Vue 3 + Ant Design Vue写一个交易记录的详情页
+
+按照“”页面的风格样式，使用Write工具和Vue 3 + Ant Design Vue重写“”
+
+在“”目录添加“”页面，并保证该页面与“”的风格样式一致（用Vue 3 + Ant Design Vue实现）
+
+在“”目录添加“”目录和“”页面，并保证该页面与“”页面风格样式一致（用Vue 3 + Ant Design Vue实现）
+
+按照“”页面的风格样式，优化“”
+
+点击“”组织管理按钮，跳转到“”
+
+D:\Project\Geyc\Old_EIMS\eimp-frontend\src\views\system\permission\RoleList.vue
+
+使用uni-app写一个登录页面，采用响应式设计，以适配各种尺寸的屏幕
+
+在“”目录添加“”页面，并保证该页面与“”的风格样式一致（用uni-app实现）
+
+优化“”页面，使其在高2560像素，宽1440像素的分辨率下可以正常显示
+
+需要使用更直接的布局方式来确保→箭头在卡片的最右侧，尝试使用绝对定位。
+
+新密码长度8-20位，包含字母和数字，字母区分大小写
+
+用uni-app写一个登录页
+emoji图标
+Font Awesome图标库
+
+用uni-app + uView Pro写一个
+使用Write工具和uni-app + uView Pro重写“”
+
+项目已经安装了ECharts，请使用Vue 3 + ECharts + Ant Design Vue实现以下功能：
+使用模拟数据，显示完整的组织架构图
+点击“刷新架构”按钮可以刷新架构图
+点击“导出图片”按钮可以导出图片
+点击“导出PDF”按钮可以导出PDF文件
+
+使用Write工具结合Vue 3框架与Ant Design Vue组件库，对文件“”进行全面优化。优化工作应涵盖代码结构重组、性能提升、UI/UX改进、响应式适配及可维护性增强等方面。具体包括但不限于：重构组件逻辑以符合Vue 3最佳实践，优化Ant Design Vue组件的使用方式，提升页面加载速度与交互响应性能，确保界面在不同设备上的显示效果一致，并添加必要的注释与文档以提高代码可维护性。完成后需进行全面测试，验证优化效果符合预期标准。
+
+
+
+未有功能：
+编码规则
+设置日志过期时间
+
+员工工号，员工在组织内的唯一标识
+
+手机桌面中将类似应用图标归类的功能，通常称为 ‌“文件夹”‌ 或 ‌“应用分组”‌。
+
+横线
+BFBFBF
+
+页面背景
+D9D9D9
+
+红色
+F5222D
+
+
+
+消息中心，🔔
+考勤管理，📅
+请假申请，🏖️
+报销管理，💰
+审批流程，📋
+报表分析，📊
+文档中心，📄
+会议管理，🤝
+资产管理，🏢
+
+
+“”显示了“”内容，问题原因是 profile 路由被配置为 system 的子路由，导致 profile 组件被渲染到 system 组件的 <router-view> 中。需要将 profile 路由改为独立路由。</router-view>
+
+
+
+将文件"D:\\Project\\Geyc\\Old_EIMS\\EIMS-Mobile\\src\\pages\\auth\\login.vue"迁移到目标路径“”。迁移过程中需确保文件内容完整保留，所有相对路径引用正确更新，相关依赖项和导入语句准确无误。迁移完成后，验证目标文件“”能够正常编译运行，功能与原文件保持一致，且不存在路径相关的错误或警告。
+
+将源文件路径为“D:\\Project\\Geyc\\Old_EIMS\\EIMS-Frontend\\src\\views\\auth\\login.vue”的页面内容完整迁移到目标文件 `d:\Project\Geyc\EIMS\EIMS-Frontend\src\views\auth\login.vue` 。迁移过程中需确保以下要求：1.完整保留源文件的所有代码内容，包括模板结构、脚本逻辑和样式定义；2.保持文件的相对路径引用关系不变；3.确保迁移后目标文件的代码格式与源文件一致；4.迁移完成后需验证目标文件能够正常编译运行，无语法错误和功能异常。
+
+检查ESLint 10.0.3 与现有的 eslint-plugin-vue 和 @typescript-eslint/eslint-plugin 版本是否兼容。
+
+降级ESLint到9.x版本
+确保eslint-plugin-vue和@typescript-eslint/eslint-plugin版本与ESLint 9.x兼容
+
+访问http://localhost:8000/，显示的是{"message":"EIMS API Service"}，更改为以下内容
+{"message":"欢迎使用EIMS企业综合管理系统","version":"1.0.0","docs":"/docs"}
+
+
+
+
+
