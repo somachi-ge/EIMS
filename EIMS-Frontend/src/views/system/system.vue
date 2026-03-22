@@ -194,6 +194,8 @@ const SYSTEM_DATA: System[] = [
   { name: '系统日志', icon: ConsoleSqlOutlined, color: '#d46b08' }
 ]
 
+// 权限管理需要先选择角色，因此映射到角色列表页面
+// 在角色列表中可以选择角色并进入权限分配页面
 const ROUTE_MAP: Record<string, string> = {
   '用户管理': '/system/user',
   '角色管理': '/system/role',
