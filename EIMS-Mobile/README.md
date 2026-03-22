@@ -192,7 +192,7 @@ pnpm run build:mp-baidu
 
 ## 许可证
 
-本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件
+[Apache 2.0](LICENSE) | [English Version](README.md)
 
 ## 联系我们
 
