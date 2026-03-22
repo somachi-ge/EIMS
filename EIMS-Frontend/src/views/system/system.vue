@@ -164,6 +164,7 @@
 <script setup lang="ts">
 import MainLayout from '../../components/layout/MainLayout.vue'
 import { shallowRef, ref } from 'vue'
+import router from '../../router/router'
 import {
   CodeOutlined,
   TeamOutlined,
@@ -196,13 +197,13 @@ const SYSTEM_DATA: System[] = [
 const ROUTE_MAP: Record<string, string> = {
   '用户管理': '/system/user',
   '角色管理': '/system/role',
-  '权限管理': '/system/permission',
-  '系统日志': '/system/log',
-  '数据备份': '/system/backup',
-  '数据恢复': '/system/restore',
-  '架构管理': '/system/organizationadmin',
-  '组织架构': '/system/organizationchart',
-  '编码规则': '/code-rule'
+  '权限管理': '/system/role',
+  '系统日志': '/system/log/operation',
+  '数据备份': '/system/backup/config',
+  '数据恢复': '/system/backup/restore',
+  '架构管理': '/system/department',
+  '组织架构': '/system/department',
+  '编码规则': '/system/config/basic'
 }
 
 const systems = shallowRef<System[]>(SYSTEM_DATA)
@@ -224,9 +225,9 @@ const handleSystemClick = (systemName: string) => {
     const path = ROUTE_MAP[systemName]
     if (path) {
       try {
-        window.open(path, '_blank')
+        router.push(path)
       } catch (error) {
-        console.error('打开新标签页失败:', error)
+        console.error('页面跳转失败:', error)
       }
     }
   }
@@ -236,9 +237,9 @@ const handleDataBackup = () => {
   const path = ROUTE_MAP['数据备份']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -247,9 +248,9 @@ const handleDataRestore = () => {
   const path = ROUTE_MAP['数据恢复']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -258,9 +259,9 @@ const handleUserManagement = () => {
   const path = ROUTE_MAP['用户管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -269,9 +270,9 @@ const handleRoleManagement = () => {
   const path = ROUTE_MAP['角色管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -280,9 +281,9 @@ const handlePermissionManagement = () => {
   const path = ROUTE_MAP['权限管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -291,9 +292,9 @@ const handleViewSystemLogs = () => {
   const path = ROUTE_MAP['系统日志']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -302,9 +303,9 @@ const handleOrganizationStructure = () => {
   const path = ROUTE_MAP['架构管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
@@ -313,9 +314,9 @@ const handleOrganization = () => {
   const path = ROUTE_MAP['组织架构']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
-      console.error('打开新标签页失败:', error)
+      console.error('页面跳转失败:', error)
     }
   }
 }
