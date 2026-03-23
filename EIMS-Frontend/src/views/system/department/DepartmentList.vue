@@ -1,5 +1,6 @@
 <template>
-  <div class="department-list">
+  <div class="department-list-container">
+    <h3>Department List</h3>
     <a-card title="部门管理" :bordered="false">
       <template #extra>
         <a-button type="primary" @click="handleAdd">
@@ -125,7 +126,12 @@ const loadDepartmentList = () => {
 </script>
 
 <style scoped>
-.department-list {
+.department-list-container {
   padding: 20px;
+}
+
+h3 {
+  margin-bottom: 20px;
+  color: #1890ff;
 }
 </style>

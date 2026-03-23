@@ -40,39 +40,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/system/user/UserList.vue')
       },
       {
-        path: 'user/add',
-        name: 'UserAdd',
-        component: () => import('../views/system/user/UserAdd.vue')
-      },
-      {
-        path: 'user/edit/:id',
-        name: 'UserEdit',
-        component: () => import('../views/system/user/UserEdit.vue')
-      },
-      {
-        path: 'user/detail/:id',
-        name: 'UserDetail',
-        component: () => import('../views/system/user/UserDetail.vue')
-      },
-      {
         path: 'role',
         name: 'RoleList',
         component: () => import('../views/system/role/RoleList.vue')
       },
       {
-        path: 'role/add',
-        name: 'RoleAdd',
-        component: () => import('../views/system/role/RoleAdd.vue')
-      },
-      {
-        path: 'role/edit/:id',
-        name: 'RoleEdit',
-        component: () => import('../views/system/role/RoleEdit.vue')
-      },
-      {
         path: 'role/permission/:id',
         name: 'PermissionAssign',
-        component: () => import('../views/system/role/PermissionAssign.vue')
+        component: () => import('../views/system/role/PermissionList.vue')
       },
       {
         path: 'department',
@@ -115,15 +90,16 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/system/log/SystemLog.vue')
       },
       {
-        path: 'log/analysis',
-        name: 'LogAnalysis',
-        component: () => import('../views/system/log/LogAnalysis.vue')
-      },
-      {
-        path: 'backup/config',
-        name: 'BackupConfig',
-        component: () => import('../views/system/backup/BackupConfig.vue')
-      },
+            path: 'log/analysis',
+            name: 'LogAnalysis',
+            component: () => import('../views/system/log/LogAnalysis.vue')
+          },
+          {
+            path: 'log/login',
+            name: 'LoginLog',
+            component: () => import('../views/system/log/LoginLog.vue')
+          },
+
       {
         path: 'backup/list',
         name: 'BackupList',
@@ -149,11 +125,7 @@ const routes: RouteRecordRaw[] = [
         name: 'UserActivity',
         component: () => import('../views/system/monitor/UserActivity.vue')
       },
-      {
-        path: 'notification/system',
-        name: 'SystemNotification',
-        component: () => import('../views/system/notification/SystemNotification.vue')
-      },
+
       {
         path: 'notification/message',
         name: 'MessageCenter',

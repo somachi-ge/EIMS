@@ -28,18 +28,18 @@
         :mask-closable="false"
         :closable="true"
       >
-        <div style="display: flex; justify-content: center; gap: 80px; padding: 20px 0;">
-          <div class="modal-system-item" @click="handleDataBackup">
+        <div style="display: flex; justify-content: center; gap: 40px; padding: 20px 0;">
+          <div class="modal-system-item" @click="handleBackupList">
             <a-card 
-              :style="{ backgroundColor: '#fa541c', border: 'none' }" 
+              :style="{ backgroundColor: '#1890ff', border: 'none' }" 
               class="modal-system-card"
               hoverable
             >
               <div class="modal-system-icon">
-                <DatabaseOutlined />
+                <TableOutlined />
               </div>
             </a-card>
-            <div class="modal-system-name">数据备份</div>
+            <div class="modal-system-name">备份列表</div>
           </div>
           <div class="modal-system-item" @click="handleDataRestore">
             <a-card 
@@ -53,6 +53,7 @@
             </a-card>
             <div class="modal-system-name">数据恢复</div>
           </div>
+
         </div>
       </a-modal>
       <a-modal
@@ -103,12 +104,48 @@
       </a-modal>
       <a-modal
         v-model:visible="systemLogsModalVisible"
-        :width="'25%'"
+        :width="'40%'"
         :footer="null"
         :mask-closable="false"
         :closable="true"
       >
-        <div style="display: flex; justify-content: center; gap: 80px; padding: 20px 0;">
+        <div style="display: flex; justify-content: center; gap: 40px; padding: 20px 0;">
+          <div class="modal-system-item" @click="handleLoginLogs">
+            <a-card 
+              :style="{ backgroundColor: '#722ed1', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <LoginOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">登录日志</div>
+          </div>
+          <div class="modal-system-item" @click="handleOperationLogs">
+            <a-card 
+              :style="{ backgroundColor: '#52c41a', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <InteractionOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">操作日志</div>
+          </div>
+          <div class="modal-system-item" @click="handleSystemLogs">
+            <a-card 
+              :style="{ backgroundColor: '#fa8c16', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <MonitorOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">系统日志</div>
+          </div>
           <div class="modal-system-item" @click="handleViewSystemLogs">
             <a-card 
               :style="{ backgroundColor: '#1890ff', border: 'none' }" 
@@ -116,10 +153,10 @@
               hoverable
             >
               <div class="modal-system-icon">
-                <ConsoleSqlOutlined />
+                <AreaChartOutlined />
               </div>
             </a-card>
-            <div class="modal-system-name">日志管理</div>
+            <div class="modal-system-name">日志分析</div>
           </div>
         </div>
       </a-modal>
@@ -130,7 +167,7 @@
         :mask-closable="false"
         :closable="true"
       >
-        <div style="display: flex; justify-content: center; gap: 80px; padding: 20px 0;">
+        <div style="display: flex; justify-content: center; gap: 40px; padding: 20px 0;">
           <div class="modal-system-item" @click="handleOrganizationStructure">
             <a-card 
               :style="{ backgroundColor: '#52c41a', border: 'none' }" 
@@ -165,7 +202,6 @@
 <script setup lang="ts">
 import MainLayout from '../../components/layout/MainLayout.vue'
 import { shallowRef, ref } from 'vue'
-import router from '../../router/router'
 import {
   CodeOutlined,
   TeamOutlined,
@@ -173,12 +209,15 @@ import {
   UserOutlined,
   ProfileOutlined,
   LockOutlined,
-  DatabaseOutlined,
   ReloadOutlined,
   ConsoleSqlOutlined,
   TableOutlined,
   SettingOutlined,
-  QuestionCircleOutlined
+  QuestionCircleOutlined,
+  LoginOutlined,
+  InteractionOutlined,
+  MonitorOutlined,
+  AreaChartOutlined
 } from '@ant-design/icons-vue'
 
 interface System {
@@ -193,7 +232,7 @@ const SYSTEM_DATA: System[] = [
   { name: '组织管理', icon: TeamOutlined, color: '#7cb305' },
   { name: '权限配置', icon: SettingOutlined, color: '#08979c' },
   { name: '数据维护', icon: TableOutlined, color: '#531dab' },
-  { name: '系统日志', icon: ConsoleSqlOutlined, color: '#d46b08' },
+  { name: '日志管理', icon: ConsoleSqlOutlined, color: '#d46b08' },
   { name: '帮助中心', icon: QuestionCircleOutlined, color: '#1890ff' }
 ]
 
@@ -202,12 +241,16 @@ const SYSTEM_DATA: System[] = [
 const ROUTE_MAP: Record<string, string> = {
   '用户管理': '/system/user',
   '角色管理': '/system/role',
-  '权限管理': '/system/role',
-  '系统日志': '/system/log/operation',
-  '数据备份': '/system/backup/config',
+  '权限管理': '/system/role/permission/1',
+  '系统日志': '/system/log/system',
+  '日志分析': '/system/log/analysis',
+  '操作日志': '/system/log/operation',
+  '登录日志': '/system/log/login',
+
+  '备份列表': '/system/backup/list',
   '数据恢复': '/system/backup/restore',
-  '架构管理': '/system/department',
-  '组织架构': '/system/department',
+  '架构管理': '/system/organization/organizationchart',
+  '组织架构': '/system/organization/organizationadmin',
   '编码规则': '/system/config/basic',
   '帮助中心': '/help'
 }
@@ -223,7 +266,7 @@ const handleSystemClick = (systemName: string) => {
     dataManagementModalVisible.value = true
   } else if (systemName === '权限配置') {
     systemManagementModalVisible.value = true
-  } else if (systemName === '系统日志') {
+  } else if (systemName === '日志管理') {
     systemLogsModalVisible.value = true
   } else if (systemName === '组织管理') {
     organizationManagementModalVisible.value = true
@@ -231,7 +274,7 @@ const handleSystemClick = (systemName: string) => {
     const path = ROUTE_MAP[systemName]
     if (path) {
       try {
-        router.push(path)
+        window.open(path, '_blank')
       } catch (error) {
         console.error('页面跳转失败:', error)
       }
@@ -239,22 +282,23 @@ const handleSystemClick = (systemName: string) => {
   }
 }
 
-const handleDataBackup = () => {
-  const path = ROUTE_MAP['数据备份']
+
+const handleDataRestore = () => {
+  const path = ROUTE_MAP['数据恢复']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
   }
 }
 
-const handleDataRestore = () => {
-  const path = ROUTE_MAP['数据恢复']
+const handleBackupList = () => {
+  const path = ROUTE_MAP['备份列表']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -265,7 +309,7 @@ const handleUserManagement = () => {
   const path = ROUTE_MAP['用户管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -276,7 +320,7 @@ const handleRoleManagement = () => {
   const path = ROUTE_MAP['角色管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -287,7 +331,7 @@ const handlePermissionManagement = () => {
   const path = ROUTE_MAP['权限管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -295,10 +339,43 @@ const handlePermissionManagement = () => {
 }
 
 const handleViewSystemLogs = () => {
+  const path = ROUTE_MAP['日志分析']
+  if (path) {
+    try {
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleOperationLogs = () => {
+  const path = ROUTE_MAP['操作日志']
+  if (path) {
+    try {
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleSystemLogs = () => {
   const path = ROUTE_MAP['系统日志']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleLoginLogs = () => {
+  const path = ROUTE_MAP['登录日志']
+  if (path) {
+    try {
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -309,7 +386,7 @@ const handleOrganizationStructure = () => {
   const path = ROUTE_MAP['架构管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -320,7 +397,7 @@ const handleOrganization = () => {
   const path = ROUTE_MAP['组织架构']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
       console.error('页面跳转失败:', error)
     }

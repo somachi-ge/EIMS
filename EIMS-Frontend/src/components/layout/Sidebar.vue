@@ -25,7 +25,7 @@
           <router-link to="/system/department" class="submenu-item">部门管理</router-link>
           <router-link to="/system/config/basic" class="submenu-item">系统配置</router-link>
           <router-link to="/system/log/operation" class="submenu-item">日志管理</router-link>
-          <router-link to="/system/backup/config" class="submenu-item">数据备份</router-link>
+          <router-link to="/system/backup/list" class="submenu-item">数据备份</router-link>
           <router-link to="/system/monitor/system" class="submenu-item">系统监控</router-link>
           <router-link to="/system/notification/system" class="submenu-item">通知管理</router-link>
         </div>

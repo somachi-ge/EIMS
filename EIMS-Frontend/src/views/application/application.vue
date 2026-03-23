@@ -158,12 +158,8 @@ const handleApplicationClick = (app: Application) => {
 
 @media (max-width: 768px) {
   .application-page {
-    padding: 16px;
-  }
-  
-  .application-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 20px;
+  width: 100%;
+  padding: 1.5%;
   }
   
   .application-card {

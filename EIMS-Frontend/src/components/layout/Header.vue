@@ -17,6 +17,42 @@
         <a-menu-item key="platform" @click="navigateTo('/platform')">平台</a-menu-item>
         <a-menu-item key="app" @click="navigateTo('/application')">应用</a-menu-item>
         <a-menu-item key="management" @click="navigateTo('/management')">管理</a-menu-item>
+        <template v-if="isUserListPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="user-list" @click="navigateTo('/system/user')">用户管理</a-menu-item>
+        </template>
+        <template v-if="isRoleListPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="role-list" @click="navigateTo('/system/role')">角色管理</a-menu-item>
+        </template>
+        <template v-if="isPermissionListPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="permission-list" @click="navigateTo('/system/role/permission/1')">权限管理</a-menu-item>
+        </template>
+        <template v-if="isLogAnalysisPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="log-analysis" @click="navigateTo('/system/log/analysis')">日志分析</a-menu-item>
+        </template>
+        <template v-if="isOperationLogPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="operation-log" @click="navigateTo('/system/log/operation')">操作日志</a-menu-item>
+        </template>
+        <template v-if="isSystemLogPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="system-log" @click="navigateTo('/system/log/system')">系统日志</a-menu-item>
+        </template>
+        <template v-if="isLoginLogPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="login-log" @click="navigateTo('/system/log/login')">登录日志</a-menu-item>
+        </template>
+        <template v-if="isBackupListPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="backup-list" @click="navigateTo('/system/backup/list')">备份列表</a-menu-item>
+        </template>
+        <template v-if="isRestoreDataPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="restore-data" @click="navigateTo('/system/backup/restore')">恢复数据</a-menu-item>
+        </template>
         <template v-if="isHelpCenterPage">
           <a-menu-item class="nav-divider">|</a-menu-item>
           <a-menu-item key="help-center" @click="navigateTo('/help')">帮助中心</a-menu-item>
@@ -91,6 +127,15 @@ const selectedKey = computed(() => {
   if (path === '/help') return 'help-center'
   if (path === '/contacts') return 'contacts'
   if (path === '/system/notification/message') return 'message-center'
+  if (path === '/system/log/analysis') return 'log-analysis'
+  if (path === '/system/log/operation') return 'operation-log'
+  if (path === '/system/log/system') return 'system-log'
+  if (path === '/system/log/login') return 'login-log'
+  if (path === '/system/backup/list') return 'backup-list'
+  if (path === '/system/backup/restore') return 'restore-data'
+  if (path === '/system/user') return 'user-list'
+  if (path === '/system/role') return 'role-list'
+  if (path.startsWith('/system/role/permission/')) return 'permission-list'
   if (path === '/management' || path.startsWith('/system')) return 'management'
   return ''
 })
@@ -108,6 +153,51 @@ const isContactsPage = computed(() => {
 // 判断是否在消息中心页面
 const isMessageCenterPage = computed(() => {
   return route.path === '/system/notification/message'
+})
+
+// 判断是否在日志分析页面
+const isLogAnalysisPage = computed(() => {
+  return route.path === '/system/log/analysis'
+})
+
+// 判断是否在操作日志页面
+const isOperationLogPage = computed(() => {
+  return route.path === '/system/log/operation'
+})
+
+// 判断是否在系统日志页面
+const isSystemLogPage = computed(() => {
+  return route.path === '/system/log/system'
+})
+
+// 判断是否在登录日志页面
+const isLoginLogPage = computed(() => {
+  return route.path === '/system/log/login'
+})
+
+// 判断是否在备份列表页面
+const isBackupListPage = computed(() => {
+  return route.path === '/system/backup/list'
+})
+
+// 判断是否在恢复数据页面
+const isRestoreDataPage = computed(() => {
+  return route.path === '/system/backup/restore'
+})
+
+// 判断是否在用户列表页面
+const isUserListPage = computed(() => {
+  return route.path === '/system/user'
+})
+
+// 判断是否在角色列表页面
+const isRoleListPage = computed(() => {
+  return route.path === '/system/role'
+})
+
+// 判断是否在权限列表页面
+const isPermissionListPage = computed(() => {
+  return route.path.startsWith('/system/role/permission/')
 })
 
 // 导航到指定路由

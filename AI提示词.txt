@@ -87,7 +87,8 @@ F5222D
 
 
 
-
+  width: 100%;
+  padding: 1.5%;
 
 index页面根容器间距 ：
 - .home-page 类（第913-916行）设置了页面的内边距： padding: 24px;

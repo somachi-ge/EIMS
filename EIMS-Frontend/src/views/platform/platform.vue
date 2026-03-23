@@ -95,7 +95,8 @@ const platforms = shallowRef<Platform[]>(PLATFORM_DATA)
 
 <style scoped>
 .platform-page {
-  padding: 24px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .platform-grid {

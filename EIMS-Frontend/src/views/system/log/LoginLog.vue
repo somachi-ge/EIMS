@@ -1,9 +1,9 @@
 <template>
-  <div class="operation-log-container">
+  <div class="login-log-container">
       <a-config-provider :locale="zhCN">
-        <div class="operation-log-page">
-        <a-card class="operation-log-card">
-          <div class="operation-log-filter" style="overflow-x: auto;">
+        <div class="login-log-page">
+        <a-card class="login-log-card">
+          <div class="login-log-filter" style="overflow-x: auto;">
             <div style="width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
               <div style="flex: 1.5; min-width: 200px;">
                 <a-input v-model:value="filterForm.keyword" placeholder="请输入搜索关键词" @keyup.enter="handleSearch" allow-clear style="width: 100%;" />
@@ -27,19 +27,19 @@
             </div>
           </div>
           
-          <div class="operation-log-actions">
+          <div class="login-log-actions">
             <a-button type="primary" @click="handleExport">导出日志</a-button>
             <a-button type="primary" style="margin-left: 8px; background-color: #ff4d4f; color: white;" @click="handleDeleteSelected">批量删除</a-button>
           </div>
           
-          <div class="operation-log-table-container">
+          <div class="login-log-table-container">
             <a-table
               :columns="columns"
               :data-source="paginatedLogs"
               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
               :pagination="false"
               size="small"
-              class="operation-log-table"
+              class="login-log-table"
               row-key="id"
               :scroll="{ x: 1200 }"
               :loading="loading"
@@ -70,23 +70,23 @@
               :pageSizeOptions="PAGE_SIZE_OPTIONS"
               :showTotal="showTotal"
               :showQuickJumper="true"
-              class="operation-log-pagination"
+              class="login-log-pagination"
             />
           </div>
         </a-card>
         
         <a-modal
           v-model:open="detailModalVisible"
-          title="操作日志详情"
+          title="登录日志详情"
           width="700px"
           :ok-text="'关闭'"
           :cancel-text="'取消'"
           @ok="closeDetailModal"
           @cancel="closeDetailModal"
-          class="operation-log-detail-modal"
+          class="login-log-detail-modal"
           :body-style="{ maxHeight: '60vh', overflowY: 'auto' }"
         >
-          <div v-if="currentLog" class="operation-log-detail">
+          <div v-if="currentLog" class="login-log-detail">
             <div class="detail-header">
               <h3 class="detail-title">{{ currentLog.action }}</h3>
               <div class="header-right">
@@ -101,11 +101,11 @@
                 <h4 class="section-title">基本信息</h4>
                 <div class="detail-grid">
                   <div class="detail-item">
-                    <div class="detail-label">操作人：</div>
+                    <div class="detail-label">登录用户：</div>
                     <div class="detail-value">{{ currentLog.user }}</div>
                   </div>
                   <div class="detail-item">
-                    <div class="detail-label">操作状态：</div>
+                    <div class="detail-label">登录状态：</div>
                     <div class="detail-value">
                       <a-tag :color="currentLog.status === 'success' ? 'green' : 'red'" :bordered="false" class="status-tag">
                         {{ currentLog.status === 'success' ? '成功' : '失败' }}
@@ -113,7 +113,7 @@
                     </div>
                   </div>
                   <div class="detail-item">
-                    <div class="detail-label">操作时间：</div>
+                    <div class="detail-label">登录时间：</div>
                     <div class="detail-value">{{ currentLog.created_at }}</div>
                   </div>
                   <div class="detail-item">
@@ -123,6 +123,14 @@
                   <div class="detail-item">
                     <div class="detail-label">MAC地址：</div>
                     <div class="detail-value">{{ currentLog.mac }}</div>
+                  </div>
+                  <div class="detail-item">
+                    <div class="detail-label">登录方式：</div>
+                    <div class="detail-value">{{ currentLog.loginType }}</div>
+                  </div>
+                  <div class="detail-item">
+                    <div class="detail-label">登录设备：</div>
+                    <div class="detail-value">{{ currentLog.device }}</div>
                   </div>
                   <div class="detail-item">
                     <div class="detail-label">用户代理：</div>
@@ -159,10 +167,15 @@ interface Log {
   userAgent: string;
   status: string;
   created_at: string;
-  module: string;
+  loginType: string;
+  device: string;
   details: {
-    module: string;
-    parameters: any;
+    loginType: string;
+    device: string;
+    ip: string;
+    location: string;
+    browser: string;
+    os: string;
     result: string;
     error: string | null;
     duration: number;
@@ -194,22 +207,25 @@ const generateRandomMacAddress = (): string => {
   return mac;
 };
 
-// 生成随机操作日志数据
+// 生成随机登录日志数据
 const generateRandomLogs = (): Log[] => {
-  const users = ['admin', 'user1', 'user2', 'manager', 'operator'];
+  const users = ['admin', 'user1', 'user2', 'manager', 'operator', 'guest'];
   const ipPrefixes = ['192.168.1.', '10.0.0.', '172.16.0.'];
   const userAgents = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36 Edg/90.0.818.62',
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1'
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1',
+    'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36'
   ];
-  const modules = ['system', 'user', 'role', 'permission', 'log', 'dashboard', 'settings', 'report', 'task', 'api'];
+  const loginTypes = ['web', 'mobile', 'api', 'sso'];
+  const devices = ['Windows PC', 'MacBook', 'iPhone', 'Android Phone', 'iPad', 'Linux PC'];
+  const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'];
+  const os = ['Windows 10', 'Windows 11', 'macOS Big Sur', 'iOS 14', 'Android 10', 'Ubuntu 20.04'];
+  const locations = ['北京', '上海', '广州', '深圳', '杭州', '成都', '武汉', '西安', '南京', '天津'];
   const actions = [
-    '登录系统', '退出系统', '创建用户', '修改用户', '删除用户', '创建角色', '修改角色', '删除角色',
-    '分配权限', '修改权限', '更新系统设置', '导出数据', '导入数据', '修改密码', '重置密码',
-    '创建部门', '修改部门', '删除部门', '创建项目', '修改项目', '删除项目', '上传文件', '下载文件'
+    '登录系统', '退出系统', '登录失败', '密码错误', '账户锁定', '会话超时', '重新登录', '强制登出'
   ];
   const logs: Log[] = [];
   
@@ -219,8 +235,9 @@ const generateRandomLogs = (): Log[] => {
     const ip = `${ipPrefixes[Math.floor(Math.random() * ipPrefixes.length)]}${Math.floor(Math.random() * 255)}`;
     const mac = generateRandomMacAddress();
     const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-    const module = modules[Math.floor(Math.random() * modules.length)];
-    const status = Math.random() > 0.1 ? 'success' : 'failed'; // 90% 成功率
+    const loginType = loginTypes[Math.floor(Math.random() * loginTypes.length)];
+    const device = devices[Math.floor(Math.random() * devices.length)];
+    const status = action.includes('失败') || action.includes('错误') || action.includes('锁定') ? 'failed' : 'success';
     
     // 生成随机时间（最近6个月内）
     const now = new Date();
@@ -248,49 +265,33 @@ const generateRandomLogs = (): Log[] => {
       userAgent: userAgent,
       status: status,
       created_at: created_at,
-      module: module,
+      loginType: loginType,
+      device: device,
       details: {
-        module: module,
-        parameters: getParametersByAction(action, i),
+        loginType: loginType,
+        device: device,
+        ip: ip,
+        location: locations[Math.floor(Math.random() * locations.length)],
+        browser: browsers[Math.floor(Math.random() * browsers.length)],
+        os: os[Math.floor(Math.random() * os.length)],
         result: status === 'success' ? '成功' : '失败',
-        error: status === 'failed' ? '操作失败：' + getErrorMessage() : null,
-        duration: Math.floor(Math.random() * 1000) + 100 // 操作持续时间（毫秒）
+        error: status === 'failed' ? '登录失败：' + getErrorMessage() : null,
+        duration: Math.floor(Math.random() * 1000) + 100 // 登录持续时间（毫秒）
       }
     });
-  }
-  
-  // 根据操作类型生成参数
-  function getParametersByAction(action: string, id: number) {
-    if (action.includes('用户')) {
-      return { userId: id, username: `user${id}`, roleId: Math.floor(Math.random() * 10) + 1 };
-    } else if (action.includes('角色')) {
-      return { roleId: id, roleName: `role${id}`, permissionIds: [1, 2, 3] };
-    } else if (action.includes('权限')) {
-      return { permissionId: id, permissionName: `permission${id}`, resource: '/api/v1/users' };
-    } else if (action.includes('登录')) {
-      return { username: `user${Math.floor(Math.random() * 100)}`, loginType: ['web', 'mobile', 'api'][Math.floor(Math.random() * 3)] };
-    } else if (action.includes('导出')) {
-      return { exportType: ['excel', 'pdf', 'csv'][Math.floor(Math.random() * 3)], recordCount: Math.floor(Math.random() * 1000) + 1 };
-    } else if (action.includes('部门')) {
-      return { departmentId: id, departmentName: `department${id}`, parentId: Math.floor(Math.random() * id) };
-    } else if (action.includes('项目')) {
-      return { projectId: id, projectName: `project${id}`, status: ['active', 'completed', 'cancelled'][Math.floor(Math.random() * 3)] };
-    } else {
-      return { id: id, timestamp: new Date().toISOString() };
-    }
   }
   
   // 生成错误信息
   function getErrorMessage() {
     const errorMessages = [
-      '权限不足，无法执行此操作',
-      '操作超时，请稍后重试',
-      '参数错误，请检查输入',
-      '系统繁忙，请稍后再试',
-      '数据冲突，操作失败',
-      '网络连接失败，请检查网络',
-      '资源不存在，操作失败',
-      '服务器内部错误，请联系管理员'
+      '用户名或密码错误',
+      '账户已被锁定',
+      '会话已超时',
+      'IP地址受限',
+      '验证码错误',
+      '系统繁忙，请稍后重试',
+      '网络连接失败',
+      '权限不足，无法登录'
     ];
     return errorMessages[Math.floor(Math.random() * errorMessages.length)];
   }
@@ -317,21 +318,27 @@ const pagination = reactive<Pagination>({
 
 const columns = shallowRef([
   {
-    title: '操作人',
+    title: '登录用户',
     dataIndex: 'user',
     key: 'user',
     width: 100
   },
   {
-    title: '操作内容',
+    title: '登录操作',
     dataIndex: 'action',
     key: 'action',
-    width: 250
+    width: 200
   },
   {
-    title: '操作模块',
-    dataIndex: 'module',
-    key: 'module',
+    title: '登录方式',
+    dataIndex: 'loginType',
+    key: 'loginType',
+    width: 100
+  },
+  {
+    title: '登录设备',
+    dataIndex: 'device',
+    key: 'device',
     width: 120
   },
   {
@@ -352,7 +359,7 @@ const columns = shallowRef([
     width: 80
   },
   {
-    title: '操作时间',
+    title: '登录时间',
     dataIndex: 'created_at',
     key: 'created_at',
     width: 160
@@ -373,7 +380,8 @@ const filteredLogs = computed(() => {
     result = result.filter(log => 
       log.action.toLowerCase().includes(lowerKeyword) ||
       log.user.toLowerCase().includes(lowerKeyword) ||
-      log.ip.includes(filterForm.keyword)
+      log.ip.includes(filterForm.keyword) ||
+      log.loginType.toLowerCase().includes(lowerKeyword)
     );
   }
   
@@ -394,7 +402,7 @@ const showTotal = (total: number) => `共 ${total} 条记录`;
 
 const handleSearch = () => {
   pagination.current = 1;
-  message.success(`搜索完成，共找到 ${filteredLogs.value.length} 条操作日志`);
+  message.success(`搜索完成，共找到 ${filteredLogs.value.length} 条登录日志`);
 };
 
 const handleReset = () => {
@@ -404,7 +412,7 @@ const handleReset = () => {
     status: ''
   });
   pagination.current = 1;
-  message.success('表单已重置，操作日志列表已恢复');
+  message.success('表单已重置，登录日志列表已恢复');
 };
 
 const onSelectChange = (keys: (string | number)[]) => {
@@ -425,10 +433,10 @@ const handleDelete = async (id: number) => {
   try {
     loading.value = true;
     originalLogs.value = originalLogs.value.filter(log => log.id !== id);
-    message.success(`删除操作日志 ID: ${id}`);
+    message.success(`删除登录日志 ID: ${id}`);
   } catch (error) {
-    console.error('删除操作日志失败:', error);
-    message.error('删除操作日志失败，请稍后重试');
+    console.error('删除登录日志失败:', error);
+    message.error('删除登录日志失败，请稍后重试');
   } finally {
     loading.value = false;
   }
@@ -437,10 +445,10 @@ const handleDelete = async (id: number) => {
 const handleExport = async () => {
   try {
     loading.value = true;
-    message.success('操作日志导出成功');
+    message.success('登录日志导出成功');
   } catch (error) {
-    console.error('导出操作日志失败:', error);
-    message.error('导出操作日志失败，请稍后重试');
+    console.error('导出登录日志失败:', error);
+    message.error('导出登录日志失败，请稍后重试');
   } finally {
     loading.value = false;
   }
@@ -448,7 +456,7 @@ const handleExport = async () => {
 
 const handleDeleteSelected = async () => {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择要删除的操作日志');
+    message.warning('请先选择要删除的登录日志');
     return;
   }
   
@@ -461,10 +469,10 @@ const handleDeleteSelected = async () => {
     }
     
     selectedRowKeys.value = [];
-    message.success(`删除 ${deleteCount} 条操作日志`);
+    message.success(`删除 ${deleteCount} 条登录日志`);
   } catch (error) {
-    console.error('批量删除操作日志失败:', error);
-    message.error('批量删除操作日志失败，请稍后重试');
+    console.error('批量删除登录日志失败:', error);
+    message.error('批量删除登录日志失败，请稍后重试');
   } finally {
     loading.value = false;
   }
@@ -476,29 +484,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.operation-log-container {
+.login-log-container {
   width: 100%;
   padding: 1.5%;
 }
 
-.operation-log-card {
+.login-log-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
 }
 
-.operation-log-card:hover {
+.login-log-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
-.operation-log-filter {
+.login-log-filter {
   margin-bottom: 20px;
   padding: 16px;
   background-color: #f5f5f5;
   border-radius: 4px;
 }
 
-.operation-log-actions {
+.login-log-actions {
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid #d9d9d9;
@@ -507,42 +515,42 @@ onMounted(() => {
   gap: 8px;
 }
 
-.operation-log-actions :deep(.ant-btn) {
+.login-log-actions :deep(.ant-btn) {
   transition: all 0.3s ease;
   border: none;
 }
 
-.operation-log-actions :deep(.ant-btn:hover) {
+.login-log-actions :deep(.ant-btn:hover) {
   opacity: 0.8;
   transform: translateY(-1px);
 }
 
-.operation-log-table {
+.login-log-table {
   border-radius: 4px;
 }
 
-.operation-log-table :deep(.ant-table-thead > tr > th) {
+.login-log-table :deep(.ant-table-thead > tr > th) {
   background-color: #fafafa;
   font-weight: 600;
   font-size: 14px;
 }
 
-.operation-log-table :deep(.ant-table-tbody > tr > td) {
+.login-log-table :deep(.ant-table-tbody > tr > td) {
   font-size: 13px;
   padding: 10px;
 }
 
-.operation-log-pagination {
+.login-log-pagination {
   margin-top: 16px;
   display: flex;
   justify-content: flex-end;
 }
 
-.operation-log-detail-modal {
+.login-log-detail-modal {
   border-radius: 8px;
 }
 
-.operation-log-detail {
+.login-log-detail {
   padding: 20px 0;
 }
 
@@ -641,35 +649,35 @@ onMounted(() => {
 }
 
 @media (max-width: 1200px) {
-  .operation-log-page {
+  .login-log-page {
     padding: 20px;
   }
   
-  .operation-log-filter {
+  .login-log-filter {
     padding: 12px;
   }
 }
 
 @media (max-width: 992px) {
-  .operation-log-page {
+  .login-log-page {
     padding: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .operation-log-page {
+  .login-log-page {
     padding: 12px;
   }
   
-  .operation-log-filter {
+  .login-log-filter {
     padding: 12px;
   }
   
-  .operation-log-actions {
+  .login-log-actions {
     flex-direction: column;
   }
   
-  .operation-log-actions :deep(.ant-btn) {
+  .login-log-actions :deep(.ant-btn) {
     width: 100%;
     margin-left: 0 !important;
   }
@@ -686,20 +694,20 @@ onMounted(() => {
 }
 
 @media (max-width: 576px) {
-  .operation-log-page {
+  .login-log-page {
     padding: 12px;
   }
   
-  .operation-log-pagination {
+  .login-log-pagination {
     justify-content: center;
   }
   
-  .operation-log-pagination :deep(.ant-pagination) {
+  .login-log-pagination :deep(.ant-pagination) {
     flex-wrap: wrap;
     justify-content: center;
   }
   
-  .operation-log-detail-modal {
+  .login-log-detail-modal {
     width: 90% !important;
   }
   
