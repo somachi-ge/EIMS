@@ -1,6 +1,6 @@
 <template>
   <MainLayout>
-    <div class="system-page">
+    <div v-if="$route.path === '/system'" class="system-page">
       <div class="system-grid">
         <div 
           v-for="(system, index) in systems" 
@@ -158,6 +158,7 @@
         </div>
       </a-modal>
     </div>
+    <router-view v-else></router-view>
   </MainLayout>
 </template>
 
@@ -176,7 +177,8 @@ import {
   ReloadOutlined,
   ConsoleSqlOutlined,
   TableOutlined,
-  SettingOutlined
+  SettingOutlined,
+  QuestionCircleOutlined
 } from '@ant-design/icons-vue'
 
 interface System {
@@ -191,7 +193,8 @@ const SYSTEM_DATA: System[] = [
   { name: '组织管理', icon: TeamOutlined, color: '#7cb305' },
   { name: '权限配置', icon: SettingOutlined, color: '#08979c' },
   { name: '数据维护', icon: TableOutlined, color: '#531dab' },
-  { name: '系统日志', icon: ConsoleSqlOutlined, color: '#d46b08' }
+  { name: '系统日志', icon: ConsoleSqlOutlined, color: '#d46b08' },
+  { name: '帮助中心', icon: QuestionCircleOutlined, color: '#1890ff' }
 ]
 
 // 权限管理需要先选择角色，因此映射到角色列表页面
@@ -205,7 +208,8 @@ const ROUTE_MAP: Record<string, string> = {
   '数据恢复': '/system/backup/restore',
   '架构管理': '/system/department',
   '组织架构': '/system/department',
-  '编码规则': '/system/config/basic'
+  '编码规则': '/system/config/basic',
+  '帮助中心': '/help'
 }
 
 const systems = shallowRef<System[]>(SYSTEM_DATA)
@@ -326,7 +330,8 @@ const handleOrganization = () => {
 
 <style scoped>
 .system-page {
-  padding: 24px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .system-grid {

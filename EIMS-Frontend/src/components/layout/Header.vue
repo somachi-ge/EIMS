@@ -17,11 +17,23 @@
         <a-menu-item key="platform" @click="navigateTo('/platform')">平台</a-menu-item>
         <a-menu-item key="app" @click="navigateTo('/application')">应用</a-menu-item>
         <a-menu-item key="management" @click="navigateTo('/management')">管理</a-menu-item>
+        <template v-if="isHelpCenterPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="help-center" @click="navigateTo('/help')">帮助中心</a-menu-item>
+        </template>
+        <template v-if="isContactsPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="contacts" @click="navigateTo('/contacts')">通讯录</a-menu-item>
+        </template>
+        <template v-if="isMessageCenterPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="message-center" @click="navigateTo('/system/notification/message')">消息中心</a-menu-item>
+        </template>
       </a-menu>
     </div>
     <div class="header-right">
       <a-tooltip title="消息通知">
-        <a-button type="text" class="action-btn">
+        <a-button type="text" class="action-btn" @click="navigateTo('/system/notification/message')">
           <BellOutlined />
         </a-button>
       </a-tooltip>
@@ -46,6 +58,10 @@
               <LockOutlined />
               <span>修改密码</span>
             </a-menu-item>
+            <a-menu-item key="help" @click="navigateTo('/help')">
+              <QuestionCircleOutlined />
+              <span>帮助中心</span>
+            </a-menu-item>
             <a-menu-item key="logout">
               <LogoutOutlined />
               <span>退出登录</span>
@@ -60,7 +76,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { BellOutlined, DownOutlined, UpOutlined, UserOutlined, LockOutlined, LogoutOutlined, UsergroupAddOutlined } from '@ant-design/icons-vue'
+import { BellOutlined, DownOutlined, UpOutlined, UserOutlined, LockOutlined, LogoutOutlined, UsergroupAddOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -72,9 +88,26 @@ const selectedKey = computed(() => {
   if (path === '/home' || path === '/') return 'home'
   if (path === '/platform') return 'platform'
   if (path === '/application') return 'app'
+  if (path === '/help') return 'help-center'
+  if (path === '/contacts') return 'contacts'
+  if (path === '/system/notification/message') return 'message-center'
   if (path === '/management' || path.startsWith('/system')) return 'management'
-  if (path === '/contacts') return ''
   return ''
+})
+
+// 判断是否在帮助中心页面
+const isHelpCenterPage = computed(() => {
+  return route.path === '/help'
+})
+
+// 判断是否在通讯录页面
+const isContactsPage = computed(() => {
+  return route.path === '/contacts'
+})
+
+// 判断是否在消息中心页面
+const isMessageCenterPage = computed(() => {
+  return route.path === '/system/notification/message'
 })
 
 // 导航到指定路由
@@ -127,6 +160,12 @@ const handleDropdownVisibleChange = (visible: boolean) => {
 .nav-menu {
   border-bottom: none;
   font-size: 16px; /* 调整这里的字体大小 */
+}
+
+.nav-divider {
+  pointer-events: none;
+  color: #d9d9d9;
+  margin: 0 8px;
 }
 
 .header-right {

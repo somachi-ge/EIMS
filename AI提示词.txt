@@ -23,6 +23,8 @@ http://localhost:8000/docs
 http://localhost:8000/redoc
 http://localhost:8000/health
 
+提交到Git和GitHub
+
 在顶部导航栏的“管理”右面增加一个竖线，竖线后面增加“组织架构”按钮，该更改仅对“”页面生效
 
 用Vue 3 + Ant Design Vue写一个交易记录的详情页
@@ -110,5 +112,5 @@ index页面根容器间距 ：
 
 顶部导航栏菜单项应为：首页、平台、应用、管理
 
-
+参考"D:\\Project\\Geyc\\Old_EIMS\\EIMS-Frontend\\src\\views\\system\\notification\\messagecenter.vue"，完善
 

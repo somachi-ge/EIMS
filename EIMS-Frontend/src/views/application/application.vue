@@ -82,7 +82,8 @@ const handleApplicationClick = (app: Application) => {
 
 <style scoped>
 .application-page {
-  padding: 24px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .application-grid {

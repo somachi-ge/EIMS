@@ -911,7 +911,8 @@ onUnmounted(() => {
 
 <style scoped>
 .home-page {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .quadrant-cards {

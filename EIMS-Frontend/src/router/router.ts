@@ -158,8 +158,18 @@ const routes: RouteRecordRaw[] = [
         path: 'notification/message',
         name: 'MessageCenter',
         component: () => import('../views/system/notification/MessageCenter.vue')
-      }
+      },
     ]
+  },
+  {
+    path: '/help',
+    name: 'HelpCenter',
+    component: () => import('../views/help/HelpCenter.vue')
+  },
+  {
+    path: '/contacts',
+    name: 'ContactList',
+    component: () => import('../views/contacts/contactlist.vue')
   }
 ]
 

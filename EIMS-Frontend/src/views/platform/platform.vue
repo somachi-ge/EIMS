@@ -170,7 +170,8 @@ const platforms = shallowRef<Platform[]>(PLATFORM_DATA)
 
 @media (max-width: 768px) {
   .platform-page {
-    padding: 20px;
+  width: 100%;
+  padding: 1.5%;
   }
   
   .platform-grid {
