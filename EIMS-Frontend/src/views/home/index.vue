@@ -1,54 +1,54 @@
 <template>
   <MainLayout>
     <div class="home-page">
-      <div class="quadrant-cards">
-        <a-card v-for="card in dashboardCards" :key="card.key" :class="['quadrant-card', `${card.key}-card`]">
-          <div class="card-header">
-            <h3 class="card-title">{{ card.title }}</h3>
-            <div class="header-right">
-              <div class="date-tabs">
+      <div class="home-quadrant-cards">
+        <a-card v-for="card in dashboardCards" :key="card.key" :class="['home-quadrant-card', `home-${card.key}-card`]">
+          <div class="home-card-header">
+            <h3 class="home-card-title">{{ card.title }}</h3>
+            <div class="home-header-right">
+              <div class="home-date-tabs">
                 <a-tag 
                   v-for="option in DATE_OPTIONS" 
                   :key="option.value"
                   :color="card.color" 
-                  :class="['date-tag', card.dateType === option.value ? 'active' : '']"
+                  :class="['home-date-tag', card.dateType === option.value ? 'active' : '']"
                   @click="switchDateType(card.key, option.value)"
                 >
                   {{ option.label }}
                 </a-tag>
               </div>
-              <component :is="card.icon" :class="['card-icon', `card-icon-${card.color}`]" />
+              <component :is="card.icon" :class="['home-card-icon', `home-card-icon-${card.color}`]" />
             </div>
           </div>
-          <div class="card-content">
-            <div class="card-value">{{ formatValue(card.animatedValue, card.isCurrency) }}</div>
-            <div class="card-stats">
-              <div class="stat-item">
-                <span :class="['stat-trend', card.data[card.dateType].rate.includes('-') ? 'down' : 'up']">
+          <div class="home-card-content">
+            <div class="home-card-value">{{ formatValue(card.animatedValue, card.isCurrency) }}</div>
+            <div class="home-card-stats">
+              <div class="home-stat-item">
+                <span :class="['home-stat-trend', card.data[card.dateType].rate.includes('-') ? 'down' : 'up']">
                   {{ card.data[card.dateType].rate.includes('-') ? '↓' : '↑' }}{{ card.data[card.dateType].rate }}
                 </span>
-                <span class="stat-period">{{ getCompareText(card.dateType) }}</span>
+                <span class="home-stat-period">{{ getCompareText(card.dateType) }}</span>
               </div>
-              <div class="stat-item stat-item-right">
-                <div class="stat-label">{{ card.targetLabel }}</div>
-                <div class="stat-value">{{ card.data[card.dateType].target }}</div>
+              <div class="home-stat-item home-stat-item-right">
+                <div class="home-stat-label">{{ card.targetLabel }}</div>
+                <div class="home-stat-value">{{ card.data[card.dateType].target }}</div>
               </div>
             </div>
           </div>
         </a-card>
       </div>
       
-      <div class="analysis-cards">
-        <a-card class="analysis-card sales-analysis-card">
-          <div class="card-header">
-            <h3 class="card-title">销售分析</h3>
-            <div class="header-right">
-              <div class="analysis-tabs">
+      <div class="home-analysis-cards">
+        <a-card class="home-analysis-card home-sales-analysis-card">
+          <div class="home-card-header">
+            <h3 class="home-card-title">销售分析</h3>
+            <div class="home-header-right">
+              <div class="home-analysis-tabs">
                 <a-tag 
                   v-for="option in SALES_ANALYSIS_OPTIONS" 
                   :key="option.value"
                   color="blue" 
-                  :class="['analysis-tag', salesAnalysisType === option.value ? 'active' : '']"
+                  :class="['home-analysis-tag', salesAnalysisType === option.value ? 'active' : '']"
                   @click="switchSalesAnalysis(option.value)"
                 >
                   {{ option.label }}
@@ -56,21 +56,21 @@
               </div>
             </div>
           </div>
-          <div class="card-content">
+          <div class="home-card-content">
             <div id="activityChart" style="height: 300px;"></div>
           </div>
         </a-card>
 
-        <a-card class="analysis-card fund-distribution-card">
-          <div class="card-header">
-            <h3 class="card-title">资金分布</h3>
-            <div class="header-right">
-              <div class="analysis-tabs">
+        <a-card class="home-analysis-card home-fund-distribution-card">
+          <div class="home-card-header">
+            <h3 class="home-card-title">资金分布</h3>
+            <div class="home-header-right">
+              <div class="home-analysis-tabs">
                 <a-tag 
                   v-for="option in FUND_DISTRIBUTION_OPTIONS" 
                   :key="option.value"
                   color="blue" 
-                  :class="['analysis-tag', fundDistributionType === option.value ? 'active' : '']"
+                  :class="['home-analysis-tag', fundDistributionType === option.value ? 'active' : '']"
                   @click="switchFundDistribution(option.value)"
                 >
                   {{ option.label }}
@@ -78,27 +78,27 @@
               </div>
             </div>
           </div>
-          <div class="card-content">
+          <div class="home-card-content">
             <div id="systemChart" style="height: 200px;"></div>
-            <div class="fund-stats">
-              <div class="fund-stat-item">
-                <div class="fund-stat-label">{{ currentFundStats.label }}</div>
-                <div class="fund-stat-value fund-stat-value-blue">{{ currentFundStats.displayValue }}</div>
+            <div class="home-fund-stats">
+              <div class="home-fund-stat-item">
+                <div class="home-fund-stat-label">{{ currentFundStats.label }}</div>
+                <div class="home-fund-stat-value home-fund-stat-value-blue">{{ currentFundStats.displayValue }}</div>
               </div>
-              <div class="fund-stat-item">
-                <div class="fund-stat-label">{{ currentFundStats.periodLabel }}</div>
-                <div class="fund-stat-value fund-stat-value-blue">{{ currentFundStats.displayPeriodValue }}</div>
+              <div class="home-fund-stat-item">
+                <div class="home-fund-stat-label">{{ currentFundStats.periodLabel }}</div>
+                <div class="home-fund-stat-value home-fund-stat-value-blue">{{ currentFundStats.displayPeriodValue }}</div>
               </div>
             </div>
           </div>
         </a-card>
       </div>
       
-      <div class="transactions-card">
-        <a-card class="transaction-card">
-          <div class="card-header">
-            <h3 class="card-title">交易记录</h3>
-            <div class="header-right">
+      <div class="home-transactions-card">
+        <a-card class="home-transaction-card">
+          <div class="home-card-header">
+            <h3 class="home-card-title">交易记录</h3>
+            <div class="home-header-right">
               <a-dropdown trigger="click">
                 <template #overlay>
                   <a-menu>
@@ -107,20 +107,20 @@
                     </a-menu-item>
                   </a-menu>
                 </template>
-                <a-button size="small" class="view-range-button">
+                <a-button size="small" class="home-view-range-button">
                   {{ currentViewRangeText }} <DownOutlined />
                 </a-button>
               </a-dropdown>
             </div>
           </div>
-          <div class="card-content">
+          <div class="home-card-content">
             <a-spin :spinning="loading">
               <a-table 
                 :columns="transactionColumns" 
                 :data-source="paginatedTransactions" 
                 :pagination="paginationConfig"
                 size="small"
-                class="transaction-table"
+                class="home-transaction-table"
               >
                 <template #bodyCell="{ column, record }">
                   <template v-if="column.key === 'status'">
@@ -151,76 +151,76 @@
         :cancel-button-props="{ style: { display: 'none' } }"
         @ok="closeDetailModal"
         @cancel="closeDetailModal"
-        class="transaction-detail-modal"
+        class="home-transaction-detail-modal"
         :body-style="{ maxHeight: '60vh', overflow: 'auto' }"
         :scrollable="true"
       >
-        <div v-if="currentTransaction" class="transaction-detail">
-          <div class="detail-header">
-            <div class="detail-id">{{ currentTransaction.id }}</div>
-            <div class="detail-status">
-              <a-tag :color="STATUS_COLORS[currentTransaction.status as keyof typeof STATUS_COLORS]" :bordered="false" class="status-tag">
+        <div v-if="currentTransaction" class="home-transaction-detail">
+          <div class="home-detail-header">
+            <div class="home-detail-id">{{ currentTransaction.id }}</div>
+            <div class="home-detail-status">
+              <a-tag :color="STATUS_COLORS[currentTransaction.status as keyof typeof STATUS_COLORS]" :bordered="false" class="home-status-tag">
                 {{ STATUS_TEXT[currentTransaction.status as keyof typeof STATUS_TEXT] }}
               </a-tag>
             </div>
           </div>
           
-          <div class="detail-content">
-            <div class="detail-section">
-              <h4 class="section-title">基本信息</h4>
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <div class="detail-label">交易类型：</div>
-                  <div class="detail-value">
-                    <a-tag :color="TYPE_COLORS[currentTransaction.type as keyof typeof TYPE_COLORS]" :bordered="false" class="type-tag">
+          <div class="home-detail-content">
+            <div class="home-detail-section">
+              <h4 class="home-section-title">基本信息</h4>
+              <div class="home-detail-grid">
+                <div class="home-detail-item">
+                  <div class="home-detail-label">交易类型：</div>
+                  <div class="home-detail-value">
+                    <a-tag :color="TYPE_COLORS[currentTransaction.type as keyof typeof TYPE_COLORS]" :bordered="false" class="home-type-tag">
                       {{ TYPE_TEXT[currentTransaction.type as keyof typeof TYPE_TEXT] }}
                     </a-tag>
                   </div>
                 </div>
-                <div class="detail-item">
-                  <div class="detail-label">客户/供应商：</div>
-                  <div class="detail-value">{{ currentTransaction.partner }}</div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">客户/供应商：</div>
+                  <div class="home-detail-value">{{ currentTransaction.partner }}</div>
                 </div>
-                <div class="detail-item">
-                  <div class="detail-label">交易描述：</div>
-                  <div class="detail-value">{{ currentTransaction.description }}</div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">交易描述：</div>
+                  <div class="home-detail-value">{{ currentTransaction.description }}</div>
                 </div>
-                <div class="detail-item">
-                  <div class="detail-label">金额：</div>
-                  <div class="detail-value amount-value">¥{{ currentTransaction.amount.toLocaleString() }}</div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">金额：</div>
+                  <div class="home-detail-value home-amount-value">¥{{ currentTransaction.amount.toLocaleString() }}</div>
                 </div>
-                <div class="detail-item">
-                  <div class="detail-label">日期：</div>
-                  <div class="detail-value">{{ currentTransaction.date }}</div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">日期：</div>
+                  <div class="home-detail-value">{{ currentTransaction.date }}</div>
                 </div>
-                <div class="detail-item">
-                  <div class="detail-label">支付方式：</div>
-                  <div class="detail-value">{{ currentTransaction.paymentMethod }}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="detail-section">
-              <h4 class="section-title">管理信息</h4>
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <div class="detail-label">负责人：</div>
-                  <div class="detail-value">{{ currentTransaction.manager }}</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">部门：</div>
-                  <div class="detail-value">{{ currentTransaction.department }}</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">发票编号：</div>
-                  <div class="detail-value">{{ currentTransaction.invoiceNumber }}</div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">支付方式：</div>
+                  <div class="home-detail-value">{{ currentTransaction.paymentMethod }}</div>
                 </div>
               </div>
             </div>
             
-            <div class="detail-section">
-              <h4 class="section-title">备注信息</h4>
-              <div class="detail-notes">
+            <div class="home-detail-section">
+              <h4 class="home-section-title">管理信息</h4>
+              <div class="home-detail-grid">
+                <div class="home-detail-item">
+                  <div class="home-detail-label">负责人：</div>
+                  <div class="home-detail-value">{{ currentTransaction.manager }}</div>
+                </div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">部门：</div>
+                  <div class="home-detail-value">{{ currentTransaction.department }}</div>
+                </div>
+                <div class="home-detail-item">
+                  <div class="home-detail-label">发票编号：</div>
+                  <div class="home-detail-value">{{ currentTransaction.invoiceNumber }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="home-detail-section">
+              <h4 class="home-section-title">备注信息</h4>
+              <div class="home-detail-notes">
                 {{ currentTransaction.notes || '无备注信息' }}
               </div>
             </div>
@@ -627,7 +627,7 @@ const fundStatsData = shallowRef<Record<string, FundStats>>({
 })
 
 const loading = ref(true)
-const fundAnimatedValue = ref(456892)
+const fundAmountAnimatedValue = ref(456892)
 const fundPeriodAnimatedValue = ref(32)
 
 const currentViewRange = ref<'month' | 'quarter' | 'year'>('month')
@@ -742,7 +742,7 @@ const currentFundStats = computed(() => {
   const data = fundStatsData.value[fundDistributionType.value]
   return {
     ...data,
-    displayValue: `¥${Math.round(fundAnimatedValue.value).toLocaleString()}`,
+    displayValue: `¥${Math.round(fundAmountAnimatedValue.value).toLocaleString()}`,
     displayPeriodValue: `${Math.round(fundPeriodAnimatedValue.value)}天`
   }
 })
@@ -769,7 +769,7 @@ const fundDistributionData = shallowRef<Record<string, FundDistributionData>>({
 })
 
 const switchFundDistribution = (type: 'receivable' | 'payable') => {
-  const oldValue = fundAnimatedValue.value
+  const oldValue = fundAmountAnimatedValue.value
   const oldPeriodValue = fundPeriodAnimatedValue.value
   
   fundDistributionType.value = type
@@ -778,7 +778,7 @@ const switchFundDistribution = (type: 'receivable' | 'payable') => {
   const newPeriodValue = fundStatsData.value[type].numericPeriodValue
   
   animateValue(oldValue, newValue, ANIMATION_DURATION, (value) => {
-    fundAnimatedValue.value = value
+    fundAmountAnimatedValue.value = value
   })
   
   animateValue(oldPeriodValue, newPeriodValue, ANIMATION_DURATION, (value) => {
@@ -884,10 +884,10 @@ onMounted(async () => {
       initSalesAnalysisChart()
       initFundDistributionChart()
       
-      fundAnimatedValue.value = 0
+      fundAmountAnimatedValue.value = 0
       fundPeriodAnimatedValue.value = 0
       animateValue(0, fundStatsData.value[fundDistributionType.value].numericValue, ANIMATION_DURATION, (value) => {
-        fundAnimatedValue.value = value
+        fundAmountAnimatedValue.value = value
       })
       animateValue(0, fundStatsData.value[fundDistributionType.value].numericPeriodValue, ANIMATION_DURATION, (value) => {
         fundPeriodAnimatedValue.value = value
@@ -915,50 +915,50 @@ onUnmounted(() => {
   padding: 1.5%;
 }
 
-.quadrant-cards {
+.home-quadrant-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-bottom: 24px;
 }
 
-.quadrant-card {
+.home-quadrant-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
 }
 
-.quadrant-card:hover {
+.home-quadrant-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 
-.card-header {
+.home-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
 
-.header-right {
+.home-header-right {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.card-title {
+.home-card-title {
   font-size: 16px;
   font-weight: 500;
   color: #333;
   margin: 0;
 }
 
-.card-icon {
+.home-card-icon {
   font-size: 18px;
   color: #999;
 }
 
-.card-icon-blue {
+.home-card-icon-blue {
   color: #1890ff;
   background-color: #bae7ff;
   width: 40px;
@@ -969,7 +969,7 @@ onUnmounted(() => {
   border-radius: 50%;
 }
 
-.card-icon-orange {
+.home-card-icon-orange {
   color: #fa8c16;
   background-color: #ffe7ba;
   width: 40px;
@@ -980,7 +980,7 @@ onUnmounted(() => {
   border-radius: 50%;
 }
 
-.card-icon-green {
+.home-card-icon-green {
   color: #52c41a;
   background-color: #d9f7be;
   width: 40px;
@@ -991,7 +991,7 @@ onUnmounted(() => {
   border-radius: 50%;
 }
 
-.card-icon-red {
+.home-card-icon-red {
   color: #ff4d4f;
   background-color: #ffccc7;
   width: 40px;
@@ -1002,12 +1002,12 @@ onUnmounted(() => {
   border-radius: 50%;
 }
 
-.date-tabs {
+.home-date-tabs {
   display: flex;
   gap: 2px;
 }
 
-.date-tag {
+.home-date-tag {
   font-size: 12px;
   padding: 2px 8px;
   cursor: pointer;
@@ -1016,59 +1016,59 @@ onUnmounted(() => {
   color: #000;
 }
 
-.date-tag.active {
+.home-date-tag.active {
   font-weight: 600;
   border: none;
   background-color: #40a9ff;
   color: #fff;
 }
 
-.sales-card .date-tag.active {
+.home-sales-card .home-date-tag.active {
   background-color: #40a9ff;
   color: #fff;
 }
 
-.purchase-card .date-tag.active {
+.home-purchase-card .home-date-tag.active {
   background-color: #ffa940;
   color: #fff;
 }
 
-.inventory-card .date-tag.active {
+.home-inventory-card .home-date-tag.active {
   background-color: #73d13d;
   color: #fff;
 }
 
-.profit-card .date-tag.active {
+.home-profit-card .home-date-tag.active {
   background-color: #ff7875;
   color: #fff;
 }
 
-.card-content {
+.home-card-content {
   padding-top: 0;
   margin-top: -16px;
 }
 
-.card-value {
+.home-card-value {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 12px;
   color: #333;
 }
 
-.card-stats {
+.home-card-stats {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.stat-item {
+.home-stat-item {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
 }
 
-.stat-item-right {
+.home-stat-item-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1076,63 +1076,63 @@ onUnmounted(() => {
   margin-top: -26px;
 }
 
-.stat-label {
+.home-stat-label {
   font-size: 12px;
   color: #666;
 }
 
-.stat-value {
+.home-stat-value {
   font-size: 14px;
   font-weight: 600;
   color: #333;
 }
 
-.stat-trend {
+.home-stat-trend {
   font-size: 12px;
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 4px;
 }
 
-.stat-trend.up {
+.home-stat-trend.up {
   color: #52c41a;
   background-color: #d9f7be;
 }
 
-.stat-trend.down {
+.home-stat-trend.down {
   color: #ff4d4f;
   background-color: #ffccc7;
 }
 
-.stat-period {
+.home-stat-period {
   font-size: 12px;
   color: #999;
 }
 
-.sales-card .card-value {
+.home-sales-card .home-card-value {
   color: #1890ff;
 }
 
-.purchase-card .card-value {
+.home-purchase-card .home-card-value {
   color: #fa8c16;
 }
 
-.inventory-card .card-value {
+.home-inventory-card .home-card-value {
   color: #52c41a;
 }
 
-.profit-card .card-value {
+.home-profit-card .home-card-value {
   color: #ff4d4f;
 }
 
 @media (max-width: 1200px) {
-  .quadrant-cards {
+  .home-quadrant-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .quadrant-cards {
+  .home-quadrant-cards {
     grid-template-columns: 1fr;
   }
   
@@ -1142,29 +1142,29 @@ onUnmounted(() => {
 }
 
 @media (max-width: 576px) {
-  .card-header {
+  .home-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
   
-  .header-right {
+  .home-header-right {
     width: 100%;
     justify-content: space-between;
   }
   
-  .card-value {
+  .home-card-value {
     font-size: 28px;
   }
 }
 
-.chart-section {
+.home-chart-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 20px;
 }
 
-.chart-card {
+.home-chart-card {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
@@ -1174,26 +1174,26 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
-.chart-header {
+.home-chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.chart-title {
+.home-chart-title {
   font-size: 16px;
   font-weight: 500;
   color: #333;
   margin: 0;
 }
 
-.chart-tabs {
+.home-chart-tabs {
   display: flex;
   gap: 12px;
 }
 
-.chart-tab {
+.home-chart-tab {
   font-size: 14px;
   color: #666;
   cursor: pointer;
@@ -1207,7 +1207,7 @@ onUnmounted(() => {
   }
 }
 
-.chart-footer {
+.home-chart-footer {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
@@ -1215,18 +1215,18 @@ onUnmounted(() => {
   border-top: 1px solid #f0f0f0;
 }
 
-.footer-item {
+.home-footer-item {
   text-align: center;
 }
 
-.footer-label {
+.home-footer-label {
   display: block;
   font-size: 12px;
   color: #999;
   margin-bottom: 4px;
 }
 
-.footer-value {
+.home-footer-value {
   display: block;
   font-size: 16px;
   font-weight: 500;
@@ -1234,86 +1234,86 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .stat-grid {
+  .home-stat-grid {
     grid-template-columns: 1fr;
   }
   
-  .chart-section {
+  .home-chart-section {
     grid-template-columns: 1fr;
   }
   
-  .chart-card {
+  .home-chart-card {
     height: 350px;
   }
   
-  .chart-header {
+  .home-chart-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
   
-  .chart-tabs {
+  .home-chart-tabs {
     align-self: flex-start;
   }
   
-  .ranking-table {
+  .home-ranking-table {
     font-size: 14px;
   }
   
-  .table-cell {
+  .home-table-cell {
     padding: 12px 8px;
   }
   
-  .store-id {
+  .home-store-id {
     font-size: 12px;
   }
 }
 
 /* 店铺销售排行榜样式 */
-.ranking-section {
+.home-ranking-section {
   margin-top: 20px;
 }
 
-.ranking-card {
+.home-ranking-card {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   padding: 20px;
 }
 
-.ranking-header {
+.home-ranking-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.ranking-title {
+.home-ranking-title {
   font-size: 16px;
   font-weight: 500;
   color: #333;
   margin: 0;
 }
 
-.ranking-filter {
+.home-ranking-filter {
   display: flex;
   align-items: center;
 }
 
-.ranking-table {
+.home-ranking-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
-.table-header {
+.home-table-header {
   display: flex;
   background-color: #f5f5f5;
   border-radius: 4px;
   margin-bottom: 8px;
 }
 
-.table-row {
+.home-table-row {
   display: flex;
   align-items: center;
   padding: 16px 0;
@@ -1324,37 +1324,37 @@ onUnmounted(() => {
   }
 }
 
-.table-cell {
+.home-table-cell {
   flex: 1;
   padding: 8px 16px;
   display: flex;
   align-items: center;
 }
 
-.table-cell.rank {
+.home-table-cell.rank {
   flex: 0 0 80px;
   justify-content: center;
 }
 
-.table-cell.store {
+.home-table-cell.store {
   flex: 2;
 }
 
-.table-cell.sales {
+.home-table-cell.sales {
   flex: 1;
   font-weight: 500;
 }
 
-.table-cell.growth {
+.home-table-cell.growth {
   flex: 1;
 }
 
-.table-cell.status {
+.home-table-cell.status {
   flex: 0 0 100px;
   justify-content: center;
 }
 
-.rank-number {
+.home-rank-number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1381,13 +1381,13 @@ onUnmounted(() => {
   }
 }
 
-.store-info {
+.home-store-info {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.store-icon {
+.home-store-icon {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -1410,23 +1410,23 @@ onUnmounted(() => {
   }
 }
 
-.store-details {
+.home-store-details {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.store-name {
+.home-store-name {
   font-weight: 500;
   color: #333;
 }
 
-.store-id {
+.home-store-id {
   font-size: 12px;
   color: #999;
 }
 
-.growth {
+.home-growth {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1440,11 +1440,11 @@ onUnmounted(() => {
   }
 }
 
-.growth-icon {
+.home-growth-icon {
   font-size: 12px;
 }
 
-.status-tag {
+.home-status-tag {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 12px;
@@ -1463,30 +1463,30 @@ onUnmounted(() => {
 }
 
 /* 统计分析卡片样式 */
-.analysis-cards {
+.home-analysis-cards {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 20px;
   margin-bottom: 24px;
 }
 
-.analysis-card {
+.home-analysis-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
 }
 
-.analysis-card:hover {
+.home-analysis-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 
-.analysis-tabs {
+.home-analysis-tabs {
   display: flex;
   gap: 2px;
 }
 
-.analysis-tag {
+.home-analysis-tag {
   font-size: 12px;
   padding: 2px 8px;
   cursor: pointer;
@@ -1495,14 +1495,14 @@ onUnmounted(() => {
   color: #000;
 }
 
-.analysis-tag.active {
+.home-analysis-tag.active {
   font-weight: 600;
   border: none;
   background-color: #40a9ff;
   color: #fff;
 }
 
-.fund-stats {
+.home-fund-stats {
   display: flex;
   justify-content: space-around;
   margin-top: 24px;
@@ -1510,123 +1510,123 @@ onUnmounted(() => {
   border-top: 1px solid #f0f0f0;
 }
 
-.fund-stat-item {
+.home-fund-stat-item {
   text-align: center;
 }
 
-.fund-stat-label {
+.home-fund-stat-label {
   font-size: 12px;
   color: #666;
   margin-bottom: 4px;
 }
 
-.fund-stat-value {
+.home-fund-stat-value {
   font-size: 18px;
   font-weight: 600;
   color: #333;
 }
 
-.fund-stat-value-blue {
+.home-fund-stat-value-blue {
   color: #1890ff;
 }
 
 @media (max-width: 1024px) {
-  .analysis-cards {
+  .home-analysis-cards {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .analysis-cards {
+  .home-analysis-cards {
     grid-template-columns: 1fr;
   }
 }
 
-.transactions-card {
+.home-transactions-card {
   margin-bottom: 24px;
 }
 
-.transaction-card {
+.home-transaction-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
 }
 
-.transaction-card:hover {
+.home-transaction-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 
-.transaction-card .card-content {
+.home-transaction-card .home-card-content {
   padding-top: 16px;
 }
 
-.transaction-card .ant-table {
+.home-transaction-card .ant-table {
   border-radius: 4px;
   margin-top: 16px;
 }
 
-.transaction-card .ant-table-thead > tr > th {
+.home-transaction-card .ant-table-thead > tr > th {
   background-color: #fafafa;
   font-weight: 600;
   font-size: 14px;
 }
 
-.transaction-card .ant-table-tbody > tr > td {
+.home-transaction-card .ant-table-tbody > tr > td {
   font-size: 13px;
   padding: 10px;
 }
 
-.view-range-button {
+.home-view-range-button {
   border: 1px solid #d9d9d9;
   background-color: #f5f5f5;
   color: #333;
   transition: all 0.3s ease;
 }
 
-.view-range-button:hover {
+.home-view-range-button:hover {
   border-color: #1890ff;
   color: #1890ff;
   background-color: #e6f7ff;
 }
 
 @media (max-width: 1200px) {
-  .transaction-card .ant-table {
+  .home-transaction-card .ant-table {
     font-size: 12px;
   }
 }
 
 @media (max-width: 768px) {
-  .transaction-card .ant-table {
+  .home-transaction-card .ant-table {
     font-size: 12px;
   }
   
-  .transaction-card .ant-table-tbody > tr > td {
+  .home-transaction-card .ant-table-tbody > tr > td {
     padding: 8px;
   }
 }
 
 @media (max-width: 576px) {
-  .transaction-card .card-header {
+  .home-transaction-card .home-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
   
-  .view-range-button {
+  .home-view-range-button {
     width: 100%;
   }
 }
 
-.transaction-detail-modal {
+.home-transaction-detail-modal {
   border-radius: 8px;
 }
 
-.transaction-detail {
+.home-transaction-detail {
   padding: 20px 0;
 }
 
-.detail-header {
+.home-detail-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1635,26 +1635,26 @@ onUnmounted(() => {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.detail-id {
+.home-detail-id {
   font-size: 18px;
   font-weight: 600;
   color: #1890ff;
 }
 
-.status-tag {
+.home-status-tag {
   font-size: 14px;
   padding: 4px 12px;
 }
 
-.detail-content {
+.home-detail-content {
   margin-bottom: 20px;
 }
 
-.detail-section {
+.home-detail-section {
   margin-bottom: 24px;
 }
 
-.section-title {
+.home-section-title {
   font-size: 16px;
   font-weight: 600;
   color: #333;
@@ -1663,18 +1663,18 @@ onUnmounted(() => {
   border-left: 4px solid #1890ff;
 }
 
-.detail-grid {
+.home-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-.detail-item {
+.home-detail-item {
   display: flex;
   align-items: center;
 }
 
-.detail-label {
+.home-detail-label {
   font-size: 14px;
   font-weight: 500;
   color: #666;
@@ -1682,24 +1682,24 @@ onUnmounted(() => {
   min-width: 100px;
 }
 
-.detail-value {
+.home-detail-value {
   font-size: 14px;
   color: #333;
   flex: 1;
 }
 
-.amount-value {
+.home-amount-value {
   font-size: 16px;
   font-weight: 600;
   color: #ff4d4f;
 }
 
-.type-tag {
+.home-type-tag {
   font-size: 12px;
   padding: 2px 8px;
 }
 
-.detail-notes {
+.home-detail-notes {
   font-size: 14px;
   color: #333;
   padding: 16px;
@@ -1711,11 +1711,11 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .detail-grid {
+  .home-detail-grid {
     grid-template-columns: 1fr;
   }
   
-  .detail-header {
+  .home-detail-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
@@ -1723,28 +1723,28 @@ onUnmounted(() => {
 }
 
 @media (max-width: 576px) {
-  .transaction-detail-modal {
+  .home-transaction-detail-modal {
     width: 90% !important;
   }
   
-  .detail-id {
+  .home-detail-id {
     font-size: 16px;
   }
   
-  .section-title {
+  .home-section-title {
     font-size: 14px;
   }
   
-  .detail-value {
+  .home-detail-value {
     font-size: 13px;
   }
   
-  .detail-item {
+  .home-detail-item {
     flex-direction: column;
     align-items: flex-start;
   }
   
-  .detail-label {
+  .home-detail-label {
     margin-bottom: 6px;
     margin-right: 0;
   }

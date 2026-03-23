@@ -127,7 +127,8 @@ const loadDepartmentList = () => {
 
 <style scoped>
 .department-list-container {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 h3 {

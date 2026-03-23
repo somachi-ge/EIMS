@@ -451,7 +451,8 @@ const handleOpenLoginHistoryModal = () => {
 
 <style scoped>
 .profile-center-container {
-  min-height: 100vh;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .profile-page {

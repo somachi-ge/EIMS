@@ -101,7 +101,8 @@ const initCharts = () => {
 
 <style scoped>
 .system-monitor-page {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .card-content {

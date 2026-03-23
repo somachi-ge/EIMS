@@ -3,9 +3,9 @@
     <a-config-provider :locale="zhCN">
       <div class="help-container">
         <a-card class="help-card">
-          <div class="card-header">
-            <h3 class="card-title">帮助中心</h3>
-            <div class="header-right">
+          <div class="help-card-header">
+            <h3 class="help-card-title">帮助中心</h3>
+            <div class="help-header-right">
               <a-space>
                 <a-button type="primary" @click="handleFeedback">
                   <template #icon>
@@ -25,16 +25,16 @@
           
           <div class="help-content">
             <div class="help-section">
-              <div class="section-header">
-                <BookOutlined class="section-icon" />
+              <div class="help-section-header">
+                <BookOutlined class="help-section-icon" />
                 <span>{{ quickStart.title }}</span>
               </div>
-              <div class="section-content">
+              <div class="help-section-content">
                 <p>{{ quickStart.content }}</p>
                 
                 <template v-for="(section, index) in quickStart.sections" :key="index">
                   <h4>{{ section.title }}</h4>
-                  <ul class="help-list">
+                  <ul class="help-section-list">
                     <li v-for="(item, itemIndex) in section.items" :key="itemIndex">{{ item }}</li>
                   </ul>
                 </template>
@@ -42,11 +42,11 @@
             </div>
             
             <div class="help-section">
-              <div class="section-header">
-                <QuestionCircleOutlined class="section-icon" />
+              <div class="help-section-header">
+                <QuestionCircleOutlined class="help-section-icon" />
                 <span>常见问题</span>
               </div>
-              <div class="section-content">
+              <div class="help-section-content">
                 <a-collapse v-model:activeKey="activeFaqKey">
                   <a-collapse-panel 
                     v-for="faq in faqList" 
@@ -60,13 +60,13 @@
             </div>
             
             <div class="help-section">
-              <div class="section-header">
-                <CompassOutlined class="section-icon" />
+              <div class="help-section-header">
+                <CompassOutlined class="help-section-icon" />
                 <span>功能指南</span>
               </div>
-              <div class="section-content">
-                <div class="feature-guides">
-                  <div class="feature-guide-item" v-for="guide in featureGuides" :key="guide.id">
+              <div class="help-section-content">
+                <div class="help-feature-guides">
+                  <div class="help-feature-guide-item" v-for="guide in featureGuides" :key="guide.id">
                     <h4>{{ guide.title }}</h4>
                     <p>{{ guide.description }}</p>
                     <ul>
@@ -78,19 +78,19 @@
             </div>
             
             <div class="help-section">
-              <div class="section-header">
-                <PhoneOutlined class="section-icon" />
+              <div class="help-section-header">
+                <PhoneOutlined class="help-section-icon" />
                 <span>联系支持</span>
               </div>
-              <div class="section-content">
+              <div class="help-section-content">
                 <p>如果您在使用过程中遇到问题，可以通过以下方式联系我们的技术支持团队：</p>
-                <div class="support-contacts">
-                  <div class="contact-item" v-for="contact in supportContacts" :key="contact.type">
-                    <component :is="CONTACT_ICONS[contact.type]" class="contact-icon" />
+                <div class="help-support-contacts">
+                  <div class="help-contact-item" v-for="contact in supportContacts" :key="contact.type">
+                    <component :is="CONTACT_ICONS[contact.type]" class="help-contact-icon" />
                     <div>
-                      <p class="contact-title">{{ contact.title }}</p>
+                      <p class="help-contact-title">{{ contact.title }}</p>
                       <p>{{ contact.value }}</p>
-                      <p class="contact-desc">{{ contact.description }}</p>
+                      <p class="help-contact-desc">{{ contact.description }}</p>
                     </div>
                   </div>
                 </div>
@@ -350,7 +350,7 @@ const handleDownloadGuide = () => {
   transition: all 0.3s ease;
 }
 
-.card-header {
+.help-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -359,14 +359,14 @@ const handleDownloadGuide = () => {
   border-bottom: 1px solid #d9d9d9;
 }
 
-.card-title {
+.help-card-title {
   font-size: 16px;
   font-weight: 500;
   color: #333;
   margin: 0;
 }
 
-.header-right {
+.help-header-right {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -384,7 +384,7 @@ const handleDownloadGuide = () => {
   border: 1px solid #f0f0f0;
 }
 
-.section-header {
+.help-section-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -393,46 +393,46 @@ const handleDownloadGuide = () => {
   border-left: 4px solid #1890ff;
 }
 
-.section-icon {
+.help-section-icon {
   font-size: 18px;
   color: #1890ff;
 }
 
-.section-header span {
+.help-section-header span {
   font-size: 16px;
   font-weight: 600;
   color: #333;
 }
 
-.section-content {
+.help-section-content {
   padding: 0;
 }
 
-.section-content p {
+.help-section-content p {
   color: #333;
   line-height: 1.5;
   margin-bottom: 16px;
 }
 
-.help-list {
+.help-section-list {
   margin: 16px 0;
   padding-left: 24px;
 }
 
-.help-list li {
+.help-section-list li {
   margin-bottom: 8px;
   color: #333;
   line-height: 1.5;
 }
 
-.feature-guides {
+.help-feature-guides {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
 
-.feature-guide-item {
+.help-feature-guide-item {
   padding: 16px;
   background-color: #fff;
   border-radius: 6px;
@@ -440,12 +440,12 @@ const handleDownloadGuide = () => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.feature-guide-item:hover {
+.help-feature-guide-item:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.feature-guide-item h4 {
+.help-feature-guide-item h4 {
   margin-top: 0;
   margin-bottom: 8px;
   color: #1890ff;
@@ -453,20 +453,20 @@ const handleDownloadGuide = () => {
   font-weight: 600;
 }
 
-.feature-guide-item p {
+.help-feature-guide-item p {
   margin: 0;
   color: #666;
   font-size: 14px;
 }
 
-.support-contacts {
+.help-support-contacts {
   margin-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.contact-item {
+.help-contact-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -474,60 +474,60 @@ const handleDownloadGuide = () => {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.contact-item:last-child {
+.help-contact-item:last-child {
   border-bottom: none;
 }
 
-.contact-icon {
+.help-contact-icon {
   font-size: 18px;
   color: #1890ff;
   width: 24px;
   margin-top: 4px;
 }
 
-.contact-item p {
+.help-contact-item p {
   margin: 0 0 4px 0;
 }
 
-.contact-title {
+.help-contact-title {
   font-size: 14px;
   font-weight: 600;
   color: #333;
 }
 
-.contact-desc {
+.help-contact-desc {
   font-size: 12px;
   color: #999;
 }
 
-.section-content h4 {
+.help-section-content h4 {
   margin: 20px 0 12px 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
 }
 
-.section-content ul,
-.section-content ol {
+.help-section-content ul,
+.help-section-content ol {
   margin: 12px 0 16px 0;
   padding-left: 24px;
 }
 
-.section-content ul li,
-.section-content ol li {
+.help-section-content ul li,
+.help-section-content ol li {
   margin-bottom: 6px;
   color: #333;
   line-height: 1.4;
 }
 
 @media (max-width: 1024px) {
-  .feature-guides {
+  .help-feature-guides {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .help-page {
+  .help-container {
     padding: 16px;
   }
   
@@ -535,17 +535,17 @@ const handleDownloadGuide = () => {
     margin-bottom: 16px;
   }
   
-  .feature-guides {
+  .help-feature-guides {
     grid-template-columns: 1fr;
   }
   
-  .card-header {
+  .help-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
   
-  .header-right {
+  .help-header-right {
     width: 100%;
     justify-content: flex-end;
   }
@@ -556,7 +556,7 @@ const handleDownloadGuide = () => {
 }
 
 @media (max-width: 576px) {
-  .help-page {
+  .help-container {
     padding: 12px;
   }
   
@@ -564,23 +564,23 @@ const handleDownloadGuide = () => {
     padding: 12px;
   }
   
-  .section-header {
+  .help-section-header {
     margin-bottom: 12px;
   }
   
-  .section-header span {
+  .help-section-header span {
     font-size: 14px;
   }
   
-  .feature-guide-item {
+  .help-feature-guide-item {
     padding: 12px;
   }
   
-  .feature-guide-item h4 {
+  .help-feature-guide-item h4 {
     font-size: 14px;
   }
   
-  .feature-guide-item p {
+  .help-feature-guide-item p {
     font-size: 13px;
   }
 }

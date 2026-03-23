@@ -40,7 +40,7 @@
             </a-form>
           </div>
           
-          <div class="divider"></div>
+          <div class="contacts-divider"></div>
           
           <div class="contacts-list">
             <a-table
@@ -54,7 +54,7 @@
             >
             </a-table>
             
-            <div class="pagination-container">
+            <div class="contacts-pagination-container">
               <a-pagination
                 v-model:current="pagination.current"
                 v-model:pageSize="pagination.pageSize"
@@ -344,7 +344,7 @@ onMounted(() => {
   border-radius: 4px;
 }
 
-.divider {
+.contacts-divider {
   height: 1px;
   background-color: #d9d9d9;
   margin-bottom: 20px;
@@ -369,7 +369,7 @@ onMounted(() => {
   padding: 10px;
 }
 
-.pagination-container {
+.contacts-pagination-container {
   display: flex;
   justify-content: flex-end;
   padding-top: 16px;
@@ -420,11 +420,11 @@ onMounted(() => {
     margin-right: 0;
   }
   
-  .pagination-container {
+  .contacts-pagination-container {
     justify-content: center;
   }
   
-  .pagination-container :deep(.ant-pagination) {
+  .contacts-pagination-container :deep(.ant-pagination) {
     flex-wrap: wrap;
     justify-content: center;
   }

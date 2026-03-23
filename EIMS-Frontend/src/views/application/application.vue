@@ -12,7 +12,7 @@
             :style="{ backgroundColor: app.color, border: 'none' }"
             class="application-card"
             hoverable
-            @click="handleApplicationClick(app)"
+            @click="navigateToApplication(app)"
           >
             <div class="application-icon">
               <component :is="app.icon" />
@@ -71,7 +71,7 @@ const APPLICATIONS: readonly Application[] = [
 
 const applications = shallowRef<readonly Application[]>(APPLICATIONS)
 
-const handleApplicationClick = (app: Application) => {
+const navigateToApplication = (app: Application) => {
   if (app.path) {
     message.info(`正在打开 ${app.name}...`)
   } else {

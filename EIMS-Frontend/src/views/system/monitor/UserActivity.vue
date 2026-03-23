@@ -95,6 +95,7 @@ const loadUserActivity = () => {
 
 <style scoped>
 .user-activity {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
 }
 </style>

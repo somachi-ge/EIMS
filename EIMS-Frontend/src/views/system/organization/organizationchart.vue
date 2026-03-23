@@ -459,7 +459,8 @@ onUnmounted(() => {
 
 <style scoped>
 .organization-chart-list-container {
-  min-height: 100vh;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .organization-chart-page {

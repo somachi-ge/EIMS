@@ -1,22 +1,22 @@
 <template>
   <div class="login-page">
-    <div class="brand-container">
-      <div class="brand-content">
-        <div class="brand-logo">
+    <div class="login-brand-container">
+      <div class="login-brand-content">
+        <div class="login-brand-logo">
           <img src="@/assets/icons/logo_white.svg" alt="星珩科技" width="140">
         </div>
         <h1>星珩 · 企业综合管理系统</h1>
         <p>新质生产力 · 数字新基座 · 智领新纪元</p>
-        <div class="brand-features">
-          <div class="feature-item">
+        <div class="login-brand-features">
+          <div class="login-feature-item">
             <TeamOutlined style="font-size: 24px; margin-bottom: 12px;" />
             <span>高效协同</span>
           </div>
-          <div class="feature-item">
+          <div class="login-feature-item">
             <LockOutlined style="font-size: 24px; margin-bottom: 12px;" />
             <span>安全可靠</span>
           </div>
-          <div class="feature-item">
+          <div class="login-feature-item">
             <BarChartOutlined style="font-size: 24px; margin-bottom: 12px;" />
             <span>智能分析</span>
           </div>
@@ -28,12 +28,12 @@
       <h2>欢迎回来</h2>
       <p>请登录访问企业综合管理系统</p>
       
-      <div class="input-container">
+      <div class="login-input-container">
         <a-form :model="formState" @finish="handleSubmit" layout="vertical">
           <a-form-item label="请输入账号" name="username" :rules="[{ required: true, message: '请输入账号' }]">
             <a-input v-model:value="formState.username" placeholder="支持工号/邮箱/手机号登录" @keyup.enter="handleSubmit">
               <template #prefix>
-                <UserOutlined class="input-icon" />
+                <UserOutlined class="login-login-input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -41,15 +41,15 @@
           <a-form-item label="请输入密码" name="password" :rules="[{ required: true, message: '请输入密码' }]">
             <a-input-password v-model:value="formState.password" placeholder="区分大小写，长度8-20位" @keyup.enter="handleSubmit">
               <template #prefix>
-                <LockOutlined class="input-icon" />
+                <LockOutlined class="login-login-input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
         </a-form>
       </div>
       
-      <div class="action-container">
-        <div class="form-actions">
+      <div class="login-action-container">
+        <div class="login-form-actions">
           <a-checkbox v-model:checked="rememberAccount">记住账号</a-checkbox>
           <a @click.prevent="showForgotPasswordModal = true">忘记密码</a>
         </div>
@@ -58,7 +58,7 @@
           <LoginOutlined style="margin-right: 8px;" /> 登录
         </a-button>
         
-        <div class="form-footer">
+        <div class="login-form-footer">
           <a @click.prevent="saveToDesktop">
             <DesktopOutlined style="margin-right: 4px;" /> 保存至桌面
           </a>
@@ -81,7 +81,7 @@
           <template #label>邮箱</template>
           <a-input v-model:value="forgotPasswordForm.email" placeholder="请输入您的电子邮箱地址" @keyup.enter="resetPassword">
             <template #prefix>
-              <MailOutlined class="input-icon" />
+              <MailOutlined class="login-input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -91,7 +91,7 @@
             <a-col :span="16">
               <a-input v-model:value="forgotPasswordForm.verifyCode" placeholder="请输入6位验证码" @keyup.enter="resetPassword">
                 <template #prefix>
-                  <CodeOutlined class="input-icon" />
+                  <CodeOutlined class="login-input-icon" />
                 </template>
               </a-input>
             </a-col>
@@ -111,7 +111,7 @@
           <template #label>新密码</template>
           <a-input-password v-model:value="forgotPasswordForm.newPassword" placeholder="请输入新密码（8-20位，包含字母和数字并区分大小写）" @keyup.enter="resetPassword">
             <template #prefix>
-              <LockOutlined class="input-icon" />
+              <LockOutlined class="login-input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
@@ -119,7 +119,7 @@
           <template #label>确认新密码</template>
           <a-input-password v-model:value="forgotPasswordForm.confirmPassword" placeholder="请再次输入新密码" @keyup.enter="resetPassword">
             <template #prefix>
-              <LockOutlined class="input-icon" />
+              <LockOutlined class="login-input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
@@ -140,7 +140,7 @@
           <template #label>电子邮箱</template>
           <a-input v-model:value="registerForm.email" placeholder="请输入您的电子邮箱地址" @keyup.enter="handleRegister">
             <template #prefix>
-              <MailOutlined class="input-icon" />
+              <MailOutlined class="login-input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -150,7 +150,7 @@
             <a-col :span="16">
               <a-input v-model:value="registerForm.verifyCode" placeholder="请输入6位验证码" @keyup.enter="handleRegister">
                 <template #prefix>
-                  <CodeOutlined class="input-icon" />
+                  <CodeOutlined class="login-input-icon" />
                 </template>
               </a-input>
             </a-col>
@@ -170,7 +170,7 @@
           <template #label>用户名</template>
           <a-input v-model:value="registerForm.username" placeholder="请输入您的用户名" @keyup.enter="handleRegister">
             <template #prefix>
-              <UserOutlined class="input-icon" />
+              <UserOutlined class="login-input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -178,7 +178,7 @@
           <template #label>姓名</template>
           <a-input v-model:value="registerForm.name" placeholder="请输入您的姓名" @keyup.enter="handleRegister">
             <template #prefix>
-              <UserOutlined class="input-icon" />
+              <UserOutlined class="login-input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -186,7 +186,7 @@
           <template #label>手机号码</template>
           <a-input v-model:value="registerForm.phone" placeholder="请输入您的手机号码" @keyup.enter="handleRegister">
             <template #prefix>
-              <PhoneOutlined class="input-icon" />
+              <PhoneOutlined class="login-input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -194,7 +194,7 @@
           <template #label>登录密码</template>
           <a-input-password v-model:value="registerForm.password" placeholder="请输入登录密码（8-20位，包含字母和数字并区分大小写）" @keyup.enter="handleRegister">
             <template #prefix>
-              <LockOutlined class="input-icon" />
+              <LockOutlined class="login-input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
@@ -202,14 +202,14 @@
           <template #label>确认密码</template>
           <a-input-password v-model:value="registerForm.confirmPassword" placeholder="请再次输入密码" @keyup.enter="handleRegister">
             <template #prefix>
-              <LockOutlined class="input-icon" />
+              <LockOutlined class="login-input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
         <a-form-item label="状态">
           <a-input value="未激活" disabled style="background-color: #f5f5f5; color: #999;">
             <template #prefix>
-              <InfoCircleOutlined class="input-icon" />
+              <InfoCircleOutlined class="login-input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -594,7 +594,7 @@ onUnmounted(() => {
   margin: 0 auto;
 }
 
-.brand-container {
+.login-brand-container {
   width: 100%;
   max-width: 590px;
   height: 535px;
@@ -609,10 +609,10 @@ onUnmounted(() => {
   margin-right: -1px;
 }
 
-.brand-content {
+.login-brand-content {
   text-align: center;
   
-  .brand-logo {
+  .login-brand-logo {
     margin-bottom: 60px;
     
     img {
@@ -635,13 +635,13 @@ onUnmounted(() => {
   }
 }
 
-.brand-features {
+.login-brand-features {
   display: flex;
   flex-direction: row;
   gap: 30px;
   justify-content: center;
   
-  .feature-item {
+  .login-feature-item {
     font-size: 14px;
     padding: 20px 40px;
     border-radius: 8px;
@@ -679,12 +679,12 @@ onUnmounted(() => {
     margin-bottom: 24px;
   }
   
-  .input-container {
+  .login-input-container {
     margin-bottom: 24px;
     margin-top: 16px;
   }
   
-  .action-container {
+  .login-action-container {
     margin-top: 8px;
   }
   
@@ -701,7 +701,7 @@ onUnmounted(() => {
   :deep(.ant-input-wrapper) {
     width: 100%;
     
-    .input-icon {
+    .login-login-input-icon {
       color: #999;
       font-size: 16px;
     }
@@ -713,7 +713,7 @@ onUnmounted(() => {
     }
   }
   
-  .form-actions {
+  .login-form-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -740,7 +740,7 @@ onUnmounted(() => {
     border-radius: 8px;
   }
   
-  .form-footer {
+  .login-form-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -807,7 +807,7 @@ onUnmounted(() => {
   }
   
   .ant-input-wrapper {
-    .input-icon {
+    .login-login-input-icon {
       color: #999;
       font-size: 16px;
     }
@@ -820,7 +820,7 @@ onUnmounted(() => {
     padding: 20px;
   }
   
-  .brand-container {
+  .login-brand-container {
     max-width: 100%;
     height: auto;
     border-radius: 12px 12px 0 0;
@@ -829,8 +829,8 @@ onUnmounted(() => {
     padding: 32px 24px;
   }
   
-  .brand-content {
-    .brand-logo {
+  .login-brand-content {
+    .login-brand-logo {
       margin-bottom: 32px;
     }
     
@@ -844,10 +844,10 @@ onUnmounted(() => {
     }
   }
   
-  .brand-features {
+  .login-brand-features {
     gap: 16px;
     
-    .feature-item {
+    .login-feature-item {
       padding: 12px 24px;
       min-width: auto;
     }
@@ -866,11 +866,11 @@ onUnmounted(() => {
     padding: 12px;
   }
   
-  .brand-container {
+  .login-brand-container {
     padding: 24px 16px;
   }
   
-  .brand-content {
+  .login-brand-content {
     h1 {
       font-size: 20px;
     }
@@ -881,11 +881,11 @@ onUnmounted(() => {
     }
   }
   
-  .brand-features {
+  .login-brand-features {
     flex-direction: column;
     gap: 12px;
     
-    .feature-item {
+    .login-feature-item {
       width: 100%;
       padding: 16px;
     }

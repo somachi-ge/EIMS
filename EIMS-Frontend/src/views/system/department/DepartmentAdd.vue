@@ -41,7 +41,8 @@ const handleSubmit = () => {
 
 <style scoped>
 .department-add-page {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .card-content {

@@ -506,7 +506,8 @@ onMounted(() => {
 
 <style scoped>
 .message-center-container {
-  min-height: 100vh;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .message-page {

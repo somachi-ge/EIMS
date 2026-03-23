@@ -78,7 +78,8 @@ const handleSubmit = async () => {
 
 <style scoped>
 .notification-config-page {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
 }
 
 .card-content {
