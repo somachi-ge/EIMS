@@ -31,7 +31,7 @@
 
             <!-- 工具栏 -->
             <div class="toolbar-section">
-              <a-button type="primary" @click="onRefresh">
+              <a-button type="primary" @click="handleRefresh">
                 <template #icon><reload-outlined /></template>
                 刷新
               </a-button>
@@ -40,8 +40,8 @@
             <!-- 表格区域 -->
             <div class="table-section">
               <a-table
-                :columns="tableColumns"
-                :data-source="displayedServiceList"
+                :columns="columns"
+                :data-source="displayedServices"
                 :pagination="false"
                 row-key="id"
                 size="small"
@@ -64,7 +64,7 @@
                       size="small"
                       class="start-btn"
                       :disabled="record.serviceStatus === 'running'"
-                      @click="onStartService(record)"
+                      @click="handleStartService(record)"
                     >
                       启动
                     </a-button>
@@ -73,13 +73,13 @@
                       size="small"
                       danger
                       :disabled="record.serviceStatus === 'stopped'"
-                      @click="onStopService(record)"
+                      @click="handleStopService(record)"
                     >
                       停止
                     </a-button>
                     <a-button 
                       size="small"
-                      @click="onViewDetails(record)"
+                      @click="handleViewDetails(record)"
                     >
                       详情
                     </a-button>
@@ -88,9 +88,9 @@
               </a-table>
 
               <a-pagination
-                v-model:current="pageConfig.current"
-                v-model:pageSize="pageConfig.pageSize"
-                :total="filteredServiceList.length"
+                v-model:current="paginationConfig.current"
+                v-model:pageSize="paginationConfig.pageSize"
+                :total="filteredServices.length"
                 :showSizeChanger="true"
                 :pageSizeOptions="['10', '20', '50']"
                 :showTotal="renderTotalText"
@@ -136,7 +136,7 @@ interface ServiceInfo {
 /**
  * 分页配置接口
  */
-interface PageConfig {
+interface PaginationConfig {
   /** 当前页码 */
   current: number;
   /** 每页条数 */
@@ -148,12 +148,12 @@ interface PageConfig {
  */
 interface FilterForm {
   keyword: string;
-  dateRange: any;
+  dateRange: [string, string] | null;
   status: string;
 }
 
 // 服务列表数据
-const serviceList = ref<ServiceInfo[]>([
+const services = ref<ServiceInfo[]>([
   {
     id: 1,
     serviceName: 'API网关服务',
@@ -264,13 +264,13 @@ const filterForm = reactive<FilterForm>({
 });
 
 // 分页配置
-const pageConfig = reactive<PageConfig>({
+const paginationConfig = reactive<PaginationConfig>({
   current: 1,
   pageSize: 10
 });
 
 // 表格列配置
-const tableColumns = [
+const columns = [
   {
     title: '服务名称',
     dataIndex: 'serviceName',
@@ -325,8 +325,8 @@ const tableColumns = [
 /**
  * 过滤后的服务列表
  */
-const filteredServiceList = computed(() => {
-  let result = [...serviceList.value];
+const filteredServices = computed(() => {
+  let result = [...services.value];
   
   if (filterForm.keyword) {
     const lowerKeyword = filterForm.keyword.toLowerCase();
@@ -347,10 +347,10 @@ const filteredServiceList = computed(() => {
 /**
  * 当前页显示的服务列表
  */
-const displayedServiceList = computed(() => {
-  const startIndex = (pageConfig.current - 1) * pageConfig.pageSize;
-  const endIndex = startIndex + pageConfig.pageSize;
-  return filteredServiceList.value.slice(startIndex, endIndex);
+const displayedServices = computed(() => {
+  const startIndex = (paginationConfig.current - 1) * paginationConfig.pageSize;
+  const endIndex = startIndex + paginationConfig.pageSize;
+  return filteredServices.value.slice(startIndex, endIndex);
 });
 
 /**
@@ -362,8 +362,8 @@ const renderTotalText = (total: number) => `共 ${total} 条记录`;
  * 处理搜索
  */
 const handleSearch = () => {
-  pageConfig.current = 1;
-  message.success(`搜索完成，共找到 ${filteredServiceList.value.length} 个服务`);
+  paginationConfig.current = 1;
+  message.success(`搜索完成，共找到 ${filteredServices.value.length} 个服务`);
 };
 
 /**
@@ -375,14 +375,14 @@ const handleReset = () => {
     dateRange: null,
     status: ''
   });
-  pageConfig.current = 1;
+  paginationConfig.current = 1;
   message.success('表单已重置，服务列表已恢复');
 };
 
 /**
  * 刷新服务列表
  */
-const onRefresh = () => {
+const handleRefresh = () => {
   message.success('服务列表已刷新');
   loadServiceData();
 };
@@ -390,7 +390,7 @@ const onRefresh = () => {
 /**
  * 启动服务
  */
-const onStartService = (record: ServiceInfo) => {
+const handleStartService = (record: ServiceInfo) => {
   message.success(`正在启动服务: ${record.serviceName}`);
   // 实际应调用API启动服务
   setTimeout(() => {
@@ -404,7 +404,7 @@ const onStartService = (record: ServiceInfo) => {
 /**
  * 停止服务
  */
-const onStopService = (record: ServiceInfo) => {
+const handleStopService = (record: ServiceInfo) => {
   message.warning(`正在停止服务: ${record.serviceName}`);
   // 实际应调用API停止服务
   setTimeout(() => {
@@ -417,7 +417,7 @@ const onStopService = (record: ServiceInfo) => {
 /**
  * 查看服务详情
  */
-const onViewDetails = (record: ServiceInfo) => {
+const handleViewDetails = (record: ServiceInfo) => {
   message.info(`查看服务详情: ${record.serviceName}`);
   // 实际应打开详情弹窗或跳转详情页
 };
@@ -428,10 +428,10 @@ const onViewDetails = (record: ServiceInfo) => {
 const loadServiceData = () => {
   // 这里应该调用实际的API接口
   // const response = await monitorApi.getServiceList({
-  //   page: pageConfig.current,
-  //   page_size: pageConfig.pageSize
+  //   page: paginationConfig.current,
+  //   page_size: paginationConfig.pageSize
   // });
-  // serviceList.value = response.data.list;
+  // services.value = response.data.list;
 };
 
 onMounted(() => {

@@ -34,65 +34,89 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 
-const cpuUsage = ref('45')
-const memoryUsage = ref('68')
-const diskUsage = ref('32')
-const networkSpeed = ref('1.2 MB/s')
+// 系统监控数据
+const cpuUsage = ref<string>('45')
+const memoryUsage = ref<string>('68')
+const diskUsage = ref<string>('32')
+const networkSpeed = ref<string>('1.2 MB/s')
+
+// 图表实例
+let cpuChart: echarts.ECharts | null = null
+let memoryChart: echarts.ECharts | null = null
+
+// 响应式调整处理函数
+const handleResize = () => {
+  cpuChart?.resize()
+  memoryChart?.resize()
+}
 
 onMounted(() => {
   // 初始化图表
   initCharts()
+  // 添加响应式调整监听
+  window.addEventListener('resize', handleResize)
 })
 
+onUnmounted(() => {
+  // 移除响应式调整监听
+  window.removeEventListener('resize', handleResize)
+  // 销毁图表实例
+  cpuChart?.dispose()
+  memoryChart?.dispose()
+})
+
+/**
+ * 初始化图表
+ */
 const initCharts = () => {
   // CPU使用趋势图表
-  const cpuChart = echarts.init(document.getElementById('cpuChart'))
-  cpuChart.setOption({
-    tooltip: {
-      trigger: 'axis'
-    },
-    xAxis: {
-      type: 'category',
-      data: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50', '11:00']
-    },
-    yAxis: {
-      type: 'value',
-      max: 100
-    },
-    series: [{
-      data: [30, 45, 35, 50, 40, 55, 45],
-      type: 'line'
-    }]
-  })
+  const cpuChartElement = document.getElementById('cpuChart')
+  if (cpuChartElement) {
+    cpuChart = echarts.init(cpuChartElement)
+    cpuChart.setOption({
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: {
+        type: 'category',
+        data: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50', '11:00']
+      },
+      yAxis: {
+        type: 'value',
+        max: 100
+      },
+      series: [{
+        data: [30, 45, 35, 50, 40, 55, 45],
+        type: 'line'
+      }]
+    })
+  }
   
   // 内存使用趋势图表
-  const memoryChart = echarts.init(document.getElementById('memoryChart'))
-  memoryChart.setOption({
-    tooltip: {
-      trigger: 'axis'
-    },
-    xAxis: {
-      type: 'category',
-      data: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50', '11:00']
-    },
-    yAxis: {
-      type: 'value',
-      max: 100
-    },
-    series: [{
-      data: [60, 62, 65, 68, 66, 70, 68],
-      type: 'line'
-    }]
-  })
-  
-  // 响应式调整
-  window.addEventListener('resize', () => {
-    cpuChart.resize()
-    memoryChart.resize()
-  })
+  const memoryChartElement = document.getElementById('memoryChart')
+  if (memoryChartElement) {
+    memoryChart = echarts.init(memoryChartElement)
+    memoryChart.setOption({
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: {
+        type: 'category',
+        data: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50', '11:00']
+      },
+      yAxis: {
+        type: 'value',
+        max: 100
+      },
+      series: [{
+        data: [60, 62, 65, 68, 66, 70, 68],
+        type: 'line'
+      }]
+    })
+  }
 }
 </script>
 

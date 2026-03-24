@@ -7,16 +7,16 @@
             <div style="width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
               <div style="flex: 1.5; min-width: 200px;">
                 <a-input 
-                  v-model:value="queryParams.keyword" 
+                  v-model:value="searchParams.keyword" 
                   placeholder="请输入搜索关键词" 
-                  @keyup.enter="onSearch" 
+                  @keyup.enter="handleSearch" 
                   allow-clear 
                   style="width: 100%;" 
                 />
               </div>
               <div style="flex: 1.2; min-width: 180px;">
                 <a-range-picker 
-                  v-model:value="queryParams.dateRange" 
+                  v-model:value="searchParams.dateRange" 
                   :placeholder="['开始日期', '结束日期']" 
                   format="YYYY年MM月DD日" 
                   style="width: 100%;" 
@@ -24,7 +24,7 @@
               </div>
               <div style="flex: 1; min-width: 120px;">
                 <a-select 
-                  v-model:value="queryParams.status" 
+                  v-model:value="searchParams.status" 
                   placeholder="全部状态" 
                   allow-clear 
                   style="width: 100%;"
@@ -35,21 +35,21 @@
                 </a-select>
               </div>
               <div style="flex: 0.4; min-width: 70px;">
-                <a-button type="primary" @click="onSearch" style="width: 100%;">搜索</a-button>
+                <a-button type="primary" @click="handleSearch" style="width: 100%;">搜索</a-button>
               </div>
               <div style="flex: 0.4; min-width: 70px;">
-                <a-button @click="onReset" style="width: 100%;">重置</a-button>
+                <a-button @click="handleReset" style="width: 100%;">重置</a-button>
               </div>
             </div>
           </div>
           
           <div class="toolbar-section">
-            <a-button type="primary" @click="onExport">导出日志</a-button>
+            <a-button type="primary" @click="handleExport">导出日志</a-button>
           </div>
           
           <div class="table-section">
             <a-table
-              :columns="tableColumns"
+              :columns="columns"
               :data-source="displayedActivityLogs"
               :pagination="false"
               row-key="id"
@@ -68,8 +68,8 @@
             </a-table>
             
             <a-pagination
-              v-model:current="pageConfig.current"
-              v-model:pageSize="pageConfig.pageSize"
+              v-model:current="paginationConfig.current"
+              v-model:pageSize="paginationConfig.pageSize"
               :total="filteredActivityLogs.length"
               :showSizeChanger="true"
               :pageSizeOptions="['10', '30', '50']"
@@ -114,13 +114,13 @@ interface UserActivityLog {
 }
 
 /**
- * 查询参数接口
+ * 搜索参数接口
  */
-interface QueryParams {
+interface SearchParams {
   /** 搜索关键词 */
   keyword: string;
   /** 日期范围 */
-  dateRange: any;
+  dateRange: [string, string] | null;
   /** 操作状态 */
   status: string;
 }
@@ -128,7 +128,7 @@ interface QueryParams {
 /**
  * 分页配置接口
  */
-interface PageConfig {
+interface PaginationConfig {
   /** 当前页码 */
   current: number;
   /** 每页条数 */
@@ -192,23 +192,23 @@ const generateMockActivityLogs = (): UserActivityLog[] => {
 };
 
 // 活动日志数据列表
-const activityLogList = ref<UserActivityLog[]>(generateMockActivityLogs());
+const activityLogs = ref<UserActivityLog[]>(generateMockActivityLogs());
 
-// 查询参数
-const queryParams = reactive<QueryParams>({
+// 搜索参数
+const searchParams = reactive<SearchParams>({
   keyword: '',
   dateRange: null,
   status: ''
 });
 
 // 分页配置
-const pageConfig = reactive<PageConfig>({
+const paginationConfig = reactive<PaginationConfig>({
   current: 1,
   pageSize: 10
 });
 
 // 表格列配置
-const tableColumns = [
+const columns = [
   {
     title: '操作用户',
     dataIndex: 'operator',
@@ -262,24 +262,24 @@ const tableColumns = [
 ];
 
 /**
- * 根据查询参数过滤后的活动日志列表
+ * 根据搜索参数过滤后的活动日志列表
  */
 const filteredActivityLogs = computed(() => {
-  let result = [...activityLogList.value];
+  let result = [...activityLogs.value];
   
-  if (queryParams.keyword) {
-    const lowerKeyword = queryParams.keyword.toLowerCase();
+  if (searchParams.keyword) {
+    const lowerKeyword = searchParams.keyword.toLowerCase();
     result = result.filter(log => 
       log.operationContent.toLowerCase().includes(lowerKeyword) ||
       log.operator.toLowerCase().includes(lowerKeyword) ||
-      log.clientIp.includes(queryParams.keyword) ||
+      log.clientIp.includes(searchParams.keyword) ||
       log.operationModule.toLowerCase().includes(lowerKeyword) ||
       log.operationType.toLowerCase().includes(lowerKeyword)
     );
   }
   
-  if (queryParams.status) {
-    result = result.filter(log => log.operationStatus === queryParams.status);
+  if (searchParams.status) {
+    result = result.filter(log => log.operationStatus === searchParams.status);
   }
   
   return result;
@@ -289,8 +289,8 @@ const filteredActivityLogs = computed(() => {
  * 当前页显示的活动日志列表
  */
 const displayedActivityLogs = computed(() => {
-  const startIndex = (pageConfig.current - 1) * pageConfig.pageSize;
-  const endIndex = startIndex + pageConfig.pageSize;
+  const startIndex = (paginationConfig.current - 1) * paginationConfig.pageSize;
+  const endIndex = startIndex + paginationConfig.pageSize;
   return filteredActivityLogs.value.slice(startIndex, endIndex);
 });
 
@@ -302,28 +302,28 @@ const renderTotalText = (total: number) => `共 ${total} 条记录`;
 /**
  * 执行搜索操作
  */
-const onSearch = () => {
-  pageConfig.current = 1;
+const handleSearch = () => {
+  paginationConfig.current = 1;
   message.success(`搜索完成，共找到 ${filteredActivityLogs.value.length} 条用户活动记录`);
 };
 
 /**
- * 重置查询条件和分页
+ * 重置搜索条件和分页
  */
-const onReset = () => {
-  Object.assign(queryParams, {
+const handleReset = () => {
+  Object.assign(searchParams, {
     keyword: '',
     dateRange: null,
     status: ''
   });
-  pageConfig.current = 1;
+  paginationConfig.current = 1;
   message.success('表单已重置，用户活动列表已恢复');
 };
 
 /**
  * 导出活动日志
  */
-const onExport = async () => {
+const handleExport = async () => {
   try {
     message.success('用户活动记录导出成功');
   } catch (error) {
@@ -338,11 +338,11 @@ const onExport = async () => {
 const loadActivityData = () => {
   // 这里应该调用实际的API接口
   // const response = await monitorApi.getUserActivity({ 
-  //   page: pageConfig.current, 
-  //   page_size: pageConfig.pageSize 
+  //   page: paginationConfig.current, 
+  //   page_size: paginationConfig.pageSize 
   // });
-  // activityLogList.value = response.data.list;
-  // pageConfig.total = response.data.total;
+  // activityLogs.value = response.data.list;
+  // paginationConfig.total = response.data.total;
 };
 
 onMounted(() => {
