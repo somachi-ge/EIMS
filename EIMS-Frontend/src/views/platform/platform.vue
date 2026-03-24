@@ -59,7 +59,7 @@ interface Platform {
   color: string
 }
 
-const PLATFORM_DATA: Platform[] = [
+const PLATFORM_ITEMS: Platform[] = [
   { name: '基础设施平台', icon: AppstoreOutlined, color: '#cf1322' },
   { name: '网络管理平台', icon: ForkOutlined, color: '#7cb305' },
   { name: '物联接入平台', icon: WifiOutlined, color: '#d4380d' },
@@ -90,7 +90,7 @@ const PLATFORM_DATA: Platform[] = [
   { name: '画像管理平台', icon: LineChartOutlined, color: '#d48806' }
 ]
 
-const platforms = shallowRef<Platform[]>(PLATFORM_DATA)
+const platforms = shallowRef<Platform[]>(PLATFORM_ITEMS)
 </script>
 
 <style scoped>
