@@ -36,7 +36,7 @@
             <a-table
               :columns="columns"
               :data-source="paginatedLogs"
-              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: handleSelectChange }"
               :pagination="false"
               size="small"
               class="login-log-table"
@@ -67,7 +67,7 @@
               v-model:pageSize="pagination.pageSize"
               :total="filteredLogs.length"
               :showSizeChanger="true"
-              :pageSizeOptions="PAGE_SIZE_OPTIONS"
+              :pageSizeOptions="pageSizeOptions"
               :showTotal="showTotal"
               :showQuickJumper="true"
               class="login-log-pagination"
@@ -193,7 +193,7 @@ interface Pagination {
   pageSize: number;
 }
 
-const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
+const pageSizeOptions = ['10', '30', '50'] as const;
 
 // 生成随机MAC地址
 const generateRandomMacAddress = (): string => {
@@ -415,7 +415,7 @@ const handleReset = () => {
   message.success('表单已重置，登录日志列表已恢复');
 };
 
-const onSelectChange = (keys: (string | number)[]) => {
+const handleSelectChange = (keys: (string | number)[]) => {
   selectedRowKeys.value = keys;
 };
 

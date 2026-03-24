@@ -41,7 +41,7 @@
             <a-table
               :columns="columns"
               :data-source="paginatedBackups"
-              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: handleSelectChange }"
               :pagination="false"
               size="small"
               class="backup-table"
@@ -477,7 +477,7 @@ const handleReset = () => {
  * 选择行变化事件
  * @param {Array} keys 选中的行 keys
  */
-const onSelectChange = (keys: (string | number)[]) => {
+const handleSelectChange = (keys: (string | number)[]) => {
   selectedRowKeys.value = keys;
 };
 

@@ -1,154 +1,210 @@
 <template>
   <a-config-provider :locale="zhCN">
-    <div class="message-center-container">
-      <Header />
-      <div class="message-page">
-        <a-card class="message-card">
+    <div class="profile-center-container">
+      <div class="profile-page">
+        <a-card class="profile-card">
           <div class="card-header">
+            <h3 class="card-title">个人设置</h3>
             <div class="header-right">
+              <a-button type="primary" @click="toggleEditMode" :class="{ 'active': isEditMode }">
+                {{ isEditMode ? '返回' : '编辑' }}
+              </a-button>
             </div>
           </div>
-          
-          <div class="message-filter" style="overflow-x: auto;">
-            <div style="width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
-              <div style="flex: 2; min-width: 200px;">
-                <a-input v-model:value="filterForm.keyword" placeholder="请输入搜索关键词" @keyup.enter="handleSearch" allow-clear style="width: 100%;" />
-              </div>
-              <div style="flex: 1.5; min-width: 200px;">
-                <a-range-picker v-model:value="filterForm.dateRange" :placeholder="['开始日期', '结束日期']" format="YYYY年MM月DD日" :locale="zhCN" style="width: 100%;" />
-              </div>
-              <div style="flex: 1; min-width: 120px;">
-                <a-select v-model:value="filterForm.type" placeholder="全部类型" allow-clear style="width: 100%;">
-                  <a-select-option value="">全部类型</a-select-option>
-                  <a-select-option value="warning">警告消息</a-select-option>
-                  <a-select-option value="error">错误消息</a-select-option>
-                  <a-select-option value="info">提醒消息</a-select-option>
-                </a-select>
-              </div>
-              <div style="flex: 1; min-width: 120px;">
-                <a-select v-model:value="filterForm.status" placeholder="全部状态" allow-clear style="width: 100%;">
-                  <a-select-option value="">全部状态</a-select-option>
-                  <a-select-option value="unread">未读</a-select-option>
-                  <a-select-option value="read">已读</a-select-option>
-                </a-select>
-              </div>
-              <div style="flex: 0.5; min-width: 70px;">
-                <a-button type="primary" @click="handleSearch" style="width: 100%;">搜索</a-button>
-              </div>
-              <div style="flex: 0.5; min-width: 70px;">
-                <a-button @click="handleReset" style="width: 100%;">重置</a-button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="message-actions">
-            <a-button type="primary" @click="handleMarkAllRead">全部已读</a-button>
-            <a-button type="primary" style="margin-left: 8px; background-color: #52c41a;" @click="handleMarkSelectedRead">标记已读</a-button>
-            <a-button type="warning" style="margin-left: 8px; background-color: #fa8c16;" @click="handleMarkSelectedUnread">标记未读</a-button>
-            <a-button danger style="margin-left: 8px;" @click="handleDeleteSelected">批量删除</a-button>
-          </div>
-          
-          <div class="message-list">
-            <a-table
-              :columns="columns"
-              :data-source="paginatedMessages"
-              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-              :pagination="false"
-              size="small"
-              class="message-table"
-              row-key="id"
-              :scroll="{ x: 800 }"
-            >
-              <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'status'">
-                  <a-tag :color="record.status === '未读' ? 'orange' : 'green'" :bordered="false" @click="toggleMessageStatus(record)" style="cursor: pointer;">
-                    {{ record.status }}
-                  </a-tag>
-                </template>
-                <template v-else-if="column.key === 'type'">
-                  <a-tag :color="getTypeColor(record.type)" :bordered="false">
-                    {{ record.type }}
-                  </a-tag>
-                </template>
-                <template v-else-if="column.key === 'content'">
-                  <span class="content-text">{{ record.content }}</span>
-                </template>
-                <template v-else-if="column.key === 'action'">
-                  <div style="display: flex; gap: 8px;">
-                    <a-tag color="blue" :bordered="false" @click="handleDetail(record)" style="cursor: pointer;">详情</a-tag>
-                    <a-tag color="red" :bordered="false" @click="handleDelete(record.id)" style="cursor: pointer;">删除</a-tag>
-                  </div>
-                </template>
-              </template>
-            </a-table>
-            
-            <a-pagination
-              v-model:current="pagination.current"
-              v-model:pageSize="pagination.pageSize"
-              :total="filteredMessages.length"
-              :showSizeChanger="true"
-              :pageSizeOptions="PAGE_SIZE_OPTIONS"
-              :showTotal="showTotal"
-              :showQuickJumper="true"
-              class="message-pagination"
-              :locale="PAGINATION_LOCALE"
-            />
-          </div>
-        </a-card>
-        
-        <a-modal
-          v-model:open="detailModalVisible"
-          title="消息详情"
-          width="700px"
-          :ok-text="'关闭'"
-          :cancel-button-props="{ style: { display: 'none' } }"
-          @ok="closeDetailModal"
-          @cancel="closeDetailModal"
-          class="message-detail-modal"
-          :body-style="{ maxHeight: '60vh', overflow: 'auto' }"
-          :scrollable="true"
-        >
-          <div v-if="currentMessage" class="message-detail">
-            <div class="detail-header">
-              <h3 class="detail-title">{{ currentMessage.title }}</h3>
-              <div class="header-right">
-                <a-tag :color="currentMessage.status === '未读' ? 'orange' : 'green'" :bordered="false" class="status-tag">
-                  {{ currentMessage.status }}
-                </a-tag>
-              </div>
-            </div>
-            
-            <div class="detail-content">
-              <div class="detail-section">
-                <h4 class="section-title">基本信息</h4>
-                <div class="detail-grid">
-                  <div class="detail-item">
-                    <div class="detail-label">消息类型：</div>
-                    <div class="detail-value">
-                      <a-tag :color="getTypeColor(currentMessage.type)" :bordered="false" class="type-tag">
-                        {{ currentMessage.type }}
-                      </a-tag>
+          <div class="card-body">
+            <div class="profile-content">
+              <div class="profile-avatar-container">
+                <div class="profile-avatar">
+                  <div class="avatar-container">
+                    <img :src="userProfile.avatar" alt="用户头像">
+                    <div class="avatar-upload" v-if="isEditMode">
+                      <a-upload
+                        :show-upload-list="false"
+                        :before-upload="beforeUpload"
+                        :custom-request="customAvatarUpload"
+                        @change="handleAvatarChange"
+                      >
+                        <a-button type="primary"><UploadOutlined /> 更换头像</a-button>
+                      </a-upload>
                     </div>
-                  </div>
-                  <div class="detail-item">
-                    <div class="detail-label">发送时间：</div>
-                    <div class="detail-value">{{ currentMessage.sendTime }}</div>
-                  </div>
-                  <div class="detail-item">
-                    <div class="detail-label">消息来源：</div>
-                    <div class="detail-value">{{ getSourceText(currentMessage.content) }}</div>
                   </div>
                 </div>
               </div>
               
-              <div class="detail-section">
-                <h4 class="section-title">消息内容</h4>
-                <div class="detail-content-text">
-                  {{ currentMessage.content }}
+              <div class="profile-form">
+                <div class="form-row">
+                  <div class="form-item">
+                    <label>工号</label>
+                    <a-input v-model:value="userProfile.employeeId" disabled />
+                  </div>
+                  <div class="form-item">
+                    <label>姓名</label>
+                    <a-input v-model:value="userProfile.name" :disabled="!isEditMode" />
+                  </div>
+                  <div class="form-item">
+                    <label>性别</label>
+                    <a-select v-model:value="userProfile.gender" :disabled="!isEditMode" placeholder="请选择">
+                      <a-select-option value="男">男</a-select-option>
+                      <a-select-option value="女">女</a-select-option>
+                    </a-select>
+                  </div>
+                  <div class="form-item">
+                    <label>民族</label>
+                    <a-input v-model:value="userProfile.nationality" :disabled="!isEditMode" />
+                  </div>
+                  <div class="form-item">
+                    <label>生日</label>
+                    <a-date-picker v-model:value="userProfile.birthday" :disabled="!isEditMode" format="YYYY-MM-DD" />
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-item">
+                    <label>学历</label>
+                    <a-input v-model:value="userProfile.education" :disabled="!isEditMode" />
+                  </div>
+                  <div class="form-item">
+                    <label>学位</label>
+                    <a-input v-model:value="userProfile.degree" :disabled="!isEditMode" />
+                  </div>
+                  <div class="form-item">
+                    <label>入职日期</label>
+                    <a-date-picker v-model:value="userProfile.joinDate" disabled format="YYYY-MM-DD" />
+                  </div>
+                  <div class="form-item">
+                    <label>邮箱</label>
+                    <a-input v-model:value="userProfile.email" :disabled="!isEditMode" />
+                  </div>
+                  <div class="form-item">
+                    <label>电话</label>
+                    <a-input v-model:value="userProfile.phone" :disabled="!isEditMode" type="tel" />
+                  </div>
+                </div>
+                
+                <div class="form-actions" v-if="isEditMode">
+                  <a-button @click="toggleEditMode">取消</a-button>
+                  <a-button type="primary" @click="handleSaveProfile">保存</a-button>
                 </div>
               </div>
             </div>
           </div>
+        </a-card>
+        
+        <a-card class="profile-card">
+          <div class="card-header">
+            <h3 class="card-title">账号信息</h3>
+            <div class="header-right">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>修改密码</span>
+                <p class="setting-desc">定期修改密码以保护账号安全</p>
+              </div>
+              <a-button type="primary" @click="showChangePasswordModal = true">修改</a-button>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>账号安全</span>
+                <p class="setting-desc">查看和管理账号安全设置</p>
+              </div>
+              <a-tag color="green" :bordered="false">安全</a-tag>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>登录历史</span>
+                <p class="setting-desc">查看最近的登录记录</p>
+              </div>
+              <a-button @click="handleOpenLoginHistoryModal">查看</a-button>
+            </div>
+          </div>
+        </a-card>
+        
+        <a-card class="profile-card">
+          <div class="card-header">
+            <h3 class="card-title">组织信息</h3>
+            <div class="header-right">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="profile-form">
+                <div class="form-row">
+                  <div class="form-item">
+                    <label>单位</label>
+                    <a-input v-model:value="userProfile.company" disabled />
+                  </div>
+                  <div class="form-item">
+                    <label>部门</label>
+                    <a-input v-model:value="userProfile.department" disabled />
+                  </div>
+                  <div class="form-item">
+                    <label>车间</label>
+                    <a-input v-model:value="userProfile.workshop" disabled />
+                  </div>
+                  <div class="form-item">
+                    <label>班组</label>
+                    <a-input v-model:value="userProfile.team" disabled />
+                  </div>
+                  <div class="form-item">
+                    <label>岗位</label>
+                    <a-input v-model:value="userProfile.position" disabled />
+                  </div>
+                </div>
+              </div>
+          </div>
+        </a-card>
+        
+        <a-modal
+          v-model:open="showChangePasswordModal"
+          title="修改密码"
+          width="500px"
+          :ok-text="'保存'"
+          :cancel-text="'取消'"
+          @ok="handleChangePassword"
+          @cancel="resetPasswordModal"
+          class="profile-modal"
+        >
+          <div class="modal-form">
+            <a-form layout="vertical">
+              <a-form-item label="当前密码">
+                <a-input-password v-model:value="passwordForm.currentPassword" placeholder="请输入当前使用密码" @keyup.enter="handleChangePassword">
+                  <template #prefix>
+                    <SafetyCertificateOutlined />
+                  </template>
+                </a-input-password>
+              </a-form-item>
+              <a-form-item label="新密码">
+                <a-input-password v-model:value="passwordForm.newPassword" placeholder="请输入新密码（8-20位，包含字母和数字并区分大小写）" @keyup.enter="handleChangePassword">
+                  <template #prefix>
+                    <LockOutlined />
+                  </template>
+                </a-input-password>
+              </a-form-item>
+              <a-form-item label="确认新密码">
+                <a-input-password v-model:value="passwordForm.confirmPassword" placeholder="请再次输入新密码" @keyup.enter="handleChangePassword">
+                  <template #prefix>
+                    <LockOutlined />
+                  </template>
+                </a-input-password>
+              </a-form-item>
+            </a-form>
+          </div>
+        </a-modal>
+        
+        <a-modal
+          v-model:open="showLoginHistoryModal"
+          title="登录历史"
+          width="800px"
+          :ok-text="'关闭'"
+          :cancel-button-props="{ style: { display: 'none' } }"
+          @ok="showLoginHistoryModal = false"
+          @cancel="showLoginHistoryModal = false"
+          class="profile-modal"
+        >
+          <a-table :data-source="loginHistory" :columns="historyColumns" row-key="id" class="history-table" :scroll="{ x: 650 }" />
         </a-modal>
       </div>
     </div>
@@ -156,380 +212,273 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, shallowRef } from 'vue';
+import { ref, reactive, shallowRef } from 'vue';
 import { message } from 'ant-design-vue';
+import { UploadOutlined, LockOutlined, SafetyCertificateOutlined } from '@ant-design/icons-vue';
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import Header from '@/components/layout/Header.vue';
 
-interface Message {
-  id: string;
-  title: string;
-  type: string;
-  status: string;
-  content: string;
-  sendTime: string;
+
+dayjs.locale('zh-cn');
+
+interface UserProfile {
+  avatar: string;
+  id: number;
+  employeeId: string;
+  name: string;
+  gender: string;
+  nationality: string;
+  birthday: dayjs.Dayjs | null;
+  education: string;
+  degree: string;
+  joinDate: dayjs.Dayjs | null;
+  email: string;
+  phone: string;
+  company: string;
+  department: string;
+  workshop: string;
+  team: string;
+  position: string;
 }
 
-interface FilterForm {
-  type: string;
-  status: string;
-  dateRange: [dayjs.Dayjs, dayjs.Dayjs] | null;
-  keyword: string;
+interface PasswordForm {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
-interface Pagination {
-  current: number;
-  pageSize: number;
+interface LoginHistoryItem {
+  id: number;
+  time: string;
+  ip: string;
+  device: string;
+  location: string;
 }
 
-const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
+interface UploadOptions {
+  file: File;
+  onSuccess: () => void;
+  onError: (error: Error) => void;
+}
 
-const PAGINATION_LOCALE = {
-  items_per_page: '条/页',
-  jump_to: '前往',
-  page: '页',
-  prev_page: '上一页',
-  next_page: '下一页',
-  prev_5: '向前 5 页',
-  next_5: '向后 5 页',
-  prev_3: '向前 3 页',
-  next_3: '向后 3 页',
-  first_page: '首页',
-  last_page: '末页'
-} as const;
+const MIN_PASSWORD_LENGTH = 8;
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-const TYPE_MAP: Record<string, string> = {
-  'warning': '警告消息',
-  'error': '错误消息',
-  'info': '提醒消息'
-} as const;
+const isEditMode = ref(false);
+const showChangePasswordModal = ref(false);
+const showLoginHistoryModal = ref(false);
 
-const STATUS_MAP: Record<string, string> = {
-  'unread': '未读',
-  'read': '已读'
-} as const;
-
-const TYPE_COLORS: Record<string, string> = {
-  '警告消息': 'orange',
-  '错误消息': 'red',
-  '提醒消息': 'blue'
-} as const;
-
-const MOCK_TYPES = shallowRef(['提醒消息', '警告消息', '错误消息']);
-const MOCK_STATUSES = shallowRef(['未读', '已读']);
-const MOCK_MODULES = shallowRef(['系统', '任务', '数据', '权限', '用户', '组织', '配置', '日志']);
-const MOCK_TITLES = shallowRef(['系统通知', '任务提醒', '错误提示', '数据更新', '权限变更', '用户操作', '组织变更', '配置更新', '日志记录']);
-
-const allMessages = ref<Message[]>([]);
-const selectedRowKeys = ref<(string | number)[]>([]);
-const detailModalVisible = ref(false);
-const currentMessage = ref<Message | null>(null);
-
-const filterForm = reactive<FilterForm>({
-  type: '',
-  status: '',
-  dateRange: null,
-  keyword: ''
+const userProfile = reactive<UserProfile>({
+  avatar: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20business%20user%20avatar%20portrait%2C%20friendly%20face%2C%20corporate%20style&image_size=square',
+  id: 1,
+  employeeId: 'EMP001',
+  name: '江东',
+  gender: '男',
+  nationality: '汉族',
+  birthday: dayjs('1990-01-01'),
+  education: '本科',
+  degree: '学士',
+  joinDate: dayjs('2020-01-01'),
+  email: 'jiangdong@example.com',
+  phone: '13800138000',
+  company: '翼航智能',
+  department: '技术部',
+  workshop: '研发车间',
+  team: '前端开发组',
+  position: '高级前端工程师'
 });
 
-const pagination = reactive<Pagination>({
-  current: 1,
-  pageSize: 10
+const passwordForm = reactive<PasswordForm>({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
 });
 
-const columns = shallowRef([
+const loginHistory = shallowRef<LoginHistoryItem[]>([
   {
-    title: '标题',
-    dataIndex: 'title',
-    key: 'title',
-    width: 180
+    id: 1,
+    time: '2026-03-15 10:30:00',
+    ip: '192.168.1.100',
+    device: 'Windows 10 / Chrome 96.0',
+    location: '北京市'
   },
   {
-    title: '类型',
-    dataIndex: 'type',
-    key: 'type',
-    width: 100
+    id: 2,
+    time: '2026-03-14 16:45:00',
+    ip: '192.168.1.101',
+    device: 'MacOS / Safari 15.0',
+    location: '上海市'
   },
   {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-    width: 80
-  },
-  {
-    title: '内容',
-    dataIndex: 'content',
-    key: 'content',
-    width: 300
-  },
-  {
-    title: '发送时间',
-    dataIndex: 'sendTime',
-    key: 'sendTime',
-    width: 140
-  },
-  {
-    title: '操作',
-    key: 'action',
-    width: 120,
-    fixed: 'right'
+    id: 3,
+    time: '2026-03-13 09:15:00',
+    ip: '192.168.1.102',
+    device: 'iOS / Safari',
+    location: '广州市'
   }
 ]);
 
-const filteredMessages = computed(() => {
-  let result = [...allMessages.value];
-  
-  if (filterForm.type) {
-    const targetType = TYPE_MAP[filterForm.type];
-    result = result.filter(msg => msg.type === targetType);
+const historyColumns = shallowRef([
+  {
+    title: '登录时间',
+    dataIndex: 'time',
+    key: 'time',
+    width: 180
+  },
+  {
+    title: 'IP地址',
+    dataIndex: 'ip',
+    key: 'ip',
+    width: 150
+  },
+  {
+    title: '设备信息',
+    dataIndex: 'device',
+    key: 'device',
+    width: 200
+  },
+  {
+    title: '登录地点',
+    dataIndex: 'location',
+    key: 'location',
+    width: 120
   }
-  
-  if (filterForm.status) {
-    const targetStatus = STATUS_MAP[filterForm.status];
-    result = result.filter(msg => msg.status === targetStatus);
-  }
-  
-  if (filterForm.dateRange && filterForm.dateRange.length === 2) {
-    const startDate = dayjs(filterForm.dateRange[0]);
-    const endDate = dayjs(filterForm.dateRange[1]);
-    result = result.filter(msg => {
-      const messageDate = dayjs(msg.sendTime.split(' ')[0]);
-      return messageDate.isAfter(startDate.subtract(1, 'day')) && messageDate.isBefore(endDate.add(1, 'day'));
-    });
-  }
-  
-  if (filterForm.keyword) {
-    const keyword = filterForm.keyword.toLowerCase();
-    result = result.filter(msg => 
-      msg.title.toLowerCase().includes(keyword) || 
-      msg.content.toLowerCase().includes(keyword)
-    );
-  }
-  
-  return result;
-});
+]);
 
-const paginatedMessages = computed(() => {
-  const start = (pagination.current - 1) * pagination.pageSize;
-  const end = start + pagination.pageSize;
-  return filteredMessages.value.slice(start, end);
-});
-
-const generateMockMessages = (): Message[] => {
-  const messages: Message[] = [];
-  
-  for (let i = 1; i <= 75; i++) {
-    const type = MOCK_TYPES.value[Math.floor(Math.random() * MOCK_TYPES.value.length)];
-    const status = MOCK_STATUSES.value[Math.floor(Math.random() * MOCK_STATUSES.value.length)];
-    const module = MOCK_MODULES.value[Math.floor(Math.random() * MOCK_MODULES.value.length)];
-    const title = MOCK_TITLES.value[Math.floor(Math.random() * MOCK_TITLES.value.length)];
-    const content = `${title}，来自${module}模块，这是第${i}条消息`;
-    
-    const date = new Date();
-    date.setDate(date.getDate() - Math.floor(Math.random() * 30));
-    date.setHours(Math.floor(Math.random() * 24));
-    date.setMinutes(Math.floor(Math.random() * 60));
-    
-    const sendTime = date.toISOString().replace('T', ' ').substring(0, 19);
-    
-    messages.push({
-      id: i.toString(),
-      title,
-      type,
-      status,
-      content,
-      sendTime
-    });
-  }
-  
-  return messages;
+const toggleEditMode = () => {
+  isEditMode.value = !isEditMode.value;
 };
 
-const fetchMessages = async () => {
+const handleSaveProfile = async () => {
   try {
-    allMessages.value = generateMockMessages();
+    setTimeout(() => {
+      message.success('个人资料保存成功');
+      isEditMode.value = false;
+    }, 500);
   } catch (error) {
-    message.error('获取消息列表失败');
-    console.error('Error fetching messages:', error);
+    message.error('保存个人资料失败，请稍后重试');
+    console.error('Error saving profile:', error);
   }
 };
 
-const showTotal = (total: number) => `共 ${total} 条记录`;
-
-const handleSearch = async () => {
-  pagination.current = 1;
-  message.success(`搜索完成，共找到 ${filteredMessages.value.length} 条消息`);
+const handleAvatarChange = (info: any) => {
+  if (info.file.status === 'done') {
+    message.success('头像上传成功');
+  } else if (info.file.status === 'error') {
+    message.error('头像上传失败');
+  }
 };
 
-const handleReset = async () => {
-  Object.assign(filterForm, {
-    type: '',
-    status: '',
-    dateRange: null,
-    keyword: ''
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
   });
-  pagination.current = 1;
-  message.success('表单已重置，消息列表已恢复');
 };
 
-const onSelectChange = (keys: (string | number)[]) => {
-  selectedRowKeys.value = keys;
-};
-
-const handleDetail = (record: Message) => {
-  currentMessage.value = record;
-  detailModalVisible.value = true;
-};
-
-const closeDetailModal = () => {
-  detailModalVisible.value = false;
-  currentMessage.value = null;
-};
-
-const handleDelete = async (id: string) => {
+const customAvatarUpload = async (options: UploadOptions) => {
+  const { file, onSuccess, onError } = options;
+  
   try {
-    const index = allMessages.value.findIndex(msg => msg.id === id);
-    if (index !== -1) {
-      allMessages.value.splice(index, 1);
-      message.success(`删除消息 ID: ${id}`);
-    }
+    const base64Avatar = await fileToBase64(file);
+    
+    setTimeout(() => {
+      userProfile.avatar = base64Avatar;
+      onSuccess();
+    }, 500);
   } catch (error) {
-    message.error('删除消息失败');
-    console.error('Error deleting message:', error);
+    console.error('Error uploading avatar:', error);
+    onError(new Error('头像上传失败'));
   }
 };
 
-const handleMarkAllRead = async () => {
-  try {
-    allMessages.value.forEach(msg => {
-      msg.status = '已读';
-    });
-    selectedRowKeys.value = [];
-    message.success('所有消息已标记为已读');
-  } catch (error) {
-    message.error('标记消息失败');
-    console.error('Error marking messages as read:', error);
+const beforeUpload = (file: File) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  const isLt2M = file.size < MAX_FILE_SIZE;
+  
+  if (!isJpgOrPng) {
+    message.error('只能上传JPG或PNG格式的图片');
   }
+  if (!isLt2M) {
+    message.error('图片大小不能超过2MB');
+  }
+  
+  return isJpgOrPng && isLt2M;
 };
 
-const handleMarkSelectedRead = async () => {
-  if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择要标记的消息');
+const resetPasswordModal = () => {
+  showChangePasswordModal.value = false;
+  passwordForm.currentPassword = '';
+  passwordForm.newPassword = '';
+  passwordForm.confirmPassword = '';
+};
+
+const handleChangePassword = async () => {
+  if (!passwordForm.currentPassword) {
+    message.error('请输入当前密码');
     return;
   }
   
-  const selectedCount = selectedRowKeys.value.length;
-  
-  try {
-    allMessages.value.forEach(msg => {
-      if (selectedRowKeys.value.includes(msg.id)) {
-        msg.status = '已读';
-      }
-    });
-    selectedRowKeys.value = [];
-    message.success(`标记 ${selectedCount} 条消息为已读`);
-  } catch (error) {
-    message.error('标记消息失败');
-    console.error('Error marking messages as read:', error);
-  }
-};
-
-const handleMarkSelectedUnread = async () => {
-  if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择要标记的消息');
+  if (!passwordForm.newPassword || passwordForm.newPassword.length < MIN_PASSWORD_LENGTH) {
+    message.error(`新密码长度不能少于${MIN_PASSWORD_LENGTH}位`);
     return;
   }
   
-  const selectedCount = selectedRowKeys.value.length;
-  
-  try {
-    allMessages.value.forEach(msg => {
-      if (selectedRowKeys.value.includes(msg.id)) {
-        msg.status = '未读';
-      }
-    });
-    selectedRowKeys.value = [];
-    message.success(`标记 ${selectedCount} 条消息为未读`);
-  } catch (error) {
-    message.error('标记消息失败');
-    console.error('Error marking messages as unread:', error);
-  }
-};
-
-const handleDeleteSelected = async () => {
-  if (selectedRowKeys.value.length === 0) {
-    message.warning('请先选择要删除的消息');
+  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+    message.error('两次输入的密码不一致');
     return;
   }
   
-  const deleteCount = selectedRowKeys.value.length;
-  
   try {
-    allMessages.value = allMessages.value.filter(msg => !selectedRowKeys.value.includes(msg.id));
-    selectedRowKeys.value = [];
-    message.success(`删除 ${deleteCount} 条消息`);
+    setTimeout(() => {
+      message.success('密码修改成功，请使用新密码登录');
+      resetPasswordModal();
+    }, 500);
   } catch (error) {
-    message.error('删除消息失败');
-    console.error('Error deleting messages:', error);
+    message.error('修改密码失败，请稍后重试');
+    console.error('Error changing password:', error);
   }
 };
 
-const getTypeColor = (type: string) => {
-  return TYPE_COLORS[type] || 'default';
+const handleOpenLoginHistoryModal = () => {
+  showLoginHistoryModal.value = true;
 };
-
-const getSourceText = (content: string) => {
-  const match = content.match(/来自(\w+)模块/);
-  return match ? match[1] : '未知';
-};
-
-const toggleMessageStatus = async (record: Message) => {
-  try {
-    const newStatus = record.status === '未读' ? '已读' : '未读';
-    const msg = allMessages.value.find(m => m.id === record.id);
-    if (msg) {
-      msg.status = newStatus;
-    }
-    message.success(`消息状态已切换为${newStatus}`);
-  } catch (error) {
-    message.error('切换消息状态失败');
-    console.error('Error toggling message status:', error);
-  }
-};
-
-onMounted(() => {
-  fetchMessages();
-});
 </script>
 
 <style scoped>
-.message-center-container {
+.profile-center-container {
   width: 100%;
   padding: 1.5%;
 }
 
-.message-page {
-  padding: 24px;
-  min-height: calc(100vh - 64px);
-  margin-top: 64px;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.message-card {
+.profile-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
+  margin-bottom: 24px;
+}
+
+.profile-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
 }
 
 .header-right {
@@ -538,234 +487,286 @@ onMounted(() => {
   gap: 8px;
 }
 
-.message-filter {
-  margin-bottom: 20px;
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+.card-body {
+  padding: 20px 0;
 }
 
-.message-filter :deep(.ant-form-inline) {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.message-actions {
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #d9d9d9;
+.profile-content {
   display: flex;
+  align-items: flex-start;
+  gap: 32px;
   flex-wrap: wrap;
-  gap: 8px;
 }
 
-.message-actions :deep(.ant-btn) {
+.profile-avatar-container {
+  flex-shrink: 0;
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.profile-avatar {
+  text-align: center;
+}
+
+.profile-form {
+  flex: 1;
+  min-width: 300px;
+}
+
+.avatar-container {
+  position: relative;
+  text-align: center;
+}
+
+.avatar-container img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #f0f0f0;
   transition: all 0.3s ease;
-  border: none;
 }
 
-.message-actions :deep(.ant-btn:hover) {
+.avatar-container img:hover {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.avatar-upload {
+  margin-top: 16px;
+}
+
+.avatar-upload :deep(.ant-btn) {
+  transition: all 0.3s ease;
+}
+
+.avatar-upload :deep(.ant-btn:hover) {
   opacity: 0.8;
   transform: translateY(-1px);
 }
 
-.content-text {
-  display: -webkit-box;
-  display: box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #666;
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+  margin-bottom: 20px;
 }
 
-.message-list {
-  position: relative;
+.form-item {
+  min-width: 0;
 }
 
-.message-table {
-  border-radius: 4px;
-}
-
-.message-table :deep(.ant-table-thead > tr > th) {
-  background-color: #fafafa;
-  font-weight: 600;
+.form-item label {
+  display: block;
   font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 8px;
 }
 
-.message-table :deep(.ant-table-tbody > tr > td) {
-  font-size: 13px;
-  padding: 10px;
+.form-item :deep(.ant-input),
+.form-item :deep(.ant-input-textarea) {
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
-.message-pagination {
-  margin-top: 16px;
+.form-item :deep(.ant-input:focus),
+.form-item :deep(.ant-input-textarea:focus) {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.form-item :deep(.ant-picker),
+.form-item :deep(.ant-select),
+.form-item :deep(.ant-input[type="tel"]) {
+  width: 100%;
+}
+
+.modal-form :deep(.ant-input-password .anticon) {
+  color: rgba(0, 0, 0, 0.45);
+  transition: color 0.3s;
+}
+
+.modal-form :deep(.ant-input-password:focus-within .anticon) {
+  color: #1890ff;
+}
+
+.form-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
 }
 
-.message-detail-modal {
-  border-radius: 8px;
+.form-actions :deep(.ant-btn) {
+  transition: all 0.3s ease;
 }
 
-.message-detail {
-  padding: 20px 0;
+.form-actions :deep(.ant-btn:hover) {
+  opacity: 0.8;
+  transform: translateY(-1px);
 }
 
-.detail-header {
+.form-actions :deep(.ant-btn-primary:hover) {
+  background-color: #40a9ff;
+}
+
+.setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  padding: 16px 0;
   border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
 }
 
-.detail-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1890ff;
+.setting-item:hover {
+  background-color: #fafafa;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-label {
+  flex: 1;
+}
+
+.setting-label span {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.setting-desc {
+  font-size: 14px;
+  color: #999;
   margin: 0;
 }
 
-.status-tag {
+.setting-item :deep(.ant-btn) {
+  transition: all 0.3s ease;
+}
+
+.setting-item :deep(.ant-btn:hover) {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.setting-item :deep(.ant-tag) {
   font-size: 14px;
   padding: 4px 12px;
 }
 
-.detail-content {
-  margin-bottom: 20px;
+.profile-modal {
+  border-radius: 8px;
 }
 
-.detail-section {
-  margin-bottom: 24px;
+.modal-form {
+  max-width: 100%;
 }
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
+.modal-form :deep(.ant-form-item) {
   margin-bottom: 16px;
-  padding: 10px 16px;
-  background-color: #f5f5f5;
-  border-left: 4px solid #1890ff;
+}
+
+.history-table {
   border-radius: 4px;
 }
 
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-}
-
-.detail-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #666;
-  margin-right: 12px;
-  min-width: 100px;
-}
-
-.detail-value {
-  font-size: 14px;
-  color: #333;
-  flex: 1;
-}
-
-.detail-content-text {
-  font-size: 14px;
-  color: #333;
-  padding: 16px;
+.history-table :deep(.ant-table-thead > tr > th) {
   background-color: #fafafa;
-  border-radius: 4px;
-  border: 1px solid #f0f0f0;
-  min-height: 120px;
-  line-height: 1.5;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.type-tag {
-  font-size: 12px;
-  padding: 2px 8px;
+.history-table :deep(.ant-table-tbody > tr > td) {
+  font-size: 13px;
+  padding: 10px;
+}
+
+.history-table :deep(.ant-table-tbody > tr:hover) {
+  background-color: #fafafa;
 }
 
 @media (max-width: 1200px) {
-  .message-page {
+  .profile-page {
     padding: 20px;
   }
 }
 
 @media (max-width: 992px) {
-  .message-page {
+  .profile-page {
     padding: 16px;
   }
   
-  .message-filter :deep(.ant-form-inline) {
-    grid-template-columns: 1fr;
+  .profile-content {
+    flex-direction: column;
+    align-items: center;
   }
   
-  .detail-grid {
-    grid-template-columns: 1fr;
+  .profile-form {
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
-  .message-page {
+  .profile-page {
     padding: 12px;
   }
   
-  .detail-header {
+  .card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
   
-  .message-filter {
-    padding: 12px;
+  .header-right {
+    width: 100%;
+    justify-content: flex-end;
   }
   
-  .message-actions {
+  .form-actions {
     flex-direction: column;
   }
   
-  .message-actions :deep(.ant-btn) {
+  .form-actions :deep(.ant-btn) {
     width: 100%;
-    margin-left: 0 !important;
+  }
+  
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .setting-item :deep(.ant-btn) {
+    align-self: flex-end;
   }
 }
 
 @media (max-width: 576px) {
-  .message-detail-modal {
+  .profile-modal {
     width: 90% !important;
   }
   
-  .detail-title {
-    font-size: 16px;
-  }
-  
-  .section-title {
+  .card-title {
     font-size: 14px;
   }
   
-  .detail-value {
-    font-size: 13px;
+  .avatar-container img {
+    width: 100px;
+    height: 100px;
   }
   
-  .detail-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .detail-label {
-    margin-bottom: 6px;
-    margin-right: 0;
+  .form-row {
+    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
   <MainLayout>
-    <div class="home-page">
+    <a-config-provider :locale="zhCN">
+      <div class="home-page">
       <div class="home-quadrant-cards">
         <a-card v-for="card in dashboardCards" :key="card.key" :class="['home-quadrant-card', `home-${card.key}-card`]">
           <div class="home-card-header">
@@ -118,7 +119,7 @@
               <a-table 
                 :columns="transactionColumns" 
                 :data-source="paginatedTransactions" 
-                :pagination="paginationConfig"
+                :pagination="false"
                 size="small"
                 class="home-transaction-table"
               >
@@ -138,6 +139,19 @@
                   <a-tag color="blue" :bordered="false" @click="openDetailModal(record as Transaction)" style="cursor: pointer;">详情</a-tag>
                 </template>
               </a-table>
+              
+              <div class="home-pagination-container">
+                <a-pagination
+                  v-model:current="pagination.current"
+                  v-model:pageSize="pagination.pageSize"
+                  :total="pagination.total"
+                  :showSizeChanger="true"
+                  :pageSizeOptions="['5', '10', '20']"
+                  :showTotal="(total: number) => `共 ${total} 条记录`"
+                  showQuickJumper
+                  size="default"
+                />
+              </div>
             </a-spin>
           </div>
         </a-card>
@@ -228,6 +242,7 @@
         </div>
       </a-modal>
     </div>
+    </a-config-provider>
   </MainLayout>
 </template>
 
@@ -235,6 +250,7 @@
 import { ref, onMounted, onUnmounted, computed, shallowRef } from 'vue'
 import { LineChartOutlined, ShoppingOutlined, InboxOutlined, DollarOutlined, DownOutlined } from '@ant-design/icons-vue'
 import * as echarts from 'echarts'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import MainLayout from '../../components/layout/MainLayout.vue'
 
 interface DateData {
@@ -691,34 +707,7 @@ const paginatedTransactions = computed(() => {
   return allTransactions.value.slice(start, end)
 })
 
-const paginationConfig = computed(() => ({
-  current: pagination.value.current,
-  pageSize: pagination.value.pageSize,
-  total: pagination.value.total,
-  onChange: (page: number, pageSize: number) => {
-    pagination.value.current = page
-    pagination.value.pageSize = pageSize
-  },
-  showSizeChanger: true,
-  pageSizeOptions: ['5', '10', '20'],
-  showTotal: (total: number) => `共 ${total} 条记录`,
-  showQuickJumper: true,
-  size: 'default' as const,
-  simple: false,
-  locale: {
-    items_per_page: '条/页',
-    jump_to: '前往',
-    page: '页',
-    prev_page: '上一页',
-    next_page: '下一页',
-    prev_5: '向前 5 页',
-    next_5: '向后 5 页',
-    prev_3: '向前 3 页',
-    next_3: '向后 3 页',
-    first_page: '首页',
-    last_page: '末页'
-  }
-}))
+
 
 const detailModalVisible = ref(false)
 const currentTransaction = ref<Transaction | null>(null)
@@ -1577,6 +1566,12 @@ onUnmounted(() => {
   padding: 10px;
 }
 
+.home-pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16px;
+}
+
 .home-view-range-button {
   border: 1px solid #d9d9d9;
   background-color: #f5f5f5;
@@ -1615,6 +1610,15 @@ onUnmounted(() => {
   
   .home-view-range-button {
     width: 100%;
+  }
+  
+  .home-pagination-container {
+    justify-content: center;
+  }
+  
+  .home-pagination-container :deep(.ant-pagination) {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 

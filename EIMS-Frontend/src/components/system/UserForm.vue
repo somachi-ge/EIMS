@@ -20,13 +20,7 @@
     <a-form-item label="电话" name="phone">
       <a-input v-model:value="form.phone" placeholder="请输入电话" />
     </a-form-item>
-    <a-form-item label="部门" name="departmentId">
-      <a-select v-model:value="form.departmentId" placeholder="请选择部门">
-        <a-select-option v-for="dept in departments" :key="dept.id" :value="dept.id">
-          {{ dept.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-item>
+
     <a-form-item label="角色" name="roleIds">
       <a-select v-model:value="form.roleIds" mode="multiple" placeholder="请选择角色">
         <a-select-option v-for="role in roles" :key="role.id" :value="role.id">
@@ -45,7 +39,6 @@ import { ref, reactive } from 'vue'
 
 interface Props {
   isAdd: boolean
-  departments: Array<{ id: number; name: string }>
   roles: Array<{ id: number; name: string }>
   initialValues?: any
 }
@@ -62,7 +55,6 @@ const form = reactive({
   name: '',
   email: '',
   phone: '',
-  departmentId: null,
   roleIds: [],
   status: true,
   ...props.initialValues
@@ -83,9 +75,6 @@ const rules = {
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-  ],
-  departmentId: [
-    { required: true, message: '请选择部门', trigger: 'change' }
   ]
 }
 

@@ -1,31 +1,26 @@
 <template>
-  <a-config-provider :locale="zhCN">
-    <div class="organization-chart-list-container">
+  <div class="organization-chart-container">
+    <a-config-provider :locale="zhCN">
       <div class="organization-chart-page">
         <a-card class="organization-chart-card">
-          <div class="card-header">
-            <div class="header-right">
-            </div>
-          </div>
-          
           <div class="organization-chart-actions">
-            <a-button type="primary" @click="handleRefresh">刷新架构</a-button>
-            <a-button type="primary" style="margin-left: 8px; background-color: #52c41a;" @click="handleCollapse">折叠架构</a-button>
-            <a-button type="primary" style="margin-left: 8px; background-color: #1890ff;" @click="handleExpand">展开架构</a-button>
-            <a-button type="primary" style="margin-left: 8px; background-color: #fa8c16; color: white;" @click="handleExport">导出图片</a-button>
+            <a-button type="primary" @click="handleRefreshChart">刷新架构</a-button>
+            <a-button type="primary" style="margin-left: 8px; background-color: #52c41a;" @click="handleCollapseChart">折叠架构</a-button>
+            <a-button type="primary" style="margin-left: 8px; background-color: #1890ff;" @click="handleExpandChart">展开架构</a-button>
+            <a-button type="primary" style="margin-left: 8px; background-color: #fa8c16; color: white;" @click="handleExportImage">导出图片</a-button>
             <a-button type="primary" style="margin-left: 8px; background-color: #722ed1;" @click="handleExportPDF">导出PDF</a-button>
-            <a-button type="primary" style="margin-left: 8px; background-color: #13c2c2;" @click="handleOrganizationAdmin">架构管理</a-button>
+            <a-button type="primary" style="margin-left: 8px; background-color: #13c2c2;" @click="navigateToOrganizationAdmin">架构管理</a-button>
           </div>
           
-          <div class="organization-chart-container-wrapper">
-            <a-spin :spinning="loading" tip="加载组织架构数据...">
-              <div ref="chartRef" class="organization-chart-container"></div>
+          <div class="organization-chart-wrapper">
+            <a-spin :spinning="isLoading" tip="加载组织架构数据...">
+              <div ref="chartRef" class="organization-chart-content"></div>
             </a-spin>
           </div>
         </a-card>
       </div>
-    </div>
-  </a-config-provider>
+    </a-config-provider>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,7 +31,7 @@ import * as echarts from 'echarts';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
 // 加载状态
-const loading = ref(false);
+const isLoading = ref(false);
 
 // 路由实例
 const router = useRouter();
@@ -119,7 +114,7 @@ const generateMockOrganizationData = (): OrganizationNode => {
  */
 const fetchOrganizationData = async (): Promise<OrganizationNode> => {
   try {
-    loading.value = true;
+    isLoading.value = true;
     // 使用模拟数据，不与后端通信
     const mockData = generateMockOrganizationData();
     return mockData;
@@ -128,14 +123,14 @@ const fetchOrganizationData = async (): Promise<OrganizationNode> => {
     message.error('获取组织架构数据失败，请稍后重试');
     return { name: '无数据', children: [] };
   } finally {
-    loading.value = false;
+    isLoading.value = false;
   }
 };
 
 /**
  * 初始化组织架构图
  */
-const initChart = async () => {
+const initOrganizationChart = async () => {
   if (!chartRef.value) return;
   
   try {
@@ -151,7 +146,7 @@ const initChart = async () => {
     const data = await fetchOrganizationData();
     
     // 配置项
-    const option = {
+    const chartOption = {
       backgroundColor: '#f5f5f5',
       tooltip: {
         trigger: 'item',
@@ -211,7 +206,7 @@ const initChart = async () => {
     };
     
     // 渲染图表
-    chartInstance.setOption(option);
+    chartInstance.setOption(chartOption);
   } catch (error) {
     console.error('初始化组织架构图失败:', error);
     message.error('初始化组织架构图失败，请稍后重试');
@@ -219,26 +214,26 @@ const initChart = async () => {
 };
 
 /**
- * 刷新架构
+ * 刷新组织架构图
  */
-const handleRefresh = async () => {
-  await initChart();
+const handleRefreshChart = async () => {
+  await initOrganizationChart();
   message.success('组织架构已刷新');
 };
 
 /**
- * 折叠架构
+ * 折叠组织架构图
  */
-const handleCollapse = async () => {
+const handleCollapseChart = async () => {
   if (!chartInstance) return;
   
   try {
-    loading.value = true;
+    isLoading.value = true;
     // 获取组织架构数据
     const data = await fetchOrganizationData();
     
     // 配置项，设置为只显示根节点
-    const option = {
+    const chartOption = {
       backgroundColor: '#f5f5f5',
       tooltip: {
         trigger: 'item',
@@ -299,30 +294,30 @@ const handleCollapse = async () => {
     };
     
     // 应用配置项
-    chartInstance.setOption(option);
+    chartInstance.setOption(chartOption);
     
     message.success('组织架构已折叠');
   } catch (error) {
     console.error('折叠组织架构失败:', error);
     message.error('折叠组织架构失败，请稍后重试');
   } finally {
-    loading.value = false;
+    isLoading.value = false;
   }
 };
 
 /**
- * 展开架构
+ * 展开组织架构图
  */
-const handleExpand = async () => {
+const handleExpandChart = async () => {
   if (!chartInstance) return;
   
   try {
-    loading.value = true;
+    isLoading.value = true;
     // 获取组织架构数据
     const data = await fetchOrganizationData();
     
     // 配置项，设置为展开所有层级
-    const option = {
+    const chartOption = {
       backgroundColor: '#f5f5f5',
       tooltip: {
         trigger: 'item',
@@ -383,35 +378,35 @@ const handleExpand = async () => {
     };
     
     // 应用配置项
-    chartInstance.setOption(option);
+    chartInstance.setOption(chartOption);
     
     message.success('组织架构已展开');
   } catch (error) {
     console.error('展开组织架构失败:', error);
     message.error('展开组织架构失败，请稍后重试');
   } finally {
-    loading.value = false;
+    isLoading.value = false;
   }
 };
 
 /**
- * 导出图片
+ * 导出组织架构图片
  */
-const handleExport = () => {
+const handleExportImage = () => {
   if (!chartInstance) return;
   
   try {
     // 获取图片URL
-    const url = chartInstance.getDataURL({
+    const imageUrl = chartInstance.getDataURL({
       pixelRatio: 2,
       backgroundColor: '#f5f5f5'
     });
     
     // 创建下载链接
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `组织架构图_${new Date().toISOString().slice(0, 10)}.png`;
-    link.click();
+    const downloadLink = document.createElement('a');
+    downloadLink.href = imageUrl;
+    downloadLink.download = `组织架构图_${new Date().toISOString().slice(0, 10)}.png`;
+    downloadLink.click();
     
     message.success('组织架构图片导出成功');
   } catch (error) {
@@ -421,7 +416,7 @@ const handleExport = () => {
 };
 
 /**
- * 导出PDF
+ * 导出组织架构PDF
  */
 const handleExportPDF = () => {
   // 暂时注释掉，因为可能缺少依赖
@@ -431,21 +426,21 @@ const handleExportPDF = () => {
 /**
  * 监听窗口大小变化，调整图表大小
  */
-const handleResize = () => {
+const handleChartResize = () => {
   chartInstance?.resize();
 };
 
 /**
  * 跳转到组织管理页面
  */
-const handleOrganizationAdmin = () => {
+const navigateToOrganizationAdmin = () => {
   router.push('/system/organization/organizationadmin');
 };
 
 // 生命周期钩子
 onMounted(async () => {
-  await initChart();
-  window.addEventListener('resize', handleResize);
+  await initOrganizationChart();
+  window.addEventListener('resize', handleChartResize);
 });
 
 onUnmounted(() => {
@@ -453,23 +448,14 @@ onUnmounted(() => {
     chartInstance.dispose();
     chartInstance = null;
   }
-  window.removeEventListener('resize', handleResize);
+  window.removeEventListener('resize', handleChartResize);
 });
 </script>
 
 <style scoped>
-.organization-chart-list-container {
+.organization-chart-container {
   width: 100%;
   padding: 1.5%;
-}
-
-.organization-chart-page {
-  padding: 24px;
-  min-height: calc(100vh - 64px);
-  margin-top: 64px;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .organization-chart-card {
@@ -480,26 +466,6 @@ onUnmounted(() => {
 
 .organization-chart-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .organization-chart-actions {
@@ -521,7 +487,7 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
-.organization-chart-container-wrapper {
+.organization-chart-wrapper {
   position: relative;
   width: 100%;
   height: 800px;
@@ -530,7 +496,7 @@ onUnmounted(() => {
   border-radius: 4px;
 }
 
-.organization-chart-container {
+.organization-chart-content {
   width: 100%;
   height: 100%;
   min-height: 800px;
@@ -563,7 +529,7 @@ onUnmounted(() => {
     margin-left: 0 !important;
   }
   
-  .organization-chart-container {
+  .organization-chart-content {
     height: 600px;
   }
 }
@@ -573,7 +539,7 @@ onUnmounted(() => {
     padding: 12px;
   }
   
-  .organization-chart-container {
+  .organization-chart-content {
     height: 500px;
   }
 }

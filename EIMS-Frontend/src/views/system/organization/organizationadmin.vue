@@ -1,15 +1,9 @@
 <template>
-  <a-config-provider :locale="zhCN">
-    <div class="organization-list-container">
-      <Header />
-      <div class="organization-page">
-        <a-card class="organization-card">
-          <div class="card-header">
-            <div class="header-right">
-            </div>
-          </div>
-          
-          <div class="organization-filter" style="overflow-x: auto;">
+  <div class="organization-admin-container">
+    <a-config-provider :locale="zhCN">
+      <div class="organization-admin-page">
+        <a-card class="organization-admin-card">
+          <div class="organization-admin-filter" style="overflow-x: auto;">
             <div style="width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
               <div style="flex: 1; min-width: 120px;">
                 <a-input v-model:value="filterForm.code" placeholder="请输入组织编码" @keyup.enter="handleSearch" allow-clear style="width: 100%;" />
@@ -47,22 +41,21 @@
             </div>
           </div>
           
-          <div class="organization-actions">
+          <div class="organization-admin-actions">
             <a-button type="primary" @click="handleAdd">添加组织</a-button>
             <a-button type="primary" style="margin-left: 8px; background-color: #52c41a;" @click="handleOrganizationType">组织类型</a-button>
             <a-button type="primary" style="margin-left: 8px; background-color: #1890ff;" @click="handleOrganizationStructure">组织架构</a-button>
           </div>
           
-          <div class="organization-table-container">
+          <div class="organization-admin-table-container">
             <a-table
               :columns="columns"
               :data-source="paginatedOrganizations"
               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
               :pagination="false"
               size="small"
-              class="organization-table"
+              class="organization-admin-table"
               row-key="id"
-              :scroll="{ x: 1000 }"
               :loading="loading"
               :expanded-row-keys="expandedRowKeys"
               @expand="handleExpand"
@@ -232,8 +225,7 @@
               :pageSizeOptions="PAGE_SIZE_OPTIONS"
               :showTotal="showTotal"
               :showQuickJumper="true"
-              class="organization-pagination"
-              :locale="PAGINATION_LOCALE"
+              class="organization-admin-pagination"
             />
           </div>
         </a-card>
@@ -247,7 +239,7 @@
           :cancel-text="'取消'"
           @ok="handleSaveOrganization"
           @cancel="closeOrganizationModal"
-          class="organization-detail-modal"
+          class="organization-admin-detail-modal"
           :body-style="{ maxHeight: '400px', overflowY: 'auto' }"
         >
           <div class="organization-form">
@@ -295,7 +287,7 @@
           <div class="organization-type-content">
             <!-- 操作按钮 -->
             <div class="type-actions" style="margin-bottom: 16px;">
-              <a-button type="primary" @click="handleAddType">
+              <a-button type="primary" @click="handleAddOrganizationType">
                 添加组织类型
               </a-button>
             </div>
@@ -312,8 +304,8 @@
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'action'">
                   <div style="display: flex; gap: 8px;">
-                    <a-tag color="blue" :bordered="false" @click="handleEditType(record)" style="cursor: pointer;">编辑</a-tag>
-                    <a-tag color="red" :bordered="false" @click="handleDeleteType(record.id)" style="cursor: pointer;">删除</a-tag>
+                    <a-tag color="blue" :bordered="false" @click="handleEditOrganizationType(record)" style="cursor: pointer;">编辑</a-tag>
+                    <a-tag color="red" :bordered="false" @click="handleDeleteOrganizationType(record.id)" style="cursor: pointer;">删除</a-tag>
                   </div>
                 </template>
               </template>
@@ -328,31 +320,30 @@
           width="500px"
           :ok-text="'保存'"
           :cancel-text="'取消'"
-          @ok="handleSaveType"
+          @ok="handleSaveOrganizationType"
           @cancel="closeTypeFormModal"
           class="type-form-modal"
         >
           <div class="type-form">
-            <a-form :model="currentType" layout="vertical">
+            <a-form :model="currentOrganizationType" layout="vertical">
               <a-form-item label="组织类型编码">
-                <a-input v-model:value="currentType.code" placeholder="组织类型编码" disabled />
+                <a-input v-model:value="currentOrganizationType.code" placeholder="组织类型编码" disabled />
               </a-form-item>
               <a-form-item label="组织类型名称" :rules="[{ required: true, message: '请输入组织类型名称' }]">
-                <a-input v-model:value="currentType.name" placeholder="请输入组织类型名称" @keyup.enter="handleSaveType" />
+                <a-input v-model:value="currentOrganizationType.name" placeholder="请输入组织类型名称" @keyup.enter="handleSaveOrganizationType" />
               </a-form-item>
             </a-form>
           </div>
         </a-modal>
       </div>
-    </div>
-  </a-config-provider>
+    </a-config-provider>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, shallowRef, h } from 'vue';
 import { message } from 'ant-design-vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import Header from '../../../components/layout/Header.vue';
 import { useRouter } from 'vue-router';
 
 interface Organization {
@@ -388,7 +379,7 @@ interface Pagination {
   pageSize: number;
 }
 
-interface OrganizationForm {
+interface OrganizationFormData {
   id: string;
   code: string;
   name: string;
@@ -399,7 +390,7 @@ interface OrganizationForm {
   parentId?: string;
 }
 
-interface TypeForm {
+interface OrganizationTypeFormData {
   id: string;
   code: string;
   name: string;
@@ -407,19 +398,7 @@ interface TypeForm {
 
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
 
-const PAGINATION_LOCALE = {
-  items_per_page: '条/页',
-  jump_to: '前往',
-  page: '页',
-  prev_page: '上一页',
-  next_page: '下一页',
-  prev_5: '向前 5 页',
-  next_5: '向后 5 页',
-  prev_3: '向前 3 页',
-  next_3: '向后 3 页',
-  first_page: '首页',
-  last_page: '末页'
-} as const;
+
 
 const ORG_PREFIX = 'YHG';
 const TYPE_PREFIX = 'TYPE';
@@ -448,7 +427,7 @@ const pagination = reactive<Pagination>({
   pageSize: 10
 });
 
-const currentOrganization = reactive<OrganizationForm>({
+const currentOrganization = reactive<OrganizationFormData>({
   id: '',
   code: '',
   name: '',
@@ -459,7 +438,7 @@ const currentOrganization = reactive<OrganizationForm>({
   parentId: ''
 });
 
-const currentType = reactive<TypeForm>({
+const currentOrganizationType = reactive<OrganizationTypeFormData>({
   id: '',
   code: '',
   name: ''
@@ -549,49 +528,41 @@ const columns = shallowRef([
   {
     title: '组织编码',
     dataIndex: 'code',
-    key: 'code',
-    width: 120
+    key: 'code'
   },
   {
     title: '组织名称',
     dataIndex: 'name',
-    key: 'name',
-    width: 150
+    key: 'name'
   },
   {
     title: '负责人',
     dataIndex: 'leader',
-    key: 'leader',
-    width: 100
+    key: 'leader'
   },
   {
     title: '负责人电话',
     dataIndex: 'leaderPhone',
-    key: 'leaderPhone',
-    width: 120
+    key: 'leaderPhone'
   },
   {
     title: '组织类型',
     dataIndex: 'organizationType',
-    key: 'organizationType',
-    width: 100
+    key: 'organizationType'
   },
   {
     title: '状态',
     dataIndex: 'status',
-    key: 'status',
-    width: 80
+    key: 'status'
   },
   {
     title: '创建时间',
     dataIndex: 'created',
-    key: 'created',
-    width: 160
+    key: 'created'
   },
   {
     title: '操作',
     key: 'action',
-    width: 150,
     fixed: 'right'
   }
 ]);
@@ -998,7 +969,7 @@ const handleOrganizationStructure = () => {
   router.push('/system/organization/organizationchart');
 };
 
-const handleAddType = () => {
+const handleAddOrganizationType = () => {
   isEditTypeMode.value = false;
   
   let maxIndex = 0;
@@ -1015,7 +986,7 @@ const handleAddType = () => {
   const newIndex = maxIndex + 1;
   const newTypeCode = generateTypeCode(TYPE_PREFIX, newIndex);
   
-  Object.assign(currentType, {
+  Object.assign(currentOrganizationType, {
     id: '',
     code: newTypeCode,
     name: ''
@@ -1024,9 +995,9 @@ const handleAddType = () => {
   typeFormModalVisible.value = true;
 };
 
-const handleEditType = (record: OrganizationType) => {
+const handleEditOrganizationType = (record: OrganizationType) => {
   isEditTypeMode.value = true;
-  Object.assign(currentType, {
+  Object.assign(currentOrganizationType, {
     id: record.id,
     code: record.code,
     name: record.name
@@ -1039,23 +1010,23 @@ const closeTypeFormModal = () => {
   typeFormModalVisible.value = false;
 };
 
-const handleSaveType = async () => {
-  if (!currentType.name) {
+const handleSaveOrganizationType = async () => {
+  if (!currentOrganizationType.name) {
     message.error('请输入组织类型名称');
     return;
   }
   
   try {
-    if (isEditTypeMode.value && currentType.id) {
+    if (isEditTypeMode.value && currentOrganizationType.id) {
       // 编辑组织类型
-      await updateOrganizationType(currentType.id, {
-        name: currentType.name
+      await updateOrganizationType(currentOrganizationType.id, {
+        name: currentOrganizationType.name
       });
     } else {
       // 添加组织类型
       await createOrganizationType({
-        code: currentType.code,
-        name: currentType.name
+        code: currentOrganizationType.code,
+        name: currentOrganizationType.name
       });
     }
     
@@ -1106,7 +1077,7 @@ const deleteOrganizationType = async (id: string) => {
   }
 };
 
-const handleDeleteType = async (id: string) => {
+const handleDeleteOrganizationType = async (id: string) => {
   await deleteOrganizationType(id);
 };
 
@@ -1116,58 +1087,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.organization-list-container {
+.organization-admin-container {
   width: 100%;
   padding: 1.5%;
 }
 
-.organization-page {
-  padding: 24px;
-  min-height: calc(100vh - 64px);
-  margin-top: 64px;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.organization-card {
+.organization-admin-card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
 }
 
-.organization-card:hover {
+.organization-admin-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.organization-filter {
+.organization-admin-filter {
   margin-bottom: 20px;
   padding: 16px;
   background-color: #f5f5f5;
   border-radius: 4px;
 }
 
-.organization-actions {
+.organization-admin-actions {
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid #d9d9d9;
@@ -1176,38 +1118,38 @@ onMounted(() => {
   gap: 8px;
 }
 
-.organization-actions :deep(.ant-btn) {
+.organization-admin-actions :deep(.ant-btn) {
   transition: all 0.3s ease;
   border: none;
 }
 
-.organization-actions :deep(.ant-btn:hover) {
+.organization-admin-actions :deep(.ant-btn:hover) {
   opacity: 0.8;
   transform: translateY(-1px);
 }
 
-.organization-table {
+.organization-admin-table {
   border-radius: 4px;
 }
 
-.organization-table :deep(.ant-table-thead > tr > th) {
+.organization-admin-table :deep(.ant-table-thead > tr > th) {
   background-color: #fafafa;
   font-weight: 600;
   font-size: 14px;
 }
 
-.organization-table :deep(.ant-table-tbody > tr > td) {
+.organization-admin-table :deep(.ant-table-tbody > tr > td) {
   font-size: 13px;
   padding: 10px;
 }
 
-.organization-pagination {
+.organization-admin-pagination {
   margin-top: 16px;
   display: flex;
   justify-content: flex-end;
 }
 
-.organization-detail-modal {
+.organization-admin-detail-modal {
   border-radius: 8px;
 }
 
@@ -1243,57 +1185,55 @@ onMounted(() => {
 }
 
 @media (max-width: 1200px) {
-  .organization-page {
+  .organization-admin-page {
     padding: 20px;
   }
   
-  .organization-filter {
+  .organization-admin-filter {
     padding: 12px;
   }
 }
 
 @media (max-width: 992px) {
-  .organization-page {
+  .organization-admin-page {
     padding: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .organization-page {
+  .organization-admin-page {
     padding: 12px;
   }
   
-  .organization-filter {
+  .organization-admin-filter {
     padding: 12px;
   }
   
-  .organization-actions {
+  .organization-admin-actions {
     flex-direction: column;
   }
   
-  .organization-actions :deep(.ant-btn) {
+  .organization-admin-actions :deep(.ant-btn) {
     width: 100%;
     margin-left: 0 !important;
   }
 }
 
 @media (max-width: 576px) {
-  .organization-page {
+  .organization-admin-page {
     padding: 12px;
   }
   
-  .organization-pagination {
+  .organization-admin-pagination {
     justify-content: center;
   }
   
-  .organization-pagination :deep(.ant-pagination) {
+  .organization-admin-pagination :deep(.ant-pagination) {
     flex-wrap: wrap;
     justify-content: center;
   }
-}
-
-@media (max-width: 576px) {
-  .organization-detail-modal,
+  
+  .organization-admin-detail-modal,
   .organization-type-modal,
   .type-form-modal {
     width: 90% !important;

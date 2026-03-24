@@ -56,7 +56,7 @@
             <a-table
               :columns="columns"
               :data-source="paginatedRoles"
-              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: handleSelectChange }"
               :pagination="false"
               size="small"
               class="role-table"
@@ -88,7 +88,6 @@
               :showTotal="showTotal"
               :showQuickJumper="true"
               class="role-pagination"
-              :locale="PAGINATION_LOCALE"
             />
           </div>
         </a-card>
@@ -187,19 +186,7 @@ interface RoleForm {
 // 常量定义
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
 
-const PAGINATION_LOCALE = {
-  items_per_page: '条/页',
-  jump_to: '前往',
-  page: '页',
-  prev_page: '上一页',
-  next_page: '下一页',
-  prev_5: '向前 5 页',
-  next_5: '向后 5 页',
-  prev_3: '向前 3 页',
-  next_3: '向后 3 页',
-  first_page: '首页',
-  last_page: '末页'
-} as const;
+
 
 const ROLE_PREFIX = 'ROL';
 
@@ -404,7 +391,7 @@ const handleReset = () => {
 };
 
 // 选择行变化事件
-const onSelectChange = (keys: (string | number)[]) => {
+const handleSelectChange = (keys: (string | number)[]) => {
   selectedRowKeys.value = keys;
 };
 

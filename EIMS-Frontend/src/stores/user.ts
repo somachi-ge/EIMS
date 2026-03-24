@@ -6,7 +6,6 @@ interface User {
   name: string
   email: string
   phone: string
-  departmentId: number
   roleIds: number[]
   status: boolean
 }
@@ -35,8 +34,8 @@ export const useUserStore = defineStore('user', {
         // 模拟API请求
         setTimeout(() => {
           this.users = [
-            { id: 1, username: 'admin', name: '管理员', email: 'admin@example.com', phone: '13800138000', departmentId: 1, roleIds: [1], status: true },
-            { id: 2, username: 'user1', name: '用户1', email: 'user1@example.com', phone: '13800138001', departmentId: 2, roleIds: [2], status: true }
+            { id: 1, username: 'admin', name: '管理员', email: 'admin@example.com', phone: '13800138000', roleIds: [1], status: true },
+            { id: 2, username: 'user1', name: '用户1', email: 'user1@example.com', phone: '13800138001', roleIds: [2], status: true }
           ]
           this.loading = false
         }, 1000)
@@ -50,7 +49,7 @@ export const useUserStore = defineStore('user', {
       try {
         // 模拟API请求
         setTimeout(() => {
-          this.currentUser = { id: 1, username: 'admin', name: '管理员', email: 'admin@example.com', phone: '13800138000', departmentId: 1, roleIds: [1], status: true }
+          this.currentUser = { id: 1, username: 'admin', name: '管理员', email: 'admin@example.com', phone: '13800138000', roleIds: [1], status: true }
           this.loading = false
         }, 1000)
       } catch (error) {

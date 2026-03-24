@@ -7,11 +7,11 @@
             <div class="header-right">
               <div class="analysis-tabs">
                 <a-tag 
-                  v-for="option in ANALYSIS_OPTIONS" 
+                  v-for="option in analysisOptions" 
                   :key="option.value"
                   color="blue" 
                   :class="['analysis-tag', analysisType === option.value ? 'active' : '']"
-                  @click="switchAnalysis(option.value)"
+                  @click="handleAnalysisTypeChange(option.value)"
                 >
                   {{ option.label }}
                 </a-tag>
@@ -43,11 +43,11 @@
             <div class="header-right">
               <div class="analysis-tabs">
                 <a-tag 
-                  v-for="option in LEVEL_OPTIONS" 
+                  v-for="option in levelOptions" 
                   :key="option.value"
                   color="blue" 
                   :class="['analysis-tag', levelType === option.value ? 'active' : '']"
-                  @click="switchLevelAnalysis(option.value)"
+                  @click="handleLevelTypeChange(option.value)"
                 >
                   {{ option.label }}
                 </a-tag>
@@ -79,11 +79,11 @@
             <div class="header-right">
               <div class="analysis-tabs">
                 <a-tag 
-                  v-for="option in TREND_OPTIONS" 
+                  v-for="option in trendOptions" 
                   :key="option.value"
                   color="blue" 
                   :class="['analysis-tag', trendType === option.value ? 'active' : '']"
-                  @click="switchTrendAnalysis(option.value)"
+                  @click="handleTrendTypeChange(option.value)"
                 >
                   {{ option.label }}
                 </a-tag>
@@ -116,19 +116,19 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 
-const ANALYSIS_OPTIONS = [
+const analysisOptions = [
   { value: 'day', label: '按日' },
   { value: 'week', label: '按周' },
   { value: 'month', label: '按月' }
 ]
 
-const LEVEL_OPTIONS = [
+const levelOptions = [
   { value: 'all', label: '全部' },
   { value: 'error', label: '错误' },
   { value: 'warning', label: '警告' }
 ]
 
-const TREND_OPTIONS = [
+const trendOptions = [
   { value: 'operations', label: '操作数' },
   { value: 'errors', label: '错误数' },
   { value: 'response', label: '响应时间' }
@@ -385,17 +385,17 @@ const updateTrendChart = () => {
   trendChart.setOption(option)
 }
 
-const switchAnalysis = (type: string) => {
+const handleAnalysisTypeChange = (type: string) => {
   analysisType.value = type
   updateOperationChart()
 }
 
-const switchLevelAnalysis = (type: string) => {
+const handleLevelTypeChange = (type: string) => {
   levelType.value = type
   updateLevelChart()
 }
 
-const switchTrendAnalysis = (type: string) => {
+const handleTrendTypeChange = (type: string) => {
   trendType.value = type
   updateTrendChart()
 }

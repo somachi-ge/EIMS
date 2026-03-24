@@ -1,44 +1,41 @@
 <template>
-  <AppLayout>
-    <div class="system-monitor-page">
-      <a-card title="系统监控">
-        <div class="card-content">
-          <div class="monitor-stats">
-            <div class="stat-item">
-              <div class="stat-value">{{ cpuUsage }}%</div>
-              <div class="stat-label">CPU使用率</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">{{ memoryUsage }}%</div>
-              <div class="stat-label">内存使用率</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">{{ diskUsage }}%</div>
-              <div class="stat-label">磁盘使用率</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">{{ networkSpeed }}</div>
-              <div class="stat-label">网络速度</div>
-            </div>
+  <div class="system-monitor-page">
+    <a-card>
+      <div class="card-content">
+        <div class="monitor-stats">
+          <div class="stat-item">
+            <div class="stat-value">{{ cpuUsage }}%</div>
+            <div class="stat-label">CPU使用率</div>
           </div>
-          <div class="monitor-charts">
-            <a-card title="CPU使用趋势" class="chart-card">
-              <div id="cpuChart" style="height: 300px;"></div>
-            </a-card>
-            <a-card title="内存使用趋势" class="chart-card">
-              <div id="memoryChart" style="height: 300px;"></div>
-            </a-card>
+          <div class="stat-item">
+            <div class="stat-value">{{ memoryUsage }}%</div>
+            <div class="stat-label">内存使用率</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{ diskUsage }}%</div>
+            <div class="stat-label">磁盘使用率</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{ networkSpeed }}</div>
+            <div class="stat-label">网络速度</div>
           </div>
         </div>
-      </a-card>
-    </div>
-  </AppLayout>
+        <div class="monitor-charts">
+          <a-card title="CPU使用趋势" class="chart-card">
+            <div id="cpuChart" style="height: 300px;"></div>
+          </a-card>
+          <a-card title="内存使用趋势" class="chart-card">
+            <div id="memoryChart" style="height: 300px;"></div>
+          </a-card>
+        </div>
+      </div>
+    </a-card>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
-import AppLayout from '../../../components/layout/AppLayout.vue'
 
 const cpuUsage = ref('45')
 const memoryUsage = ref('68')

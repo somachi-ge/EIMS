@@ -134,7 +134,7 @@
             </a-card>
             <div class="modal-system-name">操作日志</div>
           </div>
-          <div class="modal-system-item" @click="handleSystemLogs">
+          <div class="modal-system-item" @click="handleSystemLog">
             <a-card 
               :style="{ backgroundColor: '#fa8c16', border: 'none' }" 
               class="modal-system-card"
@@ -146,7 +146,7 @@
             </a-card>
             <div class="modal-system-name">系统日志</div>
           </div>
-          <div class="modal-system-item" @click="handleViewSystemLogs">
+          <div class="modal-system-item" @click="handleLogAnalysis">
             <a-card 
               :style="{ backgroundColor: '#1890ff', border: 'none' }" 
               class="modal-system-card"
@@ -194,6 +194,98 @@
           </div>
         </div>
       </a-modal>
+      <a-modal
+        v-model:visible="systemSettingsModalVisible"
+        :width="'30%'"
+        :footer="null"
+        :mask-closable="false"
+        :closable="true"
+      >
+        <div style="display: flex; justify-content: center; gap: 40px; padding: 20px 0;">
+          <div class="modal-system-item" @click="handleBasicConfig">
+            <a-card 
+              :style="{ backgroundColor: '#1890ff', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <SettingOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">基础配置</div>
+          </div>
+          <div class="modal-system-item" @click="handleEmailConfig">
+            <a-card 
+              :style="{ backgroundColor: '#722ed1', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <CodeOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">邮件配置</div>
+          </div>
+          <div class="modal-system-item" @click="handleNotificationConfig">
+            <a-card 
+              :style="{ backgroundColor: '#13c2c2', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <BellOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">通知配置</div>
+          </div>
+        </div>
+      </a-modal>
+      <a-modal
+        v-model:visible="monitoringModalVisible"
+        :width="'30%'"
+        :footer="null"
+        :mask-closable="false"
+        :closable="true"
+      >
+        <div style="display: flex; justify-content: center; gap: 40px; padding: 20px 0;">
+          <div class="modal-system-item" @click="handleSystemMonitor">
+            <a-card 
+              :style="{ backgroundColor: '#1890ff', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <MonitorOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">系统监控</div>
+          </div>
+          <div class="modal-system-item" @click="handleServiceMonitor">
+            <a-card 
+              :style="{ backgroundColor: '#722ed1', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <InteractionOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">服务监控</div>
+          </div>
+          <div class="modal-system-item" @click="handleUserActivity">
+            <a-card 
+              :style="{ backgroundColor: '#13c2c2', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <UserOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">用户活动</div>
+          </div>
+        </div>
+      </a-modal>
     </div>
     <router-view v-else></router-view>
   </MainLayout>
@@ -202,6 +294,7 @@
 <script setup lang="ts">
 import MainLayout from '../../components/layout/MainLayout.vue'
 import { shallowRef, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   CodeOutlined,
   TeamOutlined,
@@ -217,7 +310,8 @@ import {
   LoginOutlined,
   InteractionOutlined,
   MonitorOutlined,
-  AreaChartOutlined
+  AreaChartOutlined,
+  BellOutlined
 } from '@ant-design/icons-vue'
 
 interface System {
@@ -227,12 +321,14 @@ interface System {
   path?: string
 }
 
-const SYSTEM_DATA: System[] = [
+const systemData: System[] = [
   { name: '编码规则', icon: CodeOutlined, color: '#cf1322' },
   { name: '组织管理', icon: TeamOutlined, color: '#7cb305' },
   { name: '权限配置', icon: SettingOutlined, color: '#08979c' },
   { name: '数据维护', icon: TableOutlined, color: '#531dab' },
   { name: '日志管理', icon: ConsoleSqlOutlined, color: '#d46b08' },
+  { name: '监控中心', icon: MonitorOutlined, color: '#13c2c2' },
+  { name: '系统设置', icon: SettingOutlined, color: '#722ed1' },
   { name: '帮助中心', icon: QuestionCircleOutlined, color: '#1890ff' }
 ]
 
@@ -249,17 +345,28 @@ const ROUTE_MAP: Record<string, string> = {
 
   '备份列表': '/system/backup/list',
   '数据恢复': '/system/backup/restore',
-  '架构管理': '/system/organization/organizationchart',
-  '组织架构': '/system/organization/organizationadmin',
+  '架构管理': '/system/organization/organizationadmin',
+  '组织架构': '/system/organization/organizationchart',
   '编码规则': '/system/config/basic',
+  '系统设置': '/system/settings',
+  '监控中心': '/system/monitor',
+  '系统监控': '/system/monitor/system',
+  '服务监控': '/system/monitor/service',
+  '用户活动': '/system/monitor/user',
+  '基础配置': '/system/config/basic',
+  '邮件配置': '/system/config/email',
+  '通知配置': '/system/config/notification',
   '帮助中心': '/help'
 }
 
-const systems = shallowRef<System[]>(SYSTEM_DATA)
+const router = useRouter()
+const systems = shallowRef<System[]>(systemData)
 const dataManagementModalVisible = ref(false)
 const systemManagementModalVisible = ref(false)
 const systemLogsModalVisible = ref(false)
 const organizationManagementModalVisible = ref(false)
+const systemSettingsModalVisible = ref(false)
+const monitoringModalVisible = ref(false)
 
 const handleSystemClick = (systemName: string) => {
   if (systemName === '数据维护') {
@@ -270,11 +377,15 @@ const handleSystemClick = (systemName: string) => {
     systemLogsModalVisible.value = true
   } else if (systemName === '组织管理') {
     organizationManagementModalVisible.value = true
+  } else if (systemName === '系统设置') {
+    systemSettingsModalVisible.value = true
+  } else if (systemName === '监控中心') {
+    monitoringModalVisible.value = true
   } else {
     const path = ROUTE_MAP[systemName]
     if (path) {
       try {
-        window.open(path, '_blank')
+        router.push(path)
       } catch (error) {
         console.error('页面跳转失败:', error)
       }
@@ -287,7 +398,7 @@ const handleDataRestore = () => {
   const path = ROUTE_MAP['数据恢复']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -298,7 +409,7 @@ const handleBackupList = () => {
   const path = ROUTE_MAP['备份列表']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -309,7 +420,7 @@ const handleUserManagement = () => {
   const path = ROUTE_MAP['用户管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -320,7 +431,7 @@ const handleRoleManagement = () => {
   const path = ROUTE_MAP['角色管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -331,18 +442,18 @@ const handlePermissionManagement = () => {
   const path = ROUTE_MAP['权限管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
   }
 }
 
-const handleViewSystemLogs = () => {
+const handleLogAnalysis = () => {
   const path = ROUTE_MAP['日志分析']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -353,18 +464,18 @@ const handleOperationLogs = () => {
   const path = ROUTE_MAP['操作日志']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
   }
 }
 
-const handleSystemLogs = () => {
+const handleSystemLog = () => {
   const path = ROUTE_MAP['系统日志']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -375,7 +486,7 @@ const handleLoginLogs = () => {
   const path = ROUTE_MAP['登录日志']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -386,7 +497,7 @@ const handleOrganizationStructure = () => {
   const path = ROUTE_MAP['架构管理']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
     }
@@ -397,9 +508,75 @@ const handleOrganization = () => {
   const path = ROUTE_MAP['组织架构']
   if (path) {
     try {
-      window.open(path, '_blank')
+      router.push(path)
     } catch (error) {
       console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleBasicConfig = () => {
+  const path = ROUTE_MAP['基础配置']
+  if (path) {
+    try {
+      router.push(path)
+    } catch (error) {
+      console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleEmailConfig = () => {
+  const path = ROUTE_MAP['邮件配置']
+  if (path) {
+    try {
+      router.push(path)
+    } catch (error) {
+      console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleNotificationConfig = () => {
+  const path = ROUTE_MAP['通知配置']
+  if (path) {
+    try {
+      router.push(path)
+    } catch (error) {
+      console.error('页面跳转失败:', error)
+    }
+  }
+}
+
+const handleSystemMonitor = () => {
+  const path = ROUTE_MAP['系统监控']
+  if (path) {
+    try {
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面打开失败:', error)
+    }
+  }
+}
+
+const handleServiceMonitor = () => {
+  const path = ROUTE_MAP['服务监控']
+  if (path) {
+    try {
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面打开失败:', error)
+    }
+  }
+}
+
+const handleUserActivity = () => {
+  const path = ROUTE_MAP['用户活动']
+  if (path) {
+    try {
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面打开失败:', error)
     }
   }
 }

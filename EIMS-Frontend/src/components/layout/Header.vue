@@ -17,6 +17,10 @@
         <a-menu-item key="platform" @click="navigateTo('/platform')">平台</a-menu-item>
         <a-menu-item key="app" @click="navigateTo('/application')">应用</a-menu-item>
         <a-menu-item key="management" @click="navigateTo('/management')">管理</a-menu-item>
+        <template v-if="isProfilePage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="profile" @click="navigateTo('/system/profile')">个人中心</a-menu-item>
+        </template>
         <template v-if="isUserListPage">
           <a-menu-item class="nav-divider">|</a-menu-item>
           <a-menu-item key="user-list" @click="navigateTo('/system/user')">用户管理</a-menu-item>
@@ -65,6 +69,38 @@
           <a-menu-item class="nav-divider">|</a-menu-item>
           <a-menu-item key="message-center" @click="navigateTo('/system/notification/message')">消息中心</a-menu-item>
         </template>
+        <template v-if="isOrganizationAdminPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="organization-admin" @click="navigateTo('/system/organization/organizationadmin')">架构管理</a-menu-item>
+        </template>
+        <template v-if="isOrganizationChartPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="organization-chart" @click="navigateTo('/system/organization/organizationchart')">组织架构</a-menu-item>
+        </template>
+        <template v-if="isBasicConfigPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="basic-config" @click="navigateTo('/system/config/basic')">基础配置</a-menu-item>
+        </template>
+        <template v-if="isEmailConfigPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="email-config" @click="navigateTo('/system/config/email')">邮件配置</a-menu-item>
+        </template>
+        <template v-if="isNotificationConfigPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="notification-config" @click="navigateTo('/system/config/notification')">通知配置</a-menu-item>
+        </template>
+        <template v-if="isSystemMonitorPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="system-monitor" @click="navigateTo('/system/monitor/system')">系统监控</a-menu-item>
+        </template>
+        <template v-if="isServiceMonitorPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="service-monitor" @click="navigateTo('/system/monitor/service')">服务监控</a-menu-item>
+        </template>
+        <template v-if="isUserActivityPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="user-activity" @click="navigateTo('/system/monitor/user')">用户活动</a-menu-item>
+        </template>
       </a-menu>
     </div>
     <div class="header-right">
@@ -86,13 +122,9 @@
         </a>
         <template #overlay>
           <a-menu>
-            <a-menu-item key="profile">
+            <a-menu-item key="profile" @click="navigateTo('/system/profile')">
               <UserOutlined />
               <span>个人中心</span>
-            </a-menu-item>
-            <a-menu-item key="password">
-              <LockOutlined />
-              <span>修改密码</span>
             </a-menu-item>
             <a-menu-item key="help" @click="navigateTo('/help')">
               <QuestionCircleOutlined />
@@ -112,7 +144,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { BellOutlined, DownOutlined, UpOutlined, UserOutlined, LockOutlined, LogoutOutlined, UsergroupAddOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
+import { BellOutlined, DownOutlined, UpOutlined, UserOutlined, LogoutOutlined, UsergroupAddOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -136,6 +168,15 @@ const selectedKey = computed(() => {
   if (path === '/system/user') return 'user-list'
   if (path === '/system/role') return 'role-list'
   if (path.startsWith('/system/role/permission/')) return 'permission-list'
+  if (path === '/system/organization/organizationadmin') return 'organization-admin'
+  if (path === '/system/organization/organizationchart') return 'organization-chart'
+  if (path === '/system/profile') return 'profile'
+  if (path === '/system/config/basic') return 'basic-config'
+  if (path === '/system/config/email') return 'email-config'
+  if (path === '/system/config/notification') return 'notification-config'
+  if (path === '/system/monitor/system') return 'system-monitor'
+  if (path === '/system/monitor/service') return 'service-monitor'
+  if (path === '/system/monitor/user') return 'user-activity'
   if (path === '/management' || path.startsWith('/system')) return 'management'
   return ''
 })
@@ -200,6 +241,51 @@ const isPermissionListPage = computed(() => {
   return route.path.startsWith('/system/role/permission/')
 })
 
+// 判断是否在组织管理页面
+const isOrganizationAdminPage = computed(() => {
+  return route.path === '/system/organization/organizationadmin'
+})
+
+// 判断是否在组织架构页面
+const isOrganizationChartPage = computed(() => {
+  return route.path === '/system/organization/organizationchart'
+})
+
+// 判断是否在个人中心页面
+const isProfilePage = computed(() => {
+  return route.path === '/system/profile'
+})
+
+// 判断是否在基础配置页面
+const isBasicConfigPage = computed(() => {
+  return route.path === '/system/config/basic'
+})
+
+// 判断是否在邮件配置页面
+const isEmailConfigPage = computed(() => {
+  return route.path === '/system/config/email'
+})
+
+// 判断是否在通知配置页面
+const isNotificationConfigPage = computed(() => {
+  return route.path === '/system/config/notification'
+})
+
+// 判断是否在系统监控页面
+const isSystemMonitorPage = computed(() => {
+  return route.path === '/system/monitor/system'
+})
+
+// 判断是否在服务监控页面
+const isServiceMonitorPage = computed(() => {
+  return route.path === '/system/monitor/service'
+})
+
+// 判断是否在用户活动页面
+const isUserActivityPage = computed(() => {
+  return route.path === '/system/monitor/user'
+})
+
 // 导航到指定路由
 const navigateTo = (path: string) => {
   router.push(path)
@@ -224,6 +310,8 @@ const handleDropdownVisibleChange = (visible: boolean) => {
 .header-left {
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .logo {
@@ -243,13 +331,16 @@ const handleDropdownVisibleChange = (visible: boolean) => {
 }
 
 .logo-text {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .nav-menu {
   border-bottom: none;
   font-size: 16px; /* 调整这里的字体大小 */
+  flex: 1;
+  min-width: 0;
 }
 
 .nav-divider {

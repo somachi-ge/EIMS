@@ -37,7 +37,7 @@
             <a-table
               :columns="columns"
               :data-source="paginatedRestores"
-              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: handleSelectChange }"
               :pagination="false"
               size="small"
               class="restore-table"
@@ -175,7 +175,7 @@
             <a-table
               :columns="backupColumns"
               :data-source="availableBackups"
-              :row-selection="{ selectedRowKeys: selectedBackupKeys, onChange: onBackupSelectChange }"
+              :row-selection="{ selectedRowKeys: selectedBackupKeys, onChange: handleBackupSelectChange }"
               size="small"
               class="restore-table"
               row-key="id"
@@ -547,7 +547,7 @@ const handleReset = () => {
  * 选择行变化事件
  * @param {Array} keys 选中的行 keys
  */
-const onSelectChange = (keys: (string | number)[]) => {
+const handleSelectChange = (keys: (string | number)[]) => {
   selectedRowKeys.value = keys;
 };
 
@@ -555,7 +555,7 @@ const onSelectChange = (keys: (string | number)[]) => {
  * 备份选择变化事件
  * @param {Array} keys 选中的备份 keys
  */
-const onBackupSelectChange = (keys: (string | number)[]) => {
+const handleBackupSelectChange = (keys: (string | number)[]) => {
   selectedBackupKeys.value = keys;
 };
 

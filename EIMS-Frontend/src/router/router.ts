@@ -17,22 +17,22 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/auth/login.vue')
+    component: () => import('../views/auth/Login.vue')
   },
   {
     path: '/application',
     name: 'Application',
-    component: () => import('../views/application/application.vue')
+    component: () => import('../views/application/Application.vue')
   },
   {
     path: '/platform',
     name: 'Platform',
-    component: () => import('../views/platform/platform.vue')
+    component: () => import('../views/platform/Platform.vue')
   },
   {
     path: '/system',
     name: 'System',
-    component: () => import('../views/system/system.vue'),
+    component: () => import('../views/system/System.vue'),
     children: [
       {
         path: 'user',
@@ -49,21 +49,7 @@ const routes: RouteRecordRaw[] = [
         name: 'PermissionAssign',
         component: () => import('../views/system/role/PermissionList.vue')
       },
-      {
-        path: 'department',
-        name: 'DepartmentList',
-        component: () => import('../views/system/department/DepartmentList.vue')
-      },
-      {
-        path: 'department/add',
-        name: 'DepartmentAdd',
-        component: () => import('../views/system/department/DepartmentAdd.vue')
-      },
-      {
-        path: 'department/edit/:id',
-        name: 'DepartmentEdit',
-        component: () => import('../views/system/department/DepartmentEdit.vue')
-      },
+
       {
         path: 'config/basic',
         name: 'BasicConfig',
@@ -131,6 +117,25 @@ const routes: RouteRecordRaw[] = [
         name: 'MessageCenter',
         component: () => import('../views/system/notification/MessageCenter.vue')
       },
+      {
+        path: 'organization/organizationadmin',
+        name: 'OrganizationAdmin',
+        component: () => import('../views/system/organization/OrganizationAdmin.vue')
+      },
+      {
+        path: 'organization/organizationchart',
+        name: 'OrganizationChart',
+        component: () => import('../views/system/organization/OrganizationChart.vue')
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('../views/system/profile/Profile.vue')
+      },
+      {
+        path: 'monitor',
+        redirect: 'monitor/system'
+      },
     ]
   },
   {
@@ -141,7 +146,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/contacts',
     name: 'ContactList',
-    component: () => import('../views/contacts/contactlist.vue')
+    component: () => import('../views/contacts/ContactList.vue')
   }
 ]
 

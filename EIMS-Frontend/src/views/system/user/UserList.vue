@@ -61,7 +61,7 @@
             <a-table
               :columns="columns"
               :data-source="paginatedUsers"
-              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: handleSelectChange }"
               :pagination="false"
               size="small"
               class="user-table"
@@ -84,17 +84,18 @@
               </template>
             </a-table>
             
-            <a-pagination
-              v-model:current="pagination.current"
-              v-model:pageSize="pagination.pageSize"
-              :total="filteredUsers.length"
-              :showSizeChanger="true"
-              :pageSizeOptions="PAGE_SIZE_OPTIONS"
-              :showTotal="showTotal"
-              :showQuickJumper="true"
-              class="user-pagination"
-              :locale="PAGINATION_LOCALE"
-            />
+            <div class="user-pagination-container">
+              <a-pagination
+                v-model:current="pagination.current"
+                v-model:pageSize="pagination.pageSize"
+                :total="filteredUsers.length"
+                :showSizeChanger="true"
+                :pageSizeOptions="PAGE_SIZE_OPTIONS"
+                :showTotal="showTotal"
+                showQuickJumper
+                size="default"
+              />
+            </div>
           </div>
         </a-card>
         
@@ -174,20 +175,6 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
 // 常量定义
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
-
-const PAGINATION_LOCALE = {
-  items_per_page: '条/页',
-  jump_to: '前往',
-  page: '页',
-  prev_page: '上一页',
-  next_page: '下一页',
-  prev_5: '向前 5 页',
-  next_5: '向后 5 页',
-  prev_3: '向前 3 页',
-  next_3: '向后 3 页',
-  first_page: '首页',
-  last_page: '末页'
-} as const;
 
 // 类型定义
 interface User {
@@ -480,7 +467,7 @@ const handleReset = async () => {
  * 选择行变化事件
  * @param {Array} keys 选中的行 keys
  */
-const onSelectChange = (keys: (string | number)[]) => {
+const handleSelectChange = (keys: (string | number)[]) => {
   selectedRowKeys.value = keys;
 };
 
@@ -1104,10 +1091,10 @@ const toggleUserStatus = async (record: User) => {
   padding: 10px;
 }
 
-.user-pagination {
-  margin-top: 16px;
+.user-pagination-container {
   display: flex;
   justify-content: flex-end;
+  padding-top: 16px;
 }
 
 .user-detail-modal {
@@ -1155,11 +1142,11 @@ const toggleUserStatus = async (record: User) => {
     padding: 12px;
   }
   
-  .user-pagination {
+  .user-pagination-container {
     justify-content: center;
   }
   
-  .user-pagination :deep(.ant-pagination) {
+  .user-pagination-container :deep(.ant-pagination) {
     flex-wrap: wrap;
     justify-content: center;
   }
