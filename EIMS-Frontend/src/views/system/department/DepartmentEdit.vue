@@ -4,10 +4,11 @@
     <FormModal
       :visible="modalVisible"
       :title="'编辑部门'"
-      @close="handleClose"
-      @submit="handleSubmit"
+      :loading="loading"
+      @cancel="handleClose"
+      @ok="handleSubmit"
     >
-      <DepartmentForm @submit="formData = $event" :initial-data="formData" />
+      <DepartmentForm ref="departmentForm" :departments="departments" :initialValues="formData" />
     </FormModal>
   </div>
 </template>
@@ -22,13 +23,15 @@ import { useDepartmentStore } from '@/stores/department';
 const route = useRoute();
 const departmentStore = useDepartmentStore();
 const modalVisible = ref(true);
+const loading = ref(false);
+const departmentForm = ref<any>(null);
+const departments = ref<Array<{ id: number; name: string }>>([]);
 const formData = reactive({
-  id: '',
+  id: 0,
   name: '',
-  code: '',
-  parentId: '',
+  parentId: 0,
   description: '',
-  status: '1'
+  status: true
 });
 
 const handleClose = () => {
@@ -38,22 +41,37 @@ const handleClose = () => {
 
 const handleSubmit = async () => {
   try {
-    await departmentStore.updateDepartment(formData.id, formData);
-    modalVisible.value = false;
-    // 可以添加成功提示和路由跳转逻辑
+    if (departmentForm.value) {
+      const valid = await departmentForm.value.validateForm();
+      if (valid) {
+        loading.value = true;
+        const formData = departmentForm.value.getFormData();
+        // 这里应该调用API更新部门
+        console.log('更新部门:', formData);
+        // 模拟API请求
+        setTimeout(() => {
+          modalVisible.value = false;
+          // 可以添加成功提示和路由跳转逻辑
+        }, 1000);
+      }
+    }
   } catch (error) {
     console.error('编辑部门失败:', error);
+  } finally {
+    loading.value = false;
   }
 };
 
 onMounted(async () => {
-  const departmentId = route.params.id as string;
+  // 获取部门列表
+  await departmentStore.fetchDepartments();
+  departments.value = departmentStore.departments.map(dept => ({ id: dept.id, name: dept.name }));
+  
+  const departmentId = Number(route.params.id);
   if (departmentId) {
-    try {
-      const department = await departmentStore.getDepartmentById(departmentId);
+    const department = departmentStore.getDepartmentById(departmentId);
+    if (department) {
       Object.assign(formData, department);
-    } catch (error) {
-      console.error('获取部门信息失败:', error);
     }
   }
 });
