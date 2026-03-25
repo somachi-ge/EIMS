@@ -160,40 +160,7 @@
           </div>
         </div>
       </a-modal>
-      <a-modal
-        v-model:visible="organizationManagementModalVisible"
-        :width="'25%'"
-        :footer="null"
-        :mask-closable="false"
-        :closable="true"
-      >
-        <div style="display: flex; justify-content: center; gap: 40px; padding: 20px 0;">
-          <div class="modal-system-item" @click="handleOrganizationStructure">
-            <a-card 
-              :style="{ backgroundColor: '#52c41a', border: 'none' }" 
-              class="modal-system-card"
-              hoverable
-            >
-              <div class="modal-system-icon">
-                <FundOutlined />
-              </div>
-            </a-card>
-            <div class="modal-system-name">架构管理</div>
-          </div>
-          <div class="modal-system-item" @click="handleOrganization">
-            <a-card 
-              :style="{ backgroundColor: '#13c2c2', border: 'none' }" 
-              class="modal-system-card"
-              hoverable
-            >
-              <div class="modal-system-icon">
-                <TeamOutlined />
-              </div>
-            </a-card>
-            <div class="modal-system-name">组织架构</div>
-          </div>
-        </div>
-      </a-modal>
+
       <a-modal
         v-model:visible="systemSettingsModalVisible"
         :width="'30%'"
@@ -221,7 +188,7 @@
               hoverable
             >
               <div class="modal-system-icon">
-                <CodeOutlined />
+                <MailOutlined />
               </div>
             </a-card>
             <div class="modal-system-name">邮件配置</div>
@@ -296,9 +263,6 @@ import MainLayout from '../../components/layout/MainLayout.vue'
 import { shallowRef, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  CodeOutlined,
-  TeamOutlined,
-  FundOutlined,
   UserOutlined,
   ProfileOutlined,
   LockOutlined,
@@ -311,7 +275,8 @@ import {
   InteractionOutlined,
   MonitorOutlined,
   AreaChartOutlined,
-  BellOutlined
+  BellOutlined,
+  MailOutlined
 } from '@ant-design/icons-vue'
 
 interface System {
@@ -322,8 +287,6 @@ interface System {
 }
 
 const systemData: System[] = [
-  { name: '编码规则', icon: CodeOutlined, color: '#cf1322' },
-  { name: '组织管理', icon: TeamOutlined, color: '#7cb305' },
   { name: '权限配置', icon: SettingOutlined, color: '#08979c' },
   { name: '数据维护', icon: TableOutlined, color: '#531dab' },
   { name: '日志管理', icon: ConsoleSqlOutlined, color: '#d46b08' },
@@ -364,7 +327,6 @@ const systems = shallowRef<System[]>(systemData)
 const dataManagementModalVisible = ref(false)
 const systemManagementModalVisible = ref(false)
 const systemLogsModalVisible = ref(false)
-const organizationManagementModalVisible = ref(false)
 const systemSettingsModalVisible = ref(false)
 const monitoringModalVisible = ref(false)
 
@@ -375,12 +337,19 @@ const handleSystemClick = (systemName: string) => {
     systemManagementModalVisible.value = true
   } else if (systemName === '日志管理') {
     systemLogsModalVisible.value = true
-  } else if (systemName === '组织管理') {
-    organizationManagementModalVisible.value = true
   } else if (systemName === '系统设置') {
     systemSettingsModalVisible.value = true
   } else if (systemName === '监控中心') {
     monitoringModalVisible.value = true
+  } else if (systemName === '帮助中心') {
+    const path = ROUTE_MAP[systemName]
+    if (path) {
+      try {
+        window.open(path, '_blank')
+      } catch (error) {
+        console.error('页面打开失败:', error)
+      }
+    }
   } else {
     const path = ROUTE_MAP[systemName]
     if (path) {
@@ -493,35 +462,15 @@ const handleLoginLogs = () => {
   }
 }
 
-const handleOrganizationStructure = () => {
-  const path = ROUTE_MAP['架构管理']
-  if (path) {
-    try {
-      router.push(path)
-    } catch (error) {
-      console.error('页面跳转失败:', error)
-    }
-  }
-}
 
-const handleOrganization = () => {
-  const path = ROUTE_MAP['组织架构']
-  if (path) {
-    try {
-      router.push(path)
-    } catch (error) {
-      console.error('页面跳转失败:', error)
-    }
-  }
-}
 
 const handleBasicConfig = () => {
   const path = ROUTE_MAP['基础配置']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -530,9 +479,9 @@ const handleEmailConfig = () => {
   const path = ROUTE_MAP['邮件配置']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -541,9 +490,9 @@ const handleNotificationConfig = () => {
   const path = ROUTE_MAP['通知配置']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }

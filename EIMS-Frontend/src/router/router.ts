@@ -147,6 +147,26 @@ const routes: RouteRecordRaw[] = [
     path: '/contacts',
     name: 'ContactList',
     component: () => import('../views/contacts/ContactList.vue')
+  },
+  {
+    path: '/error/403',
+    name: 'Forbidden',
+    component: () => import('../views/error/Forbidden.vue')
+  },
+  {
+    path: '/error/500',
+    name: 'ServerError',
+    component: () => import('../views/error/ServerError.vue')
+  },
+  {
+    path: '/error/503',
+    name: 'ServiceUnavailable',
+    component: () => import('../views/error/ServiceUnavailable.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/error/NotFound.vue')
   }
 ]
 

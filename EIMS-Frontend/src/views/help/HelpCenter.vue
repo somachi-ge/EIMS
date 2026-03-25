@@ -4,7 +4,7 @@
       <div class="help-container">
         <a-card class="help-card">
           <div class="help-card-header">
-            <h3 class="help-card-title">帮助中心</h3>
+            <h3 class="help-card-title"></h3>
             <div class="help-header-right">
               <a-space>
                 <a-button type="primary" @click="handleFeedback">
@@ -13,12 +13,33 @@
                   </template>
                   提交反馈
                 </a-button>
-                <a-button @click="handleDownloadGuide">
+                <a-button @click="handlePreviewGuide">
                   <template #icon>
-                    <DownloadOutlined />
+                    <EyeOutlined />
                   </template>
-                  下载手册
+                  预览手册
                 </a-button>
+                <a-dropdown>
+                  <a-button>
+                    <template #icon>
+                      <DownloadOutlined />
+                    </template>
+                    下载手册
+                    <DownOutlined />
+                  </a-button>
+                  <template #overlay>
+                    <a-menu>
+                      <a-menu-item @click="downloadAsPDF">
+                        <FilePdfOutlined />
+                        PDF格式
+                      </a-menu-item>
+                      <a-menu-item @click="downloadAsWord">
+                        <FileWordOutlined />
+                        Word格式
+                      </a-menu-item>
+                    </a-menu>
+                  </template>
+                </a-dropdown>
               </a-space>
             </div>
           </div>
@@ -118,12 +139,63 @@
           </div>
         </a-card>
       </div>
+      
+      <!-- 反馈表单模态框 -->
+      <a-modal
+        v-model:visible="feedbackVisible"
+        title="提交反馈"
+        width="500px"
+        @ok="handleFeedbackSubmit"
+        @cancel="handleFeedbackCancel"
+      >
+        <div class="feedback-form">
+          <a-form layout="vertical">
+            <a-form-item label="反馈类型" required>
+              <a-select
+                v-model:value="feedbackForm.type"
+                placeholder="请选择反馈类型"
+                style="width: 100%"
+              >
+                <a-select-option
+                  v-for="type in feedbackTypes"
+                  :key="type.value"
+                  :value="type.value"
+                >
+                  {{ type.label }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+            
+            <a-form-item label="主题" required>
+              <a-input
+                v-model:value="feedbackForm.subject"
+                placeholder="请输入反馈主题"
+              />
+            </a-form-item>
+            
+            <a-form-item label="详细描述" required>
+              <a-textarea
+                v-model:value="feedbackForm.description"
+                placeholder="请详细描述您的问题或建议"
+                rows="4"
+              />
+            </a-form-item>
+            
+            <a-form-item label="联系方式（选填）">
+              <a-input
+                v-model:value="feedbackForm.contact"
+                placeholder="请留下您的联系方式，以便我们回复"
+              />
+            </a-form-item>
+          </a-form>
+        </div>
+      </a-modal>
     </a-config-provider>
   </MainLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef, h } from 'vue';
 import MainLayout from '../../components/layout/MainLayout.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import {
@@ -133,9 +205,13 @@ import {
   PhoneOutlined,
   MailOutlined,
   MessageOutlined,
-  DownloadOutlined
+  DownloadOutlined,
+  EyeOutlined,
+  FilePdfOutlined,
+  FileWordOutlined,
+  DownOutlined
 } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 
 interface QuickStartSection {
   title: string;
@@ -175,6 +251,22 @@ const CONTACT_ICONS = {
 } as const;
 
 const activeFaqKey = ref<string[]>(['faq1']);
+
+const feedbackForm = ref({
+  type: '',
+  subject: '',
+  description: '',
+  contact: ''
+});
+
+const feedbackVisible = ref(false);
+
+const feedbackTypes = [
+  { value: 'bug', label: '功能缺陷' },
+  { value: 'suggestion', label: '功能建议' },
+  { value: 'question', label: '使用问题' },
+  { value: 'other', label: '其他' }
+];
 
 const quickStart = shallowRef<QuickStartData>({
   title: '快速开始',
@@ -305,6 +397,50 @@ const featureGuides = shallowRef<FeatureGuide[]>([
       '系统性能分析',
       '异常情况预警'
     ]
+  },
+  {
+    id: 'guide7',
+    title: '日志管理',
+    description: '记录和分析系统操作日志',
+    items: [
+      '操作日志查询',
+      '系统日志分析',
+      '日志导出和归档',
+      '异常日志告警'
+    ]
+  },
+  {
+    id: 'guide8',
+    title: '通知管理',
+    description: '管理系统通知和消息',
+    items: [
+      '通知模板设置',
+      '消息发送管理',
+      '通知记录查询',
+      '通知偏好设置'
+    ]
+  },
+  {
+    id: 'guide9',
+    title: '报表管理',
+    description: '生成和导出系统报表',
+    items: [
+      '报表模板配置',
+      '数据统计分析',
+      '报表导出格式',
+      '定时报表生成'
+    ]
+  },
+  {
+    id: 'guide10',
+    title: '系统安全',
+    description: '保障系统安全运行',
+    items: [
+      '安全策略配置',
+      '访问控制管理',
+      '安全审计日志',
+      '漏洞扫描和修复'
+    ]
   }
 ]);
 
@@ -330,11 +466,87 @@ const supportContacts = shallowRef<SupportContact[]>([
 ]);
 
 const handleFeedback = () => {
-  message.info('提交反馈功能即将上线');
+  feedbackVisible.value = true;
 };
 
-const handleDownloadGuide = () => {
-  message.info('正在准备下载手册...');
+const handleFeedbackSubmit = () => {
+  // 验证表单
+  if (!feedbackForm.value.type || !feedbackForm.value.subject || !feedbackForm.value.description) {
+    message.error('请填写必填项');
+    return;
+  }
+  
+  // 模拟提交反馈
+  message.loading('正在提交反馈...', 1.5);
+  setTimeout(() => {
+    message.success('反馈提交成功，我们会尽快处理');
+    feedbackVisible.value = false;
+    // 重置表单
+    feedbackForm.value = {
+      type: '',
+      subject: '',
+      description: '',
+      contact: ''
+    };
+  }, 1500);
+};
+
+const handleFeedbackCancel = () => {
+  feedbackVisible.value = false;
+  // 重置表单
+  feedbackForm.value = {
+    type: '',
+    subject: '',
+    description: '',
+    contact: ''
+  };
+};
+
+const handlePreviewGuide = () => {
+  Modal.info({
+    title: '用户操作手册',
+    width: 600,
+    maskClosable: true,
+    content: h('div', { style: { padding: '20px' } }, [
+      h('h3', { style: { marginBottom: '16px', color: '#1890ff' } }, 'EIMS企业综合管理系统用户手册'),
+      h('p', { style: { marginBottom: '16px' } }, '本手册包含系统的完整使用指南，涵盖以下内容：'),
+      h('ul', { style: { marginBottom: '20px', paddingLeft: '20px' } }, [
+        h('li', { style: { marginBottom: '8px' } }, '系统概述与架构'),
+        h('li', { style: { marginBottom: '8px' } }, '快速入门指南'),
+        h('li', { style: { marginBottom: '8px' } }, '功能模块详解'),
+        h('li', { style: { marginBottom: '8px' } }, '常见问题解答'),
+        h('li', { style: { marginBottom: '8px' } }, '技术支持联系方式')
+      ]),
+      h('p', { style: { color: '#666' } }, '请通过下载功能获取完整的PDF或Word格式手册。')
+    ]),
+    onOk() {},
+  });
+};
+
+const downloadAsPDF = () => {
+  message.loading('正在生成PDF文件...', 1.5);
+  setTimeout(() => {
+    const link = document.createElement('a');
+    link.href = '/manuals/EIMS_User_Manual_V1.0.0.pdf';
+    link.download = 'EIMS用户操作手册_V1.0.0.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    message.success('PDF手册下载已开始');
+  }, 1500);
+};
+
+const downloadAsWord = () => {
+  message.loading('正在生成Word文件...', 1.5);
+  setTimeout(() => {
+    const link = document.createElement('a');
+    link.href = '/manuals/EIMS_User_Manual_V1.0.0.docx';
+    link.download = 'EIMS用户操作手册_V1.0.0.docx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    message.success('Word手册下载已开始');
+  }, 1500);
 };
 </script>
 
@@ -352,7 +564,7 @@ const handleDownloadGuide = () => {
 
 .help-card-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 12px;
@@ -370,6 +582,7 @@ const handleDownloadGuide = () => {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-left: 0;
 }
 
 .help-content {
@@ -583,5 +796,32 @@ const handleDownloadGuide = () => {
   .help-feature-guide-item p {
     font-size: 13px;
   }
+}
+
+/* 反馈表单样式 */
+.feedback-form {
+  padding: 10px 0;
+}
+
+.feedback-form .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.feedback-form .ant-form-item-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.feedback-form .ant-input,
+.feedback-form .ant-select-selector,
+.feedback-form .ant-input-textarea {
+  border-radius: 4px;
+}
+
+.feedback-form .ant-input:focus,
+.feedback-form .ant-select-selector:focus,
+.feedback-form .ant-input-textarea:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
 </style>

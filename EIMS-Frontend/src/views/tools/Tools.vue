@@ -30,19 +30,9 @@ import MainLayout from '../../components/layout/MainLayout.vue'
 import { shallowRef } from 'vue'
 import { message } from 'ant-design-vue'
 import {
-  TeamOutlined,
-  ProjectOutlined,
-  CustomerServiceOutlined,
-  UserOutlined,
-  AccountBookOutlined,
-  ToolOutlined,
   SwapOutlined,
-  ScheduleOutlined,
-  EnvironmentOutlined,
-  SettingOutlined,
-  CheckCircleOutlined,
-  ControlOutlined,
-  LineChartOutlined,
+  CodeOutlined,
+  TeamOutlined,
 } from '@ant-design/icons-vue'
 
 interface Application {
@@ -54,19 +44,9 @@ interface Application {
 }
 
 const APPLICATIONS: readonly Application[] = [
-  { id: 'cooffice', name: '协同办公', icon: TeamOutlined, color: '#1890ff', path: '/cooffice' },
-  { id: 'project', name: '项目管理', icon: ProjectOutlined, color: '#52c41a', path: '/project' },
-  { id: 'crm', name: '客户关系', icon: CustomerServiceOutlined, color: '#faad14', path: '/crm' },
-  { id: 'hr', name: '人力资源', icon: UserOutlined, color: '#f5222d', path: '/hr' },
-  { id: 'finance', name: '财务管理', icon: AccountBookOutlined, color: '#722ed1', path: '/finance' },
-  { id: 'asset', name: '资产管理', icon: ToolOutlined, color: '#13c2c2', path: '/asset' },
-  { id: 'supplychain', name: '供应链管理', icon: SwapOutlined, color: '#fa541c', path: '/supplychain' },
-  { id: 'schedule', name: '计划排程', icon: ScheduleOutlined, color: '#eb2f96', path: '/schedule' },
-  { id: 'warehouse', name: '仓库管理', icon: EnvironmentOutlined, color: '#1890ff', path: '/warehouse' },
-  { id: 'production', name: '生产管理', icon: SettingOutlined, color: '#52c41a', path: '/production' },
-  { id: 'quality', name: '质量管理', icon: CheckCircleOutlined, color: '#faad14', path: '/quality' },
-  { id: 'equipment', name: '设备管理', icon: ControlOutlined, color: '#f5222d', path: '/equipment' },
-  { id: 'energy', name: '能源管理', icon: LineChartOutlined, color: '#722ed1', path: '/energy' },
+  { id: 'code', name: '编码规则', icon: CodeOutlined, color: '#cf1322', path: '/system/config/basic' },
+  { id: 'organization', name: '组织管理', icon: TeamOutlined, color: '#7cb305', path: '/system/organization' },
+  { id: 'workflow', name: '工作流', icon: SwapOutlined, color: '#0958d9', path: '/workflow' },
 ]
 
 const applications = shallowRef<readonly Application[]>(APPLICATIONS)
