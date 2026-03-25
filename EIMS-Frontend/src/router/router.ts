@@ -20,14 +20,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/auth/Login.vue')
   },
   {
+    path: '/tools',
+    name: 'Tools',
+    component: () => import('../views/tools/Tools.vue')
+  },
+  {
     path: '/application',
     name: 'Application',
     component: () => import('../views/application/Application.vue')
-  },
-  {
-    path: '/platform',
-    name: 'Platform',
-    component: () => import('../views/platform/Platform.vue')
   },
   {
     path: '/system',

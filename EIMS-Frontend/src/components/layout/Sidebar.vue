@@ -8,13 +8,13 @@
         <span class="menu-icon">🏠</span>
         <span class="menu-text">首页</span>
       </router-link>
+      <router-link to="/tools" class="menu-item">
+        <span class="menu-icon">🔧</span>
+        <span class="menu-text">工具中心</span>
+      </router-link>
       <router-link to="/application" class="menu-item">
         <span class="menu-icon">📱</span>
         <span class="menu-text">应用管理</span>
-      </router-link>
-      <router-link to="/platform" class="menu-item">
-        <span class="menu-icon">🌐</span>
-        <span class="menu-text">平台管理</span>
       </router-link>
       <div class="menu-item has-submenu">
         <span class="menu-icon">⚙️</span>

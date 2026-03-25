@@ -14,8 +14,8 @@
         :selected-keys="[selectedKey]"
       >
         <a-menu-item key="home" @click="navigateTo('/home')">首页</a-menu-item>
-        <a-menu-item key="platform" @click="navigateTo('/platform')">平台</a-menu-item>
-        <a-menu-item key="app" @click="navigateTo('/application')">应用</a-menu-item>
+        <a-menu-item key="application" @click="navigateTo('/application')">应用</a-menu-item>
+        <a-menu-item key="tools" @click="navigateTo('/tools')">工具</a-menu-item>
         <a-menu-item key="management" @click="navigateTo('/management')">管理</a-menu-item>
         <template v-if="isProfilePage">
           <a-menu-item class="nav-divider">|</a-menu-item>
@@ -154,8 +154,8 @@ const isDropdownVisible = ref(false)
 const selectedKey = computed(() => {
   const path = route.path
   if (path === '/home' || path === '/') return 'home'
-  if (path === '/platform') return 'platform'
-  if (path === '/application') return 'app'
+  if (path === '/application') return 'application'
+  if (path === '/tools') return 'tools'
   if (path === '/help') return 'help-center'
   if (path === '/contacts') return 'contacts'
   if (path === '/system/notification/message') return 'message-center'

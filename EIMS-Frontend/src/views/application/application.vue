@@ -1,24 +1,23 @@
 <template>
   <MainLayout>
-    <div class="application-page">
-      <div class="application-grid">
+    <div class="platform-page">
+      <div class="platform-grid">
         <div 
-          v-for="(app, index) in applications" 
-          :key="app.id"
-          class="application-item"
+          v-for="(platform, index) in platforms" 
+          :key="platform.name" 
+          class="platform-item"
           :style="{ animationDelay: `${index * 0.05}s` }"
         >
-          <a-card
-            :style="{ backgroundColor: app.color, border: 'none' }"
-            class="application-card"
+          <a-card 
+            :style="{ backgroundColor: platform.color, border: 'none' }" 
+            class="platform-card"
             hoverable
-            @click="navigateToApplication(app)"
           >
-            <div class="application-icon">
-              <component :is="app.icon" />
+            <div class="platform-icon">
+              <component :is="platform.icon" />
             </div>
           </a-card>
-          <div class="application-name">{{ app.name }}</div>
+          <div class="platform-name">{{ platform.name }}</div>
         </div>
       </div>
     </div>
@@ -28,65 +27,79 @@
 <script setup lang="ts">
 import MainLayout from '../../components/layout/MainLayout.vue'
 import { shallowRef } from 'vue'
-import { message } from 'ant-design-vue'
 import {
-  TeamOutlined,
-  ProjectOutlined,
-  CustomerServiceOutlined,
-  UserOutlined,
-  AccountBookOutlined,
-  ToolOutlined,
-  SwapOutlined,
-  ScheduleOutlined,
-  EnvironmentOutlined,
-  SettingOutlined,
-  CheckCircleOutlined,
-  ControlOutlined,
+  AppstoreOutlined,
+  ForkOutlined,
+  WifiOutlined,
+  DatabaseOutlined,
   LineChartOutlined,
+  IdcardOutlined,
+  LockOutlined,
+  LinkOutlined,
+  ApiOutlined,
+  GatewayOutlined,
+  SwapOutlined,
+  ControlOutlined,
+  VideoCameraOutlined,
+  CodeOutlined,
+  ToolOutlined,
+  ShoppingOutlined,
+  SettingOutlined,
+  KeyOutlined,
+  SafetyOutlined,
+  CompassOutlined,
+  CloudOutlined,
+  BlockOutlined,
+  BookOutlined
 } from '@ant-design/icons-vue'
 
-interface Application {
-  id: string
+interface Platform {
   name: string
   icon: any
   color: string
-  path?: string
 }
 
-const APPLICATIONS: readonly Application[] = [
-  { id: 'cooffice', name: '协同办公系统', icon: TeamOutlined, color: '#1890ff', path: '/cooffice' },
-  { id: 'project', name: '项目管理系统', icon: ProjectOutlined, color: '#52c41a', path: '/project' },
-  { id: 'crm', name: '客户关系系统', icon: CustomerServiceOutlined, color: '#faad14', path: '/crm' },
-  { id: 'hr', name: '人力资源系统', icon: UserOutlined, color: '#f5222d', path: '/hr' },
-  { id: 'finance', name: '财务管理系统', icon: AccountBookOutlined, color: '#722ed1', path: '/finance' },
-  { id: 'asset', name: '资产管理系统', icon: ToolOutlined, color: '#13c2c2', path: '/asset' },
-  { id: 'supplychain', name: '供应链管理系统', icon: SwapOutlined, color: '#fa541c', path: '/supplychain' },
-  { id: 'schedule', name: '计划排程系统', icon: ScheduleOutlined, color: '#eb2f96', path: '/schedule' },
-  { id: 'warehouse', name: '仓库管理系统', icon: EnvironmentOutlined, color: '#1890ff', path: '/warehouse' },
-  { id: 'production', name: '生产管理系统', icon: SettingOutlined, color: '#52c41a', path: '/production' },
-  { id: 'quality', name: '质量管理系统', icon: CheckCircleOutlined, color: '#faad14', path: '/quality' },
-  { id: 'equipment', name: '设备管理系统', icon: ControlOutlined, color: '#f5222d', path: '/equipment' },
-  { id: 'energy', name: '能源管理系统', icon: LineChartOutlined, color: '#722ed1', path: '/energy' },
+const PLATFORM_ITEMS: Platform[] = [
+  { name: '基础设施', icon: AppstoreOutlined, color: '#cf1322' },
+  { name: '网络管理', icon: ForkOutlined, color: '#7cb305' },
+  { name: '物联接入', icon: WifiOutlined, color: '#d4380d' },
+  { name: '统一数据', icon: DatabaseOutlined, color: '#d48806' },
+  { name: '数据治理', icon: LineChartOutlined, color: '#c41d7f' },
+  { name: '身份认证', icon: IdcardOutlined, color: '#d4b106' },
+  { name: '访问管理', icon: LockOutlined, color: '#389e0d' },
+  { name: '系统集成', icon: LinkOutlined, color: '#1d39c4' },
+  { name: '接口管理', icon: ApiOutlined, color: '#08979c' },
+  { name: '服务总线', icon: GatewayOutlined, color: '#531dab' },
+  { name: '工作流', icon: SwapOutlined, color: '#0958d9' },
+  { name: '数据资产', icon: CloudOutlined, color: '#d46b08' },
+  { name: '设备接入', icon: ControlOutlined, color: '#cf1322' },
+  { name: '数字孪生', icon: VideoCameraOutlined, color: '#7cb305' },
+  { name: '算法管理', icon: CodeOutlined, color: '#d4380d' },
+  { name: '模型管理', icon: DatabaseOutlined, color: '#d48806' },
+  { name: '量子技术', icon: SettingOutlined, color: '#c41d7f' },
+  { name: '区块链', icon: BlockOutlined, color: '#d4b106' },
+  { name: '应用开发', icon: CodeOutlined, color: '#389e0d' },
+  { name: '生态协作', icon: LinkOutlined, color: '#1d39c4' },
+  { name: '应用治理', icon: SettingOutlined, color: '#08979c' },
+  { name: '应用商城', icon: ShoppingOutlined, color: '#531dab' },
+  { name: '统一运维', icon: ToolOutlined, color: '#0958d9' },
+  { name: '运营管控', icon: CompassOutlined, color: '#d46b08' },
+  { name: '合规审计', icon: BookOutlined, color: '#cf1322' },
+  { name: '安全可信', icon: SafetyOutlined, color: '#7cb305' },
+  { name: '安全治理', icon: KeyOutlined, color: '#d4380d' },
+  { name: '画像管理', icon: LineChartOutlined, color: '#d48806' }
 ]
 
-const applications = shallowRef<readonly Application[]>(APPLICATIONS)
-
-const navigateToApplication = (app: Application) => {
-  if (app.path) {
-    message.info(`正在打开 ${app.name}...`)
-  } else {
-    message.warning(`${app.name} 功能正在开发中...`)
-  }
-}
+const platforms = shallowRef<Platform[]>(PLATFORM_ITEMS)
 </script>
 
 <style scoped>
-.application-page {
+.platform-page {
   width: 100%;
   padding: 1.5%;
 }
 
-.application-grid {
+.platform-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 32px;
@@ -94,7 +107,7 @@ const navigateToApplication = (app: Application) => {
   margin: 0 auto;
 }
 
-.application-item {
+.platform-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,7 +124,7 @@ const navigateToApplication = (app: Application) => {
   }
 }
 
-.application-card {
+.platform-card {
   width: 70px;
   aspect-ratio: 1;
   display: flex;
@@ -120,76 +133,81 @@ const navigateToApplication = (app: Application) => {
   color: white;
   border-radius: 8px;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.application-card:hover {
+.platform-card:hover {
   transform: translateY(-4px) scale(1.1);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-.application-icon {
+.platform-icon {
   font-size: 32px;
 }
 
-.application-name {
+.platform-name {
   font-size: 14px;
   font-weight: 500;
   text-align: center;
   margin-top: 8px;
   color: #333;
   width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
   display: -webkit-box;
+  display: box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 1200px) {
-  .application-grid {
+  .platform-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
-  .application-page {
+  .platform-page {
   width: 100%;
   padding: 1.5%;
   }
   
-  .application-card {
+  .platform-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 20px;
+  }
+  
+  .platform-card {
     width: 60px;
   }
   
-  .application-icon {
+  .platform-icon {
     font-size: 28px;
   }
   
-  .application-name {
+  .platform-name {
     font-size: 13px;
   }
 }
 
 @media (max-width: 480px) {
-  .application-grid {
+  .platform-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 16px;
   }
   
-  .application-card {
+  .platform-card {
     width: 56px;
   }
   
-  .application-icon {
+  .platform-icon {
     font-size: 24px;
   }
   
-  .application-name {
+  .platform-name {
     font-size: 12px;
   }
 }
