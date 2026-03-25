@@ -17,6 +17,10 @@
         <a-menu-item key="application" @click="navigateTo('/application')">应用</a-menu-item>
         <a-menu-item key="tools" @click="navigateTo('/tools')">工具</a-menu-item>
         <a-menu-item key="management" @click="navigateTo('/management')">管理</a-menu-item>
+        <template v-if="isCodingRulePage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="coding-rule" @click="navigateTo('/coding-rule')">编码规则</a-menu-item>
+        </template>
         <template v-if="isProfilePage">
           <a-menu-item class="nav-divider">|</a-menu-item>
           <a-menu-item key="profile" @click="navigateTo('/system/profile')">个人中心</a-menu-item>
@@ -178,7 +182,13 @@ const selectedKey = computed(() => {
   if (path === '/system/monitor/service') return 'service-monitor'
   if (path === '/system/monitor/user') return 'user-activity'
   if (path === '/management' || path.startsWith('/system')) return 'management'
+  if (path === '/coding-rule') return 'coding-rule'
   return ''
+})
+
+// 判断是否在编码规则页面
+const isCodingRulePage = computed(() => {
+  return route.path === '/coding-rule'
 })
 
 // 判断是否在帮助中心页面

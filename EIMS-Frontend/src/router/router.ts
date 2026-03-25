@@ -149,6 +149,17 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/contacts/ContactList.vue')
   },
   {
+    path: '/coding-rule',
+    name: 'CodingRule',
+    component: () => import('../views/coding-rule/CodingRule.vue')
+  },
+  {
+    path: '/coding-rule/rule/list',
+    name: 'RuleList',
+    component: () => import('../views/coding-rule/rule/RuleList.vue'),
+    meta: { title: '规则列表' }
+  },
+  {
     path: '/error/403',
     name: 'Forbidden',
     component: () => import('../views/error/Forbidden.vue')

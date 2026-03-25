@@ -44,7 +44,7 @@ interface Application {
 }
 
 const APPLICATIONS: readonly Application[] = [
-  { id: 'code', name: '编码规则', icon: CodeOutlined, color: '#cf1322', path: '/system/config/basic' },
+  { id: 'code', name: '编码规则', icon: CodeOutlined, color: '#cf1322', path: '/coding-rule' },
   { id: 'organization', name: '组织管理', icon: TeamOutlined, color: '#7cb305', path: '/system/organization' },
   { id: 'workflow', name: '工作流', icon: SwapOutlined, color: '#0958d9', path: '/workflow' },
 ]
@@ -53,7 +53,11 @@ const applications = shallowRef<readonly Application[]>(APPLICATIONS)
 
 const navigateToApplication = (app: Application) => {
   if (app.path) {
-    message.info(`正在打开 ${app.name}...`)
+    if (app.id === 'code') {
+      window.open(app.path, '_blank')
+    } else {
+      message.info(`正在打开 ${app.name}...`)
+    }
   } else {
     message.warning(`${app.name} 功能正在开发中...`)
   }
