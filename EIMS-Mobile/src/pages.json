@@ -31,15 +31,15 @@
 			}
 		},
 		{
-			"path": "pages/platform/platform",
+			"path": "pages/tools/tools",
 			"style": {
-				"navigationBarTitleText": "平台"
+				"navigationBarTitleText": "工具"
 			}
 		},
 		{
 			"path": "pages/system/system",
 			"style": {
-				"navigationBarTitleText": "系统"
+				"navigationBarTitleText": "管理"
 			}
 		},
 		{
@@ -128,14 +128,14 @@
 				"selectedIconPath": "static/icon/home/app-active.png"
 			},
 			{
-				"pagePath": "pages/platform/platform",
-				"text": "平台",
+				"pagePath": "pages/tools/tools",
+				"text": "工具",
 				"iconPath": "static/icon/home/platform.png",
 				"selectedIconPath": "static/icon/home/platform-active.png"
 			},
 			{
 				"pagePath": "pages/system/system",
-				"text": "系统",
+				"text": "管理",
 				"iconPath": "static/icon/home/system.png",
 				"selectedIconPath": "static/icon/home/system-active.png"
 			}

@@ -1,24 +1,37 @@
 <template>
-  <view class="application-container">
+  <view class="tools-container">
     
-    <view class="application-menu">
+    <view class="tools-menu">
+      <!-- 编码规则工具 -->
       <view class="menu-item">
-        <button class="menu-button button-app3" @click="navigateTo('/pages/application/app3')">
+        <button class="menu-button button-tools11" @click="navigateTo('/pages/tools/code-rule')">
           <view class="menu-icon">
-            <image src="../../static/icon/button/name-ff.svg" class="menu-svg-icon" />
+            <image src="../../static/icon/button/Coding-ff.svg" class="menu-svg-icon" />
           </view>
         </button>
-        <text class="menu-label">职工管理</text>
+        <text class="menu-label">编码规则</text>
       </view>
       
+      <!-- 组织管理工具 -->
       <view class="menu-item">
-        <button class="menu-button button-app4" @click="navigateTo('/pages/application/app4')">
+        <button class="menu-button button-tools12" @click="navigateTo('/pages/tools/organization')">
           <view class="menu-icon">
-            <image src="../../static/icon/button/equipment-ff.svg" class="menu-svg-icon" />
+            <image src="../../static/icon/button/organize-ff.svg" class="menu-svg-icon" />
           </view>
         </button>
-        <text class="menu-label">设备管理</text>
+        <text class="menu-label">组织管理</text>
       </view>
+      
+      <!-- 工作流工具 -->
+      <view class="menu-item">
+        <button class="menu-button button-tools13" @click="navigateTo('/pages/tools/workflow')">
+          <view class="menu-icon">
+            <image src="../../static/icon/button/approval-ff.svg" class="menu-svg-icon" />
+          </view>
+        </button>
+        <text class="menu-label">工作流</text>
+      </view>
+
     </view>
   </view>
 </template>
@@ -33,19 +46,19 @@ const navigateTo = (url: string) => {
 }
 
 onMounted(() => {
-  // 应用列表已清空
-  console.log('应用列表已清空')
+  // 工具列表已清空
+  console.log('工具列表已清空')
 })
 </script>
 
 <style scoped>
-.application-container {
+.tools-container {
   padding: 20rpx;
   height: 100vh;
   background-color: #D9D9D9;
 }
 
-.application-menu {
+.tools-menu {
   display: flex;
   flex-wrap: wrap;
   row-gap: 40rpx;
@@ -71,12 +84,16 @@ onMounted(() => {
   margin-bottom: 10rpx;
 }
 
-.button-app3 {
-  background-color: #d4b106;
+.button-tools11 {
+  background-color: #1890ff;
 }
 
-.button-app4 {
-  background-color: #531dab;
+.button-tools12 {
+  background-color: #52c41a;
+}
+
+.button-tools13 {
+  background-color: #faad14;
 }
 
 .menu-button::after {
