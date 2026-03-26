@@ -47,8 +47,8 @@
                     <!-- 操作按钮区域 -->
                     <div class="rule-actions">
                         <a-button type="primary" @click="handleAdd">新增规则</a-button>
-                        <a-button type="primary" style="margin-left: 8px;" @click="handleBatchExport">批量导出</a-button>
-                        <a-button type="primary" style="margin-left: 8px;" @click="handleBatchImport">批量导入</a-button>
+                        <a-button type="primary" style="margin-left: 8px;" @click="handleBatchExport">导出规则</a-button>
+                        <a-button type="primary" style="margin-left: 8px;" @click="handleBatchImport">导入规则</a-button>
                         <a-button type="primary" style="margin-left: 8px;" @click="handleTemplateDownload">模板下载</a-button>
                         <a-button type="primary" style="margin-left: 8px; background-color: #52c41a;" @click="handleBatchEnable">批量启用</a-button>
                         <a-button type="primary" style="margin-left: 8px; background-color: #fa8c16;" @click="handleBatchDisable">批量停用</a-button>
@@ -57,11 +57,14 @@
 
                     <!-- 提示信息 -->
                     <a-alert
+                        v-if="showAlert"
                         type="warning"
                         show-icon
                         :message="'操作提示'"
                         :description="'禁用规则后，关联业务无法生成编码；删除规则前，请确认无关联编码生成记录'"
                         style="margin-bottom: 16px;"
+                        closable
+                        @close="handleAlertClose"
                     />
 
                     <!-- 规则列表 -->
@@ -98,8 +101,9 @@
                                 </template>
                                 <template v-else-if="column.key === 'action'">
                                     <div style="display: flex; gap: 8px;">
-                                        <a-button type="link" size="small" @click="handleView(record)">查看</a-button>
+                                        <a-button type="link" size="small" @click="handleView(record)">详情</a-button>
                                         <a-button type="link" size="small" @click="handleEdit(record)">编辑</a-button>
+                                        <a-button type="link" size="small" @click="handlePreview(record)">预览</a-button>
                                         <a-button type="link" size="small" danger @click="handleDelete(record.dbId)">删除</a-button>
                                     </div>
                                 </template>
@@ -121,99 +125,17 @@
                     </div>
                 </a-card>
 
-                <!-- 新增/编辑规则模态框 -->
-                <a-modal
-                    v-model:open="ruleModalVisible"
-                    :title="isEditMode ? '编辑规则' : '新增规则'"
-                    width="700px"
-                    :ok-text="'保存'"
-                    :cancel-text="'取消'"
-                    @ok="handleSaveRule"
-                    @cancel="closeRuleModal"
-                    :body-style="{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }"
-                    class="rule-detail-modal"
-                >
-                    <a-form :model="ruleForm" layout="vertical">
-                        <a-row :gutter="16">
-                            <a-col :span="12">
-                                <a-form-item label="规则编码" :rules="[{ required: true, message: '请输入规则编码' }]">
-                                    <a-input v-model:value="ruleForm.ruleCode" placeholder="请输入规则编码，如：EQ-RULE-001" :disabled="isEditMode">
-                                        <template #prefix><BarcodeOutlined /></template>
-                                    </a-input>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="12">
-                                <a-form-item label="规则名称" :rules="[{ required: true, message: '请输入规则名称' }]">
-                                    <a-input v-model:value="ruleForm.ruleName" placeholder="请输入规则名称">
-                                        <template #prefix><TagOutlined /></template>
-                                    </a-input>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
 
-                        <a-row :gutter="16">
-                            <a-col :span="12">
-                                <a-form-item label="规则类型" :rules="[{ required: true, message: '请选择规则类型' }]">
-                                    <a-select v-model:value="ruleForm.ruleType" placeholder="请选择规则类型">
-                                        <a-select-option value="equipment">设备编码</a-select-option>
-                                        <a-select-option value="product">产品编码</a-select-option>
-                                        <a-select-option value="material">物料编码</a-select-option>
-                                        <a-select-option value="asset">资产编码</a-select-option>
-                                        <a-select-option value="other">其他</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="12">
-                                <a-form-item label="状态" :rules="[{ required: true, message: '请选择状态' }]">
-                                    <a-radio-group v-model:value="ruleForm.status">
-                                        <a-radio value="active">启用</a-radio>
-                                        <a-radio value="inactive">停用</a-radio>
-                                    </a-radio-group>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-
-                        <a-form-item label="规则格式" :rules="[{ required: true, message: '请输入规则格式' }]">
-                            <a-input v-model:value="ruleForm.rulePattern" placeholder="请输入规则格式，如：EQ-{YYYY}-{NNNN}">
-                                <template #prefix><CodeOutlined /></template>
-                            </a-input>
-                            <div class="form-hint">
-                                支持变量：{YYYY}年份 {MM}月份 {DD}日期 {NNNN}流水号 {DEPT}部门代码
-                            </div>
-                        </a-form-item>
-
-                        <a-row :gutter="16">
-                            <a-col :span="12">
-                                <a-form-item label="起始流水号">
-                                    <a-input-number v-model:value="ruleForm.startNumber" :min="1" :max="999999" style="width: 100%;" placeholder="请输入起始流水号" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="12">
-                                <a-form-item label="流水号长度">
-                                    <a-input-number v-model:value="ruleForm.numberLength" :min="1" :max="10" style="width: 100%;" placeholder="请输入流水号长度" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-
-                        <a-form-item label="规则描述">
-                            <a-textarea v-model:value="ruleForm.description" :rows="3" placeholder="请输入规则描述（选填）" />
-                        </a-form-item>
-
-                        <a-form-item label="预览">
-                            <div class="preview-box">
-                                <span class="preview-label">编码示例：</span>
-                                <span class="preview-value">{{ generatePreview() }}</span>
-                            </div>
-                        </a-form-item>
-                    </a-form>
-                </a-modal>
 
                 <!-- 查看规则详情模态框 -->
                 <a-modal
                     v-model:open="viewModalVisible"
                     title="规则详情"
                     width="600px"
-                    :footer="null"
+                    :ok-text="'关闭'"
+                    :cancel-text="''"
+                    :cancel-button-props="{ style: { display: 'none' } }"
+                    @ok="closeViewModal"
                     @cancel="closeViewModal"
                     class="rule-view-modal"
                 >
@@ -240,6 +162,38 @@
                         <a-descriptions-item label="规则描述" :span="2">{{ currentRule.description || '无' }}</a-descriptions-item>
                     </a-descriptions>
                 </a-modal>
+
+                <!-- 预览规则编码模态窗 -->
+                <a-modal
+                    v-model:open="previewModalVisible"
+                    title="规则预览"
+                    width="500px"
+                    :ok-text="'关闭'"
+                    :cancel-text="''"
+                    :cancel-button-props="{ style: { display: 'none' } }"
+                    @ok="closePreviewModal"
+                    @cancel="closePreviewModal"
+                    class="rule-preview-modal"
+                >
+                    <div class="preview-container" v-if="currentPreviewRule">
+                        <div class="preview-item">
+                            <span class="preview-label">规则名称：</span>
+                            <span class="preview-value">{{ currentPreviewRule.ruleName }}</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-label">规则格式：</span>
+                            <span class="preview-value">{{ currentPreviewRule.rulePattern }}</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-label">预览编码：</span>
+                            <span class="preview-code">{{ previewCode }}</span>
+                        </div>
+                        <div class="preview-hint">
+                            <p>预览编码基于当前日期和规则设置生成</p>
+                            <p>实际生成的编码可能会根据系统时间和流水号自动递增</p>
+                        </div>
+                    </div>
+                </a-modal>
             </div>
         </div>
     </a-config-provider>
@@ -249,25 +203,16 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, shallowRef } from 'vue';
 import { message } from 'ant-design-vue';
+import { useRouter } from 'vue-router';
 import AppLayout from '../layout/AppLayout.vue';
-import {
-    PlusOutlined,
-    ExportOutlined,
-    ImportOutlined,
-    DownloadOutlined,
-    CheckCircleOutlined,
-    StopOutlined,
-    DeleteOutlined,
-    EyeOutlined,
-    EditOutlined,
-    BarcodeOutlined,
-    TagOutlined,
-    CodeOutlined
-} from '@ant-design/icons-vue';
+
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
 // 常量定义
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
+
+// 路由
+const router = useRouter();
 
 // 类型定义
 interface CodingRule {
@@ -299,26 +244,16 @@ interface Pagination {
     total: number;
 }
 
-interface RuleForm {
-    ruleCode: string;
-    ruleName: string;
-    ruleType: 'equipment' | 'product' | 'material' | 'asset' | 'other';
-    rulePattern: string;
-    startNumber: number;
-    numberLength: number;
-    status: 'active' | 'inactive';
-    description: string;
-}
-
 // 状态管理
 const loading = ref(false);
 const rules = ref<CodingRule[]>([]);
 const selectedRowKeys = ref<(string | number)[]>([]);
-const ruleModalVisible = ref(false);
 const viewModalVisible = ref(false);
-const isEditMode = ref(false);
-const currentRuleId = ref<number | null>(null);
+const previewModalVisible = ref(false);
 const currentRule = ref<CodingRule | null>(null);
+const currentPreviewRule = ref<CodingRule | null>(null);
+const previewCode = ref('');
+const showAlert = ref(true);
 
 // 表单数据
 const filterForm = reactive<FilterForm>({
@@ -332,17 +267,6 @@ const pagination = reactive<Pagination>({
     current: 1,
     pageSize: 10,
     total: 0
-});
-
-const ruleForm = reactive<RuleForm>({
-    ruleCode: '',
-    ruleName: '',
-    ruleType: 'equipment',
-    rulePattern: '',
-    startNumber: 1,
-    numberLength: 4,
-    status: 'active',
-    description: ''
 });
 
 // 表格列定义
@@ -399,7 +323,7 @@ const columns = shallowRef([
     {
         title: '操作',
         key: 'action',
-        width: 180,
+        width: 210,
         fixed: 'right'
     }
 ]);
@@ -428,23 +352,7 @@ const getRuleTypeText = (type: string): string => {
     return textMap[type] || type;
 };
 
-// 生成预览编码
-const generatePreview = (): string => {
-    if (!ruleForm.rulePattern) return '请输入规则格式';
 
-    const now = new Date();
-    const year = now.getFullYear().toString();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const serialNumber = String(ruleForm.startNumber).padStart(ruleForm.numberLength, '0');
-
-    return ruleForm.rulePattern
-        .replace(/{YYYY}/g, year)
-        .replace(/{MM}/g, month)
-        .replace(/{DD}/g, day)
-        .replace(/{NNNN}/g, serialNumber)
-        .replace(/{DEPT}/g, 'DEPT');
-};
 
 // 生成模拟数据
 const generateMockRules = (): CodingRule[] => {
@@ -540,6 +448,71 @@ const generateMockRules = (): CodingRule[] => {
             updatedAt: '2026-03-19 10:30:00'
         }
     ];
+
+    // 生成94条额外的模拟数据（总共100条）
+    const ruleTypes = ['equipment', 'product', 'material', 'asset', 'other'] as const;
+    const typeNames = {
+        equipment: '设备',
+        product: '产品',
+        material: '物料',
+        asset: '资产',
+        other: '其他'
+    };
+    const creators = ['管理员', '操作员', '技术人员', '主管'];
+    
+    for (let i = 7; i <= 100; i++) {
+        const typeIndex = (i - 7) % ruleTypes.length;
+        const ruleType = ruleTypes[typeIndex];
+        const typeName = typeNames[ruleType];
+        const codePrefix = {
+            equipment: 'EQ',
+            product: 'PR',
+            material: 'MT',
+            asset: 'AS',
+            other: 'OT'
+        }[ruleType];
+        const sequence = Math.floor((i - 7) / ruleTypes.length) + 1;
+        const codeSuffix = String(sequence).padStart(3, '0');
+        
+        // 随机生成状态（80%激活，20%停用）
+        const status = Math.random() > 0.2 ? 'active' as const : 'inactive' as const;
+        // 随机生成创建者
+        const creator = creators[Math.floor(Math.random() * creators.length)];
+        // 随机生成生成数量
+        const generatedCount = Math.floor(Math.random() * 5000);
+        // 随机生成开始日期
+        const startDate = new Date(2026, Math.floor(Math.random() * 3), Math.floor(Math.random() * 28) + 1);
+        const createdAt = startDate.toISOString().replace('T', ' ').slice(0, 19);
+        // 随机生成更新日期（在创建日期之后）
+        const updateDate = new Date(startDate.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000);
+        const updatedAt = updateDate.toISOString().replace('T', ' ').slice(0, 19);
+        
+        // 生成不同的规则模式
+        const patterns = [
+            `${codePrefix}-{YYYY}-{NNNN}`,
+            `${codePrefix}-{DEPT}-{YYYY}{MM}-{NNNN}`,
+            `${codePrefix}-{YYYY}{MM}{DD}-{NNNN}`,
+            `${codePrefix}-{TYPE}-{YYYY}-{NNNN}`,
+            `${codePrefix}-{YYYY}-{MM}-{NNNN}`
+        ];
+        const pattern = patterns[(i - 7) % patterns.length];
+        
+        mockRules.push({
+            dbId: i,
+            ruleCode: `${codePrefix}-RULE-${codeSuffix}`,
+            ruleName: `${typeName}编码规则${sequence}`,
+            ruleType,
+            rulePattern: pattern,
+            startNumber: Math.floor(Math.random() * 100) + 1,
+            numberLength: Math.floor(Math.random() * 6) + 3,
+            status,
+            description: `${typeName}编码管理规则，用于${typeName}的统一编码`,
+            generatedCount,
+            creator,
+            createdAt,
+            updatedAt
+        });
+    }
 
     return mockRules;
 };
@@ -638,38 +611,14 @@ const handleSelectChange = (keys: (string | number)[]) => {
     selectedRowKeys.value = keys;
 };
 
-// 打开新增规则模态框
+// 跳转到新增规则页面
 const handleAdd = () => {
-    isEditMode.value = false;
-    currentRuleId.value = null;
-    Object.assign(ruleForm, {
-        ruleCode: '',
-        ruleName: '',
-        ruleType: 'equipment',
-        rulePattern: '',
-        startNumber: 1,
-        numberLength: 4,
-        status: 'active',
-        description: ''
-    });
-    ruleModalVisible.value = true;
+    router.push('/coding-rule/rule-management/add');
 };
 
-// 打开编辑规则模态框
+// 跳转到编辑规则页面
 const handleEdit = (record: CodingRule) => {
-    isEditMode.value = true;
-    currentRuleId.value = record.dbId;
-    Object.assign(ruleForm, {
-        ruleCode: record.ruleCode,
-        ruleName: record.ruleName,
-        ruleType: record.ruleType,
-        rulePattern: record.rulePattern,
-        startNumber: record.startNumber,
-        numberLength: record.numberLength,
-        status: record.status,
-        description: record.description
-    });
-    ruleModalVisible.value = true;
+    router.push(`/coding-rule/rule-management/edit/${record.dbId}`);
 };
 
 // 查看规则详情
@@ -678,93 +627,38 @@ const handleView = (record: CodingRule) => {
     viewModalVisible.value = true;
 };
 
-// 关闭规则模态框
-const closeRuleModal = () => {
-    ruleModalVisible.value = false;
-    currentRuleId.value = null;
+// 预览规则编码
+const handlePreview = (record: CodingRule) => {
+    // 生成预览编码
+    const now = new Date();
+    const year = now.getFullYear().toString();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const serialNumber = String(record.startNumber).padStart(record.numberLength, '0');
+    
+    previewCode.value = record.rulePattern
+        .replace(/{YYYY}/g, year)
+        .replace(/{MM}/g, month)
+        .replace(/{DD}/g, day)
+        .replace(/{NNNN}/g, serialNumber)
+        .replace(/{DEPT}/g, 'DEPT')
+        .replace(/{TYPE}/g, record.ruleType.toUpperCase());
+    
+    currentPreviewRule.value = record;
+    previewModalVisible.value = true;
+};
+
+// 关闭预览模态窗
+const closePreviewModal = () => {
+    previewModalVisible.value = false;
+    currentPreviewRule.value = null;
+    previewCode.value = '';
 };
 
 // 关闭查看模态框
 const closeViewModal = () => {
     viewModalVisible.value = false;
     currentRule.value = null;
-};
-
-// 验证规则表单
-const validateRuleForm = (): boolean => {
-    if (!ruleForm.ruleCode) {
-        message.error('请输入规则编码');
-        return false;
-    }
-    if (!ruleForm.ruleName) {
-        message.error('请输入规则名称');
-        return false;
-    }
-    if (!ruleForm.ruleType) {
-        message.error('请选择规则类型');
-        return false;
-    }
-    if (!ruleForm.rulePattern) {
-        message.error('请输入规则格式');
-        return false;
-    }
-    return true;
-};
-
-// 保存规则
-const handleSaveRule = async () => {
-    if (!validateRuleForm()) {
-        return;
-    }
-
-    try {
-        loading.value = true;
-        const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
-
-        if (isEditMode.value && currentRuleId.value !== null) {
-            const index = originalRules.value.findIndex(rule => rule.dbId === currentRuleId.value);
-            if (index !== -1) {
-                originalRules.value[index] = {
-                    ...originalRules.value[index],
-                    ruleName: ruleForm.ruleName,
-                    ruleType: ruleForm.ruleType,
-                    rulePattern: ruleForm.rulePattern,
-                    startNumber: ruleForm.startNumber,
-                    numberLength: ruleForm.numberLength,
-                    status: ruleForm.status,
-                    description: ruleForm.description,
-                    updatedAt: now
-                };
-                message.success('规则编辑成功');
-            }
-        } else {
-            const newRule: CodingRule = {
-                dbId: originalRules.value.length + 1,
-                ruleCode: ruleForm.ruleCode,
-                ruleName: ruleForm.ruleName,
-                ruleType: ruleForm.ruleType,
-                rulePattern: ruleForm.rulePattern,
-                startNumber: ruleForm.startNumber,
-                numberLength: ruleForm.numberLength,
-                status: ruleForm.status,
-                description: ruleForm.description,
-                generatedCount: 0,
-                creator: '当前用户',
-                createdAt: now,
-                updatedAt: now
-            };
-            originalRules.value.push(newRule);
-            message.success('规则添加成功');
-        }
-
-        ruleModalVisible.value = false;
-        currentRuleId.value = null;
-    } catch (error) {
-        message.error('保存规则失败');
-        console.error('Error saving rule:', error);
-    } finally {
-        loading.value = false;
-    }
 };
 
 // 删除规则
@@ -1024,6 +918,11 @@ const handleBatchExport = () => {
 
     message.success(`导出成功，共导出 ${exportData.length} 条规则记录`);
 };
+
+// 关闭操作提示
+const handleAlertClose = () => {
+    showAlert.value = false;
+};
 </script>
 
 <style scoped>
@@ -1194,5 +1093,60 @@ const handleBatchExport = () => {
     .rule-detail-modal {
         width: 90% !important;
     }
+}
+
+/* 预览模态窗样式 */
+.rule-preview-modal {
+    :deep(.ant-modal-content) {
+        border-radius: 8px;
+    }
+}
+
+.preview-container {
+    padding: 16px 0;
+}
+
+.preview-item {
+    display: flex;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
+
+.preview-label {
+    width: 80px;
+    font-weight: 500;
+    color: #262626;
+    flex-shrink: 0;
+}
+
+.preview-value {
+    flex: 1;
+    color: #595959;
+    word-break: break-all;
+}
+
+.preview-code {
+    flex: 1;
+    color: #1890ff;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    padding: 8px 12px;
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+    border-radius: 4px;
+    word-break: break-all;
+}
+
+.preview-hint {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #8c8c8c;
+}
+
+.preview-hint p {
+    margin: 4px 0;
 }
 </style>

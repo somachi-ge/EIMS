@@ -93,9 +93,9 @@ const collapsed = ref(false);
 // 路由映射表
 const routeMap: Record<string, string> = {
   'dashboard': '/coding-rule',
-  'rule-list': '/coding-rule/rule/list',
-  'rule-add': '/coding-rule/rule/add',
-  'rule-import': '/coding-rule/rule/import',
+  'rule-list': '/coding-rule/rule-management/list',
+  'rule-add': '/coding-rule/rule-management/add',
+  'rule-import': '/coding-rule/rule-management/import',
   'code-single': '/coding-rule/code/single',
   'code-batch': '/coding-rule/code/batch',
   'code-export': '/coding-rule/code/export',
@@ -107,19 +107,30 @@ const routeMap: Record<string, string> = {
 
 // 根据当前路由设置选中状态
 const updateSelectedKeys = () => {
-  const currentPath = route.path;
-  for (const [key, path] of Object.entries(routeMap)) {
-    if (currentPath === path || currentPath.startsWith(path)) {
-      selectedKeys.value = [key];
-      // 如果是有子菜单的项，自动展开
-      if (key.startsWith('rule-')) {
+    const currentPath = route.path;
+    // 特殊处理规则编辑和新增页面，激活规则列表
+    if (currentPath.startsWith('/coding-rule/rule-management/edit/') || currentPath === '/coding-rule/rule-management/add') {
+        selectedKeys.value = ['rule-list'];
         openKeys.value = ['rule'];
-      } else if (key.startsWith('code-')) {
-        openKeys.value = ['code'];
-      }
-      break;
+        return;
     }
-  }
+    
+    // 先按路径长度排序，确保更具体的路径优先匹配
+    const sortedRouteMap = Object.entries(routeMap)
+        .sort((a, b) => b[1].length - a[1].length);
+    
+    for (const [key, path] of sortedRouteMap) {
+        if (currentPath === path || currentPath.startsWith(path)) {
+            selectedKeys.value = [key];
+            // 如果是有子菜单的项，自动展开
+            if (key.startsWith('rule-')) {
+                openKeys.value = ['rule'];
+            } else if (key.startsWith('code-')) {
+                openKeys.value = ['code'];
+            }
+            break;
+        }
+    }
 };
 
 // 初始化时设置选中状态

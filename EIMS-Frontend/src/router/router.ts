@@ -154,10 +154,22 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/coding-rule/CodingRule.vue')
   },
   {
-    path: '/coding-rule/rule/list',
+    path: '/coding-rule/rule-management/list',
     name: 'RuleList',
-    component: () => import('../views/coding-rule/rule/RuleList.vue'),
+    component: () => import('../views/coding-rule/rule-management/RuleList.vue'),
     meta: { title: '规则列表' }
+  },
+  {
+    path: '/coding-rule/rule-management/add',
+    name: 'RuleAdd',
+    component: () => import('../views/coding-rule/rule-management/RuleEdit.vue'),
+    meta: { title: '新增规则' }
+  },
+  {
+    path: '/coding-rule/rule-management/edit/:id',
+    name: 'RuleEdit',
+    component: () => import('../views/coding-rule/rule-management/RuleEdit.vue'),
+    meta: { title: '编辑规则' }
   },
   {
     path: '/error/403',

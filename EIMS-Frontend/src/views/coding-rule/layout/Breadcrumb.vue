@@ -21,20 +21,26 @@ interface BreadcrumbItem {
 const route = useRoute();
 
 const breadcrumbItems = computed(() => {
-  const items: BreadcrumbItem[] = [];
-  items.push({ title: '控制台', path: '/coding-rule' });
-  
-  route.matched.forEach((record) => {
-    if (record.meta.title) {
-      items.push({
-        title: record.meta.title as string,
-        path: record.path
-      });
+    const items: BreadcrumbItem[] = [];
+    items.push({ title: '编码概览', path: '/coding-rule' });
+    
+    const currentPath = route.path;
+    // 特殊处理规则编辑和新增页面，添加规则列表
+    if (currentPath.startsWith('/coding-rule/rule-management/edit/') || currentPath === '/coding-rule/rule-management/add') {
+        items.push({ title: '规则列表', path: '/coding-rule/rule-management/list' });
     }
+    
+    route.matched.forEach((record) => {
+      if (record.meta.title) {
+        items.push({
+          title: record.meta.title as string,
+          path: record.path
+        });
+      }
+    });
+    
+    return items;
   });
-  
-  return items;
-});
 </script>
 
 <style scoped>
