@@ -162,7 +162,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/coding-rule/rule-management/add',
     name: 'RuleAdd',
-    component: () => import('../views/coding-rule/rule-management/RuleEdit.vue'),
+    component: () => import('../views/coding-rule/rule-management/RuleAdd.vue'),
     meta: { title: '新增规则' }
   },
   {
@@ -170,6 +170,24 @@ const routes: RouteRecordRaw[] = [
     name: 'RuleEdit',
     component: () => import('../views/coding-rule/rule-management/RuleEdit.vue'),
     meta: { title: '编辑规则' }
+  },
+  {
+    path: '/coding-rule/generator',
+    name: 'CodeGenerate',
+    component: () => import('../views/coding-rule/generator/CodeGenerate.vue'),
+    meta: { title: '编码生成' }
+  },
+  {
+    path: '/coding-rule/parse',
+    name: 'CodeParse',
+    component: () => import('../views/coding-rule/parse/CodeParse.vue'),
+    meta: { title: '编码解析' }
+  },
+  {
+    path: '/coding-rule/log',
+    name: 'LogList',
+    component: () => import('../views/coding-rule/log/LogList.vue'),
+    meta: { title: '操作日志' }
   },
   {
     path: '/error/403',

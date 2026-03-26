@@ -1,8 +1,8 @@
 <template>
     <AppLayout>
         <a-config-provider :locale="zhCN">
-            <div class="rule-edit-container">
-                <div class="rule-edit-page">
+            <div class="rule-add-container">
+                <div class="rule-add-page">
                     <!-- 步骤条 -->
                     <div class="steps-wrapper">
                         <a-steps :current="currentStep" size="small" @change="handleStepChange">
@@ -379,7 +379,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { message, Tooltip } from 'ant-design-vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import type { Dayjs } from 'dayjs';
@@ -392,7 +392,6 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN';
 dayjs.locale('zh-cn');
 
 // 路由
-const route = useRoute();
 const router = useRouter();
 
 // 当前步骤
@@ -480,24 +479,14 @@ const formData = reactive<FormData>({
     }
 });
 
-// 是否是编辑模式
-const isEdit = ref(false);
-
 // 预览相关
 const previewCode = ref('EQ-CN01-2602-0045');
 const previewDescription = ref('固定段 + 车间产线 + 年月 + 流水号');
 
 // 初始化
 onMounted(() => {
-    const id = route.params.id;
-    if (id) {
-        isEdit.value = true;
-        // 加载数据
-        loadRuleData(Number(id));
-    } else {
-        // 新增模式，设置默认值
-        formData.ruleCode = generateRuleCode();
-    }
+    // 生成默认规则编码
+    formData.ruleCode = generateRuleCode();
     // 初始化预览
     updatePreview();
 });
@@ -510,6 +499,13 @@ watch(
     },
     { deep: true }
 );
+
+// 生成规则编码
+const generateRuleCode = (): string => {
+    const prefix = 'EQ';
+    const timestamp = Date.now().toString().slice(-6);
+    return `${prefix}-RULE-${timestamp}`;
+};
 
 // 获取分段占位符
 const getSegmentPlaceholder = (type: string): string => {
@@ -605,103 +601,6 @@ const removeCondition = (index: number) => {
     }
 };
 
-// 生成规则编码
-const generateRuleCode = (): string => {
-    const prefix = 'EQ';
-    const timestamp = Date.now().toString().slice(-6);
-    return `${prefix}-RULE-${timestamp}`;
-};
-
-// 加载规则数据
-const loadRuleData = (id: number) => {
-    // 模拟加载数据
-    // 实际项目中这里应该调用API
-    console.log('加载规则数据:', id);
-    
-    // 模拟数据 - 从模拟规则列表中查找对应ID的规则
-    const mockRules = [
-        {
-            dbId: 1,
-            ruleCode: 'EQ-RULE-001',
-            ruleName: '生产设备编码规则',
-            ruleType: 'equipment',
-            description: '用于生产设备统一编码管理',
-            bindingObjects: ['equipment'],
-            isDefault: true,
-            priority: 1
-        },
-        {
-            dbId: 2,
-            ruleCode: 'PR-RULE-001',
-            ruleName: '产品编码规则',
-            ruleType: 'product',
-            description: '产品出厂编码规则',
-            bindingObjects: ['product'],
-            isDefault: false,
-            priority: 2
-        },
-        {
-            dbId: 3,
-            ruleCode: 'MT-RULE-001',
-            ruleName: '原材料编码规则',
-            ruleType: 'material',
-            description: '原材料入库编码规则',
-            bindingObjects: ['material'],
-            isDefault: false,
-            priority: 3
-        },
-        {
-            dbId: 4,
-            ruleCode: 'AS-RULE-001',
-            ruleName: '固定资产编码规则',
-            ruleType: 'asset',
-            description: '公司固定资产编码规则',
-            bindingObjects: ['asset'],
-            isDefault: false,
-            priority: 4
-        },
-        {
-            dbId: 5,
-            ruleCode: 'EQ-RULE-002',
-            ruleName: '检测设备编码规则',
-            ruleType: 'equipment',
-            description: '质量检测设备编码',
-            bindingObjects: ['equipment'],
-            isDefault: false,
-            priority: 5
-        },
-        {
-            dbId: 6,
-            ruleCode: 'OT-RULE-001',
-            ruleName: '通用编码规则',
-            ruleType: 'other',
-            description: '通用物品编码规则',
-            bindingObjects: ['equipment', 'product'],
-            isDefault: false,
-            priority: 6
-        }
-    ];
-    
-    // 查找对应ID的规则
-    const rule = mockRules.find(r => r.dbId === id);
-    
-    if (rule) {
-        // 填充表单数据
-        formData.ruleCode = rule.ruleCode;
-        formData.ruleName = rule.ruleName;
-        formData.ruleType = rule.ruleType;
-        formData.priority = rule.priority;
-        formData.description = rule.description;
-        formData.bindingObjects = rule.bindingObjects;
-        formData.isDefault = rule.isDefault;
-        // 可以根据需要设置日期字段
-        // formData.effectiveDate = dayjs();
-        // formData.expiryDate = dayjs().add(1, 'year');
-    } else {
-        console.error('未找到ID为', id, '的规则');
-    }
-};
-
 // 保存草稿
 const handleSaveDraft = () => {
     message.success('草稿保存成功');
@@ -721,7 +620,7 @@ const handleSubmit = () => {
         return;
     }
     
-    message.success(isEdit.value ? '规则更新成功' : '规则创建成功');
+    message.success('规则创建成功');
     router.push('/coding-rule/rule-management/list');
 };
 
@@ -737,12 +636,12 @@ const handleStepChange = (current: number) => {
 </script>
 
 <style scoped>
-.rule-edit-container {
+.rule-add-container {
     width: 100%;
     padding: 1.5%;
 }
 
-.rule-edit-page {
+.rule-add-page {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
@@ -970,7 +869,7 @@ const handleStepChange = (current: number) => {
 
 /* 响应式设计 */
 @media (max-width: 992px) {
-    .rule-edit-page {
+    .rule-add-page {
         padding: 16px;
     }
     
@@ -1015,7 +914,7 @@ const handleStepChange = (current: number) => {
 }
 
 @media (max-width: 768px) {
-    .rule-edit-container {
+    .rule-add-container {
         padding: 12px;
     }
     

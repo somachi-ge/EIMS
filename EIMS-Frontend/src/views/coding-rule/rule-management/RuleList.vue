@@ -241,12 +241,10 @@ interface FilterForm {
 interface Pagination {
     current: number;
     pageSize: number;
-    total: number;
 }
 
 // 状态管理
 const loading = ref(false);
-const rules = ref<CodingRule[]>([]);
 const selectedRowKeys = ref<(string | number)[]>([]);
 const viewModalVisible = ref(false);
 const previewModalVisible = ref(false);
@@ -265,8 +263,7 @@ const filterForm = reactive<FilterForm>({
 
 const pagination = reactive<Pagination>({
     current: 1,
-    pageSize: 10,
-    total: 0
+    pageSize: 10
 });
 
 // 表格列定义
@@ -356,7 +353,8 @@ const getRuleTypeText = (type: string): string => {
 
 // 生成模拟数据
 const generateMockRules = (): CodingRule[] => {
-    const mockRules: CodingRule[] = [
+    // 预定义的规则数据
+    const initialRules: CodingRule[] = [
         {
             dbId: 1,
             ruleCode: 'EQ-RULE-001',
@@ -449,55 +447,37 @@ const generateMockRules = (): CodingRule[] => {
         }
     ];
 
-    // 生成94条额外的模拟数据（总共100条）
+    // 生成额外的模拟数据
     const ruleTypes = ['equipment', 'product', 'material', 'asset', 'other'] as const;
-    const typeNames = {
-        equipment: '设备',
-        product: '产品',
-        material: '物料',
-        asset: '资产',
-        other: '其他'
-    };
+    const typeNames = { equipment: '设备', product: '产品', material: '物料', asset: '资产', other: '其他' };
+    const codePrefixes = { equipment: 'EQ', product: 'PR', material: 'MT', asset: 'AS', other: 'OT' };
     const creators = ['管理员', '操作员', '技术人员', '主管'];
+    const patterns = ['{PREFIX}-{YYYY}-{NNNN}', '{PREFIX}-{DEPT}-{YYYY}{MM}-{NNNN}', '{PREFIX}-{YYYY}{MM}{DD}-{NNNN}', '{PREFIX}-{TYPE}-{YYYY}-{NNNN}', '{PREFIX}-{YYYY}-{MM}-{NNNN}'];
     
+    // 生成94条额外数据（总共100条）
     for (let i = 7; i <= 100; i++) {
         const typeIndex = (i - 7) % ruleTypes.length;
         const ruleType = ruleTypes[typeIndex];
         const typeName = typeNames[ruleType];
-        const codePrefix = {
-            equipment: 'EQ',
-            product: 'PR',
-            material: 'MT',
-            asset: 'AS',
-            other: 'OT'
-        }[ruleType];
+        const codePrefix = codePrefixes[ruleType];
         const sequence = Math.floor((i - 7) / ruleTypes.length) + 1;
         const codeSuffix = String(sequence).padStart(3, '0');
         
-        // 随机生成状态（80%激活，20%停用）
+        // 随机生成状态、创建者和生成数量
         const status = Math.random() > 0.2 ? 'active' as const : 'inactive' as const;
-        // 随机生成创建者
         const creator = creators[Math.floor(Math.random() * creators.length)];
-        // 随机生成生成数量
         const generatedCount = Math.floor(Math.random() * 5000);
-        // 随机生成开始日期
+        
+        // 生成日期
         const startDate = new Date(2026, Math.floor(Math.random() * 3), Math.floor(Math.random() * 28) + 1);
         const createdAt = startDate.toISOString().replace('T', ' ').slice(0, 19);
-        // 随机生成更新日期（在创建日期之后）
         const updateDate = new Date(startDate.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000);
         const updatedAt = updateDate.toISOString().replace('T', ' ').slice(0, 19);
         
-        // 生成不同的规则模式
-        const patterns = [
-            `${codePrefix}-{YYYY}-{NNNN}`,
-            `${codePrefix}-{DEPT}-{YYYY}{MM}-{NNNN}`,
-            `${codePrefix}-{YYYY}{MM}{DD}-{NNNN}`,
-            `${codePrefix}-{TYPE}-{YYYY}-{NNNN}`,
-            `${codePrefix}-{YYYY}-{MM}-{NNNN}`
-        ];
-        const pattern = patterns[(i - 7) % patterns.length];
+        // 生成规则模式
+        const pattern = patterns[(i - 7) % patterns.length].replace('{PREFIX}', codePrefix);
         
-        mockRules.push({
+        initialRules.push({
             dbId: i,
             ruleCode: `${codePrefix}-RULE-${codeSuffix}`,
             ruleName: `${typeName}编码规则${sequence}`,
@@ -514,7 +494,7 @@ const generateMockRules = (): CodingRule[] => {
         });
     }
 
-    return mockRules;
+    return initialRules;
 };
 
 // 模拟规则数据
@@ -565,8 +545,6 @@ const fetchRules = async () => {
     try {
         loading.value = true;
         await new Promise(resolve => setTimeout(resolve, 200));
-        rules.value = [...originalRules.value];
-        pagination.total = rules.value.length;
     } catch (error) {
         message.error('获取规则列表失败');
         console.error('Error fetching rules:', error);
@@ -636,13 +614,20 @@ const handlePreview = (record: CodingRule) => {
     const day = String(now.getDate()).padStart(2, '0');
     const serialNumber = String(record.startNumber).padStart(record.numberLength, '0');
     
-    previewCode.value = record.rulePattern
-        .replace(/{YYYY}/g, year)
-        .replace(/{MM}/g, month)
-        .replace(/{DD}/g, day)
-        .replace(/{NNNN}/g, serialNumber)
-        .replace(/{DEPT}/g, 'DEPT')
-        .replace(/{TYPE}/g, record.ruleType.toUpperCase());
+    // 替换规则模式中的变量
+    const replacements = {
+        '{YYYY}': year,
+        '{MM}': month,
+        '{DD}': day,
+        '{NNNN}': serialNumber,
+        '{DEPT}': 'DEPT',
+        '{TYPE}': record.ruleType.toUpperCase()
+    };
+    
+    previewCode.value = Object.entries(replacements).reduce((pattern, [key, value]) => 
+        pattern.replace(new RegExp(key, 'g'), value), 
+        record.rulePattern
+    );
     
     currentPreviewRule.value = record;
     previewModalVisible.value = true;
@@ -684,9 +669,10 @@ const handleBatchDelete = async () => {
 
     try {
         loading.value = true;
+        const deleteCount = selectedRowKeys.value.length;
         originalRules.value = originalRules.value.filter(rule => !selectedRowKeys.value.includes(rule.dbId));
         selectedRowKeys.value = [];
-        message.success(`批量删除 ${selectedRowKeys.value.length} 个规则成功`);
+        message.success(`批量删除 ${deleteCount} 个规则成功`);
     } catch (error) {
         message.error('批量删除规则失败');
         console.error('Error batch deleting rules:', error);
@@ -777,7 +763,7 @@ const handleBatchImport = () => {
 
     input.onchange = async (e) => {
         const target = e.target as HTMLInputElement;
-        if (!target.files || target.files.length === 0) return;
+        if (!target.files?.length) return;
 
         const file = target.files[0];
         const reader = new FileReader();
@@ -788,7 +774,7 @@ const handleBatchImport = () => {
 
             try {
                 loading.value = true;
-                const lines = result.split('\n').filter(line => line.trim() !== '');
+                const lines = result.split('\n').filter(line => line.trim());
                 if (lines.length < 2) {
                     message.error('CSV文件格式错误，至少需要包含表头和一行数据');
                     return;
@@ -798,6 +784,7 @@ const handleBatchImport = () => {
                 const importedRules: CodingRule[] = [];
                 const errors: string[] = [];
                 const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
+                const validTypes = ['equipment', 'product', 'material', 'asset', 'other'];
 
                 dataLines.forEach((line, index) => {
                     const fields = line.split(',');
@@ -813,7 +800,6 @@ const handleBatchImport = () => {
                         return;
                     }
 
-                    const validTypes = ['equipment', 'product', 'material', 'asset', 'other'];
                     if (!validTypes.includes(ruleType)) {
                         errors.push(`第${index + 2}行：规则类型错误`);
                         return;
@@ -836,12 +822,12 @@ const handleBatchImport = () => {
                     });
                 });
 
-                if (errors.length > 0) {
+                if (errors.length) {
                     message.error(`导入失败，发现${errors.length}个错误：\n${errors.join('\n')}`);
                     return;
                 }
 
-                if (importedRules.length > 0) {
+                if (importedRules.length) {
                     originalRules.value.push(...importedRules);
                     message.success(`批量导入成功，共导入${importedRules.length}条规则`);
                 } else {
@@ -854,7 +840,7 @@ const handleBatchImport = () => {
             }
         };
 
-        reader.readAsText(file as Blob, 'utf-8');
+        reader.readAsText(file, 'utf-8');
     };
 
     input.click();

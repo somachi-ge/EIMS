@@ -22,27 +22,34 @@
         </template>
         <a-menu-item key="rule-list">规则列表</a-menu-item>
         <a-menu-item key="rule-add">新增规则</a-menu-item>
-        <a-menu-item key="rule-import">导入规则</a-menu-item>
       </a-sub-menu>
-      <a-sub-menu key="code">
+      <a-sub-menu key="generator">
         <template #title>
           <span>
             <CodeOutlined />
             <span>编码生成</span>
           </span>
         </template>
-        <a-menu-item key="code-single">单个生成</a-menu-item>
-        <a-menu-item key="code-batch">批量生成</a-menu-item>
-        <a-menu-item key="code-export">导出编码</a-menu-item>
+        <a-menu-item key="generator-code">编码生成</a-menu-item>
       </a-sub-menu>
-      <a-menu-item key="parse">
-        <template #icon><SearchOutlined /></template>
-        <span>编码解析</span>
-      </a-menu-item>
-      <a-menu-item key="log">
-        <template #icon><FileTextOutlined /></template>
-        <span>操作日志</span>
-      </a-menu-item>
+      <a-sub-menu key="parse">
+        <template #title>
+          <span>
+            <SearchOutlined />
+            <span>编码解析</span>
+          </span>
+        </template>
+        <a-menu-item key="parse-single">编码解析</a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="log">
+        <template #title>
+          <span>
+            <FileTextOutlined />
+            <span>操作日志</span>
+          </span>
+        </template>
+        <a-menu-item key="log-list">操作日志</a-menu-item>
+      </a-sub-menu>
       <a-menu-item key="setting">
         <template #icon><SettingOutlined /></template>
         <span>系统设置</span>
@@ -95,12 +102,9 @@ const routeMap: Record<string, string> = {
   'dashboard': '/coding-rule',
   'rule-list': '/coding-rule/rule-management/list',
   'rule-add': '/coding-rule/rule-management/add',
-  'rule-import': '/coding-rule/rule-management/import',
-  'code-single': '/coding-rule/code/single',
-  'code-batch': '/coding-rule/code/batch',
-  'code-export': '/coding-rule/code/export',
-  'parse': '/coding-rule/parse',
-  'log': '/coding-rule/log',
+  'generator-code': '/coding-rule/generator',
+  'parse-single': '/coding-rule/parse',
+  'log-list': '/coding-rule/log',
   'setting': '/coding-rule/setting',
   'help': '/coding-rule/help'
 };
@@ -108,9 +112,15 @@ const routeMap: Record<string, string> = {
 // 根据当前路由设置选中状态
 const updateSelectedKeys = () => {
     const currentPath = route.path;
-    // 特殊处理规则编辑和新增页面，激活规则列表
-    if (currentPath.startsWith('/coding-rule/rule-management/edit/') || currentPath === '/coding-rule/rule-management/add') {
+    // 特殊处理规则编辑页面，激活规则列表
+    if (currentPath.startsWith('/coding-rule/rule-management/edit/')) {
         selectedKeys.value = ['rule-list'];
+        openKeys.value = ['rule'];
+        return;
+    }
+    // 特殊处理新增规则页面，激活新增规则
+    if (currentPath === '/coding-rule/rule-management/add') {
+        selectedKeys.value = ['rule-add'];
         openKeys.value = ['rule'];
         return;
     }
@@ -120,13 +130,21 @@ const updateSelectedKeys = () => {
         .sort((a, b) => b[1].length - a[1].length);
     
     for (const [key, path] of sortedRouteMap) {
-        if (currentPath === path || currentPath.startsWith(path)) {
+        // 移除路径末尾的斜杠，确保匹配更准确
+        const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+        const normalizedPath = path.replace(/\/$/, '');
+        
+        if (normalizedCurrentPath === normalizedPath || normalizedCurrentPath.startsWith(normalizedPath + '/')) {
             selectedKeys.value = [key];
             // 如果是有子菜单的项，自动展开
-            if (key.startsWith('rule-')) {
+            if (key.startsWith('rule')) {
                 openKeys.value = ['rule'];
-            } else if (key.startsWith('code-')) {
-                openKeys.value = ['code'];
+            } else if (key.startsWith('generator-')) {
+                openKeys.value = ['generator'];
+            } else if (key.startsWith('parse-')) {
+                openKeys.value = ['parse'];
+            } else if (key.startsWith('log-')) {
+                openKeys.value = ['log'];
             }
             break;
         }

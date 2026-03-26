@@ -367,9 +367,9 @@ const handleDataRestore = () => {
   const path = ROUTE_MAP['数据恢复']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -378,9 +378,9 @@ const handleBackupList = () => {
   const path = ROUTE_MAP['备份列表']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -389,9 +389,9 @@ const handleUserManagement = () => {
   const path = ROUTE_MAP['用户管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -400,9 +400,9 @@ const handleRoleManagement = () => {
   const path = ROUTE_MAP['角色管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -411,9 +411,9 @@ const handlePermissionManagement = () => {
   const path = ROUTE_MAP['权限管理']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -422,9 +422,9 @@ const handleLogAnalysis = () => {
   const path = ROUTE_MAP['日志分析']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -433,9 +433,9 @@ const handleOperationLogs = () => {
   const path = ROUTE_MAP['操作日志']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -444,9 +444,9 @@ const handleSystemLog = () => {
   const path = ROUTE_MAP['系统日志']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
@@ -455,9 +455,9 @@ const handleLoginLogs = () => {
   const path = ROUTE_MAP['登录日志']
   if (path) {
     try {
-      router.push(path)
+      window.open(path, '_blank')
     } catch (error) {
-      console.error('页面跳转失败:', error)
+      console.error('页面打开失败:', error)
     }
   }
 }
