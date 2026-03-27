@@ -48,7 +48,8 @@
                     />
                   </template>
                   <template #action="{ record }">
-                    <a-button size="small" @click="handleEditCategory(record)">编辑</a-button>
+                    <a-button size="small" style="margin-right: 8px;" @click="handleEditCategory(record)">编辑</a-button>
+                    <a-button size="small" danger @click="handleDeleteCategory(record)">删除</a-button>
                   </template>
                 </a-table>
                 <div class="pagination-container">
@@ -600,6 +601,14 @@ const handleEditCategory = (record: any) => {
   editCategoryName.value = record.name;
   editCategoryCode.value = record.code;
   editCategoryModalVisible.value = true;
+};
+
+// 删除分类
+const handleDeleteCategory = (record: any) => {
+  // 打开删除确认弹窗
+  deleteRecord.value = { ...record, type: 'category' };
+  isBatchDelete.value = false;
+  deleteModalVisible.value = true;
 };
 
 // 确认编辑分类
