@@ -50,14 +50,24 @@
         </template>
         <a-menu-item key="log-list">操作日志</a-menu-item>
       </a-sub-menu>
-      <a-menu-item key="setting">
-        <template #icon><SettingOutlined /></template>
-        <span>系统设置</span>
-      </a-menu-item>
-      <a-menu-item key="help">
-        <template #icon><QuestionCircleOutlined /></template>
-        <span>帮助反馈</span>
-      </a-menu-item>
+      <a-sub-menu key="setting">
+        <template #title>
+          <span>
+            <SettingOutlined />
+            <span>系统设置</span>
+          </span>
+        </template>
+        <a-menu-item key="setting-system">系统设置</a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="help">
+        <template #title>
+          <span>
+            <QuestionCircleOutlined />
+            <span>帮助反馈</span>
+          </span>
+        </template>
+        <a-menu-item key="help-feedback">帮助反馈</a-menu-item>
+      </a-sub-menu>
     </a-menu>
     
     <!-- 缩起/展开按钮 -->
@@ -105,8 +115,8 @@ const routeMap: Record<string, string> = {
   'generator-code': '/coding-rule/generator',
   'parse-single': '/coding-rule/parse',
   'log-list': '/coding-rule/log',
-  'setting': '/coding-rule/setting',
-  'help': '/coding-rule/help'
+  'setting-system': '/coding-rule/setting',
+  'help-feedback': '/coding-rule/help'
 };
 
 // 根据当前路由设置选中状态
@@ -145,6 +155,10 @@ const updateSelectedKeys = () => {
                 openKeys.value = ['parse'];
             } else if (key.startsWith('log-')) {
                 openKeys.value = ['log'];
+            } else if (key.startsWith('setting-')) {
+                openKeys.value = ['setting'];
+            } else if (key.startsWith('help-')) {
+                openKeys.value = ['help'];
             }
             break;
         }

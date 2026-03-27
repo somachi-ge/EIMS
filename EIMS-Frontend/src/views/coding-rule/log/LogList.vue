@@ -25,10 +25,11 @@
             <div style="flex: 1; min-width: 120px;">
               <a-select
                 v-model:value="operationType"
-                placeholder="操作类型"
+                placeholder="全部操作类型"
                 allow-clear
                 style="width: 100%;"
               >
+                <a-select-option value="">全部操作类似</a-select-option>
                 <a-select-option value="create">创建</a-select-option>
                 <a-select-option value="update">更新</a-select-option>
                 <a-select-option value="delete">删除</a-select-option>
@@ -75,8 +76,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { SearchOutlined } from '@ant-design/icons-vue';
+import { ref } from 'vue';
+
 import AppLayout from '../layout/AppLayout.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 

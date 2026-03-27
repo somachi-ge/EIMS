@@ -190,6 +190,18 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '操作日志' }
   },
   {
+    path: '/coding-rule/help',
+    name: 'HelpFeedback',
+    component: () => import('../views/coding-rule/help/HelpFeedback.vue'),
+    meta: { title: '帮助反馈' }
+  },
+  {
+    path: '/coding-rule/setting',
+    name: 'SystemSetting',
+    component: () => import('../views/coding-rule/setting/SystemSetting.vue'),
+    meta: { title: '系统设置' }
+  },
+  {
     path: '/error/403',
     name: 'Forbidden',
     component: () => import('../views/error/Forbidden.vue')
