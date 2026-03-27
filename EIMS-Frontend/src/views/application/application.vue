@@ -39,7 +39,6 @@ import {
   CheckCircleOutlined,
   ControlOutlined,
   LineChartOutlined,
-  CodeOutlined,
   TeamOutlined,
   ProjectOutlined,
 } from '@ant-design/icons-vue'

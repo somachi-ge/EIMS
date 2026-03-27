@@ -3,11 +3,10 @@
         <a-config-provider :locale="zhCN">
             <div class="rule-list-container">
                 <div class="rule-page">
+                <!-- 页面标题 -->
+                <h2 class="page-title">规则列表</h2>
                 <!-- 规则管理卡片 -->
                 <a-card class="rule-card">
-                    <div class="card-header">
-                        <div class="header-right"></div>
-                    </div>
 
                     <!-- 搜索过滤区域 -->
                     <div class="rule-filter" style="overflow-x: auto;">
@@ -46,13 +45,9 @@
 
                     <!-- 操作按钮区域 -->
                     <div class="rule-actions">
-                        <a-button type="primary" @click="handleAdd">新增规则</a-button>
-                        <a-button type="primary" style="margin-left: 8px;" @click="handleBatchExport">导出规则</a-button>
-                        <a-button type="primary" style="margin-left: 8px;" @click="handleBatchImport">导入规则</a-button>
-                        <a-button type="primary" style="margin-left: 8px;" @click="handleTemplateDownload">模板下载</a-button>
-                        <a-button type="primary" style="margin-left: 8px; background-color: #52c41a;" @click="handleBatchEnable">批量启用</a-button>
-                        <a-button type="primary" style="margin-left: 8px; background-color: #fa8c16;" @click="handleBatchDisable">批量停用</a-button>
-                        <a-button type="primary" style="margin-left: 8px; background-color: #ff4d4f;" @click="handleBatchDelete">批量删除</a-button>
+                        <a-button type="primary" style="background-color: #52c41a;" @click="handleBatchEnable">批量启用</a-button>
+                        <a-button type="primary" style="background-color: #fa8c16;" @click="handleBatchDisable">批量停用</a-button>
+                        <a-button type="primary" style="background-color: #ff4d4f;" @click="handleBatchDelete">批量删除</a-button>
                     </div>
 
                     <!-- 提示信息 -->
@@ -127,41 +122,7 @@
 
 
 
-                <!-- 查看规则详情模态框 -->
-                <a-modal
-                    v-model:open="viewModalVisible"
-                    title="规则详情"
-                    width="600px"
-                    :ok-text="'关闭'"
-                    :cancel-text="''"
-                    :cancel-button-props="{ style: { display: 'none' } }"
-                    @ok="closeViewModal"
-                    @cancel="closeViewModal"
-                    class="rule-view-modal"
-                >
-                    <a-descriptions :column="2" bordered v-if="currentRule">
-                        <a-descriptions-item label="规则编码" :span="2">{{ currentRule.ruleCode }}</a-descriptions-item>
-                        <a-descriptions-item label="规则名称" :span="2">{{ currentRule.ruleName }}</a-descriptions-item>
-                        <a-descriptions-item label="规则类型">
-                            <a-tag :color="getRuleTypeColor(currentRule.ruleType)" :bordered="false">
-                                {{ getRuleTypeText(currentRule.ruleType) }}
-                            </a-tag>
-                        </a-descriptions-item>
-                        <a-descriptions-item label="状态">
-                            <a-tag :color="currentRule.status === 'active' ? 'green' : 'orange'" :bordered="false">
-                                {{ currentRule.status === 'active' ? '启用' : '停用' }}
-                            </a-tag>
-                        </a-descriptions-item>
-                        <a-descriptions-item label="规则格式" :span="2">{{ currentRule.rulePattern }}</a-descriptions-item>
-                        <a-descriptions-item label="起始流水号">{{ currentRule.startNumber }}</a-descriptions-item>
-                        <a-descriptions-item label="流水号长度">{{ currentRule.numberLength }}</a-descriptions-item>
-                        <a-descriptions-item label="已生成数量">{{ currentRule.generatedCount }}</a-descriptions-item>
-                        <a-descriptions-item label="创建人">{{ currentRule.creator }}</a-descriptions-item>
-                        <a-descriptions-item label="创建时间" :span="2">{{ currentRule.createdAt }}</a-descriptions-item>
-                        <a-descriptions-item label="更新时间" :span="2">{{ currentRule.updatedAt }}</a-descriptions-item>
-                        <a-descriptions-item label="规则描述" :span="2">{{ currentRule.description || '无' }}</a-descriptions-item>
-                    </a-descriptions>
-                </a-modal>
+
 
                 <!-- 预览规则编码模态窗 -->
                 <a-modal
@@ -201,18 +162,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, shallowRef } from 'vue';
-import { message } from 'ant-design-vue';
-import { useRouter } from 'vue-router';
+import { ref, reactive, computed, onMounted, shallowRef, h } from 'vue';
+import { message, Modal } from 'ant-design-vue';
+import { useRouter, useRoute } from 'vue-router';
 import AppLayout from '../layout/AppLayout.vue';
 
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
-// 常量定义
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
 
-// 路由
 const router = useRouter();
+const route = useRoute();
 
 // 类型定义
 interface CodingRule {
@@ -246,9 +206,7 @@ interface Pagination {
 // 状态管理
 const loading = ref(false);
 const selectedRowKeys = ref<(string | number)[]>([]);
-const viewModalVisible = ref(false);
 const previewModalVisible = ref(false);
-const currentRule = ref<CodingRule | null>(null);
 const currentPreviewRule = ref<CodingRule | null>(null);
 const previewCode = ref('');
 const showAlert = ref(true);
@@ -556,6 +514,12 @@ const fetchRules = async () => {
 // 组件挂载时获取规则列表
 onMounted(() => {
     fetchRules();
+    
+    const ruleCode = route.query.ruleCode as string;
+    if (ruleCode) {
+        filterForm.ruleCode = ruleCode;
+        message.info(`已自动筛选规则编码：${ruleCode}`);
+    }
 });
 
 // 搜索按钮点击事件
@@ -589,20 +553,16 @@ const handleSelectChange = (keys: (string | number)[]) => {
     selectedRowKeys.value = keys;
 };
 
-// 跳转到新增规则页面
-const handleAdd = () => {
-    router.push('/coding-rule/rule-management/add');
-};
+
 
 // 跳转到编辑规则页面
 const handleEdit = (record: CodingRule) => {
     router.push(`/coding-rule/rule-management/edit/${record.dbId}`);
 };
 
-// 查看规则详情
+// 跳转到规则详情页面
 const handleView = (record: CodingRule) => {
-    currentRule.value = record;
-    viewModalVisible.value = true;
+    router.push(`/coding-rule/rule-management/detail/${record.dbId}`);
 };
 
 // 预览规则编码
@@ -640,24 +600,31 @@ const closePreviewModal = () => {
     previewCode.value = '';
 };
 
-// 关闭查看模态框
-const closeViewModal = () => {
-    viewModalVisible.value = false;
-    currentRule.value = null;
-};
-
 // 删除规则
 const handleDelete = async (id: number) => {
-    try {
-        loading.value = true;
-        originalRules.value = originalRules.value.filter(rule => rule.dbId !== id);
-        message.success('删除规则成功');
-    } catch (error) {
-        message.error('删除规则失败');
-        console.error('Error deleting rule:', error);
-    } finally {
-        loading.value = false;
-    }
+    Modal.confirm({
+        title: '确认删除',
+        width: 400,
+        content: h('div', null, [
+            h('p', null, '确定要删除此规则吗？'),
+            h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+        ]),
+        okText: '确认',
+        cancelText: '取消',
+        okType: 'danger',
+        onOk: async () => {
+            try {
+                loading.value = true;
+                originalRules.value = originalRules.value.filter(rule => rule.dbId !== id);
+                message.success('删除规则成功');
+            } catch (error) {
+                message.error('删除规则失败');
+                console.error('Error deleting rule:', error);
+            } finally {
+                loading.value = false;
+            }
+        }
+    });
 };
 
 // 批量删除规则
@@ -667,18 +634,31 @@ const handleBatchDelete = async () => {
         return;
     }
 
-    try {
-        loading.value = true;
-        const deleteCount = selectedRowKeys.value.length;
-        originalRules.value = originalRules.value.filter(rule => !selectedRowKeys.value.includes(rule.dbId));
-        selectedRowKeys.value = [];
-        message.success(`批量删除 ${deleteCount} 个规则成功`);
-    } catch (error) {
-        message.error('批量删除规则失败');
-        console.error('Error batch deleting rules:', error);
-    } finally {
-        loading.value = false;
-    }
+    Modal.confirm({
+        title: '确认删除',
+        width: 400,
+        content: h('div', null, [
+            h('p', null, `确定要删除选中的 ${selectedRowKeys.value.length} 个规则吗？`),
+            h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+        ]),
+        okText: '确认',
+        cancelText: '取消',
+        okType: 'danger',
+        onOk: async () => {
+            try {
+                loading.value = true;
+                const deleteCount = selectedRowKeys.value.length;
+                originalRules.value = originalRules.value.filter(rule => !selectedRowKeys.value.includes(rule.dbId));
+                selectedRowKeys.value = [];
+                message.success(`批量删除 ${deleteCount} 个规则成功`);
+            } catch (error) {
+                message.error('批量删除规则失败');
+                console.error('Error batch deleting rules:', error);
+            } finally {
+                loading.value = false;
+            }
+        }
+    });
 };
 
 // 批量启用规则
@@ -755,155 +735,9 @@ const toggleRuleStatus = async (record: CodingRule) => {
     }
 };
 
-// 批量导入规则
-const handleBatchImport = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.csv';
 
-    input.onchange = async (e) => {
-        const target = e.target as HTMLInputElement;
-        if (!target.files?.length) return;
 
-        const file = target.files[0];
-        const reader = new FileReader();
 
-        reader.onload = async (event) => {
-            const result = event.target?.result as string;
-            if (!result) return;
-
-            try {
-                loading.value = true;
-                const lines = result.split('\n').filter(line => line.trim());
-                if (lines.length < 2) {
-                    message.error('CSV文件格式错误，至少需要包含表头和一行数据');
-                    return;
-                }
-
-                const dataLines = lines.slice(1);
-                const importedRules: CodingRule[] = [];
-                const errors: string[] = [];
-                const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
-                const validTypes = ['equipment', 'product', 'material', 'asset', 'other'];
-
-                dataLines.forEach((line, index) => {
-                    const fields = line.split(',');
-                    if (fields.length < 6) {
-                        errors.push(`第${index + 2}行：数据字段不足`);
-                        return;
-                    }
-
-                    const [ruleCode, ruleName, ruleType, rulePattern, startNumber, numberLength] = fields;
-
-                    if (!ruleCode || !ruleName || !ruleType || !rulePattern) {
-                        errors.push(`第${index + 2}行：存在空字段`);
-                        return;
-                    }
-
-                    if (!validTypes.includes(ruleType)) {
-                        errors.push(`第${index + 2}行：规则类型错误`);
-                        return;
-                    }
-
-                    importedRules.push({
-                        dbId: originalRules.value.length + 1 + importedRules.length,
-                        ruleCode,
-                        ruleName,
-                        ruleType: ruleType as CodingRule['ruleType'],
-                        rulePattern,
-                        startNumber: parseInt(startNumber) || 1,
-                        numberLength: parseInt(numberLength) || 4,
-                        status: 'active',
-                        description: '',
-                        generatedCount: 0,
-                        creator: '当前用户',
-                        createdAt: now,
-                        updatedAt: now
-                    });
-                });
-
-                if (errors.length) {
-                    message.error(`导入失败，发现${errors.length}个错误：\n${errors.join('\n')}`);
-                    return;
-                }
-
-                if (importedRules.length) {
-                    originalRules.value.push(...importedRules);
-                    message.success(`批量导入成功，共导入${importedRules.length}条规则`);
-                } else {
-                    message.warning('没有可导入的有效数据');
-                }
-            } catch (error) {
-                message.error('导入失败：' + (error as Error).message);
-            } finally {
-                loading.value = false;
-            }
-        };
-
-        reader.readAsText(file, 'utf-8');
-    };
-
-    input.click();
-};
-
-// 下载导入模板
-const handleTemplateDownload = () => {
-    const headers = ['规则编码', '规则名称', '规则类型', '规则格式', '起始流水号', '流水号长度'];
-    const csvContent = [
-        headers.join(','),
-        ['EQ-RULE-003,新设备编码规则,equipment,EQ-{YYYY}-{NNNN},1,4'].join(',')
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `编码规则导入模板_${new Date().toISOString().slice(0, 10)}.csv`);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    message.success('模板下载成功');
-};
-
-// 批量导出规则
-const handleBatchExport = () => {
-    const headers = ['规则编码', '规则名称', '规则类型', '规则格式', '起始流水号', '流水号长度', '状态', '已生成数量', '创建人', '创建时间'];
-    const exportData = filteredRules.value.map(rule => [
-        rule.ruleCode,
-        rule.ruleName,
-        getRuleTypeText(rule.ruleType),
-        rule.rulePattern,
-        rule.startNumber,
-        rule.numberLength,
-        rule.status === 'active' ? '启用' : '停用',
-        rule.generatedCount,
-        rule.creator,
-        rule.createdAt
-    ]);
-
-    const csvContent = [
-        headers.join(','),
-        ...exportData.map(row => row.join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `编码规则列表_${new Date().toISOString().slice(0, 10)}.csv`);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    message.success(`导出成功，共导出 ${exportData.length} 条规则记录`);
-};
 
 // 关闭操作提示
 const handleAlertClose = () => {
@@ -917,21 +751,28 @@ const handleAlertClose = () => {
     padding: 1.5%;
 }
 
-.rule-card {
+.rule-page {
+    background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    padding: 24px;
+}
+
+.rule-card {
+    border-radius: 8px;
+    box-shadow: none;
+    border: none;
     transition: all 0.3s ease;
 }
 
 .rule-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: none;
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
 }
 
 .rule-filter {
@@ -1021,10 +862,7 @@ const handleAlertClose = () => {
     margin-left: 8px;
 }
 
-.rule-view-modal :deep(.ant-descriptions-item-label) {
-    font-weight: 500;
-    background-color: #fafafa;
-}
+
 
 /* 响应式设计 */
 @media (max-width: 1200px) {

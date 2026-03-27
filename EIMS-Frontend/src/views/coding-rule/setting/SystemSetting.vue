@@ -2,7 +2,11 @@
   <a-config-provider :locale="zhCN">
     <AppLayout>
       <div class="system-setting">
-        <a-card>
+        <div class="system-setting-page">
+          <!-- 页面标题 -->
+          <h2 class="page-title">系统设置</h2>
+          
+          <a-card>
           <a-tabs default-active-key="global" class="setting-tabs">
             <a-tab-pane key="global" tab="全局参数配置">
               <div class="section-content">
@@ -205,27 +209,6 @@
             </a-form>
           </a-modal>
 
-          <!-- 删除确认弹窗 -->
-          <a-modal
-            v-model:open="deleteModalVisible"
-            title="确认删除"
-            width="400px"
-            @ok="handleDeleteConfirm"
-            @cancel="handleDeleteCancel"
-            :ok-text="'确认'"
-            :cancel-text="'取消'"
-            :ok-type="'danger'"
-          >
-            <div v-if="deleteRecord && !isBatchDelete">
-              <p>确定要删除{{ deleteRecord.type === 'category' ? '分类' : deleteRecord.type === 'business' ? '业务对象' : '模板' }} "{{ deleteRecord.name }}" 吗？</p>
-              <p style="color: #ff4d4f; margin-top: 12px;">删除后将无法恢复，请谨慎操作。</p>
-            </div>
-            <div v-else-if="isBatchDelete">
-              <p>确定要删除选中的 {{ batchDeleteCount }} 个{{ batchDeleteType === 'category' ? '分类' : batchDeleteType === 'business' ? '业务对象' : '模板' }} 吗？</p>
-              <p style="color: #ff4d4f; margin-top: 12px;">删除后将无法恢复，请谨慎操作。</p>
-            </div>
-          </a-modal>
-
           <!-- 新增业务对象弹窗 -->
           <a-modal
             v-model:open="addBusinessModalVisible"
@@ -321,7 +304,8 @@
               </a-form-item>
             </a-form>
           </a-modal>
-        </a-card>
+          </a-card>
+        </div>
       </div>
     </AppLayout>
   </a-config-provider>
@@ -330,8 +314,8 @@
 <script setup lang="ts">
 import AppLayout from '../layout/AppLayout.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import { ref, computed } from 'vue';
-import { message } from 'ant-design-vue';
+import { ref, computed, h } from 'vue';
+import { message, Modal } from 'ant-design-vue';
 
 // 常量定义
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
@@ -504,12 +488,7 @@ const editTemplateName = ref('');
 const editTemplateRuleId = ref<number | null>(null);
 
 // 删除确认弹窗
-const deleteModalVisible = ref(false);
-const deleteRecord = ref<any>(null);
-const isBatchDelete = ref(false);
-const batchDeleteCount = ref(0);
-const batchDeleteType = ref<'category' | 'business' | 'template'>('template');
-const batchDeleteKeys = ref<(string | number)[]>([]);
+
 
 // 模板选择
 const selectedTemplateKeys = ref<(string | number)[]>([]);
@@ -605,10 +584,24 @@ const handleEditCategory = (record: any) => {
 
 // 删除分类
 const handleDeleteCategory = (record: any) => {
-  // 打开删除确认弹窗
-  deleteRecord.value = { ...record, type: 'category' };
-  isBatchDelete.value = false;
-  deleteModalVisible.value = true;
+  Modal.confirm({
+    title: '确认删除',
+    width: 400,
+    content: h('div', null, [
+      h('p', null, `确定要删除分类 "${record.name}" 吗？`),
+      h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+    ]),
+    okText: '确认',
+    cancelText: '取消',
+    okType: 'danger',
+    onOk: () => {
+      const index = categoryData.value.findIndex(category => category.id === record.id);
+      if (index !== -1) {
+        categoryData.value.splice(index, 1);
+        message.success(`分类 "${record.name}" 已删除`);
+      }
+    }
+  });
 };
 
 // 确认编辑分类
@@ -681,76 +674,27 @@ const toggleBusinessObjectStatus = (record: any) => {
 
 // 删除模板
 const handleDeleteTemplate = (record: any) => {
-  // 打开删除确认弹窗
-  deleteRecord.value = { ...record, type: 'template' };
-  isBatchDelete.value = false;
-  deleteModalVisible.value = true;
-};
-
-// 确认删除
-const handleDeleteConfirm = () => {
-  try {
-    if (isBatchDelete.value) {
-      // 批量删除
-      const deleteCount = batchDeleteKeys.value.length;
-      
-      if (batchDeleteType.value === 'category') {
-        categoryData.value = categoryData.value.filter(category => !batchDeleteKeys.value.includes(category.id));
-        selectedCategoryKeys.value = [];
-      } else if (batchDeleteType.value === 'business') {
-        businessData.value = businessData.value.filter(business => !batchDeleteKeys.value.includes(business.id));
-        selectedBusinessKeys.value = [];
-      } else if (batchDeleteType.value === 'template') {
-        templateData.value = templateData.value.filter(template => !batchDeleteKeys.value.includes(template.id));
-        selectedTemplateKeys.value = [];
-      }
-      
-      message.success(`批量删除 ${deleteCount} 个${batchDeleteType.value === 'category' ? '分类' : batchDeleteType.value === 'business' ? '业务对象' : '模板'} 成功`);
-    } else if (deleteRecord.value) {
-      // 单个删除
-      if (deleteRecord.value.type === 'category') {
-        const index = categoryData.value.findIndex(category => category.id === deleteRecord.value.id);
-        if (index !== -1) {
-          categoryData.value.splice(index, 1);
-          message.success(`分类 "${deleteRecord.value.name}" 已删除`);
-        }
-      } else if (deleteRecord.value.type === 'business') {
-        const index = businessData.value.findIndex(business => business.id === deleteRecord.value.id);
-        if (index !== -1) {
-          businessData.value.splice(index, 1);
-          message.success(`业务对象 "${deleteRecord.value.name}" 已删除`);
-        }
-      } else {
-        const index = templateData.value.findIndex(template => template.id === deleteRecord.value.id);
-        if (index !== -1) {
-          templateData.value.splice(index, 1);
-          message.success(`模板 "${deleteRecord.value.name}" 已删除`);
-        }
+  Modal.confirm({
+    title: '确认删除',
+    width: 400,
+    content: h('div', null, [
+      h('p', null, `确定要删除模板 "${record.name}" 吗？`),
+      h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+    ]),
+    okText: '确认',
+    cancelText: '取消',
+    okType: 'danger',
+    onOk: () => {
+      const index = templateData.value.findIndex(template => template.id === record.id);
+      if (index !== -1) {
+        templateData.value.splice(index, 1);
+        message.success(`模板 "${record.name}" 已删除`);
       }
     }
-    
-    // 重置状态
-    deleteModalVisible.value = false;
-    deleteRecord.value = null;
-    isBatchDelete.value = false;
-    batchDeleteCount.value = 0;
-    batchDeleteType.value = 'template';
-    batchDeleteKeys.value = [];
-  } catch (error) {
-    message.error('删除失败');
-    console.error('Error deleting:', error);
-  }
+  });
 };
 
-// 取消删除
-const handleDeleteCancel = () => {
-  deleteModalVisible.value = false;
-  deleteRecord.value = null;
-  isBatchDelete.value = false;
-  batchDeleteCount.value = 0;
-  batchDeleteType.value = 'template';
-  batchDeleteKeys.value = [];
-};
+
 
 // 新增分类
 const handleAddCategory = () => {
@@ -875,10 +819,24 @@ const handleEditBusinessCancel = () => {
 
 // 删除业务对象
 const handleDeleteBusinessObject = (record: any) => {
-  // 打开删除确认弹窗
-  deleteRecord.value = { ...record, type: 'business' };
-  isBatchDelete.value = false;
-  deleteModalVisible.value = true;
+  Modal.confirm({
+    title: '确认删除',
+    width: 400,
+    content: h('div', null, [
+      h('p', null, `确定要删除业务对象 "${record.name}" 吗？`),
+      h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+    ]),
+    okText: '确认',
+    cancelText: '取消',
+    okType: 'danger',
+    onOk: () => {
+      const index = businessData.value.findIndex(business => business.id === record.id);
+      if (index !== -1) {
+        businessData.value.splice(index, 1);
+        message.success(`业务对象 "${record.name}" 已删除`);
+      }
+    }
+  });
 };
 
 // 配置业务对象属性弹窗
@@ -1089,12 +1047,23 @@ const handleBatchDeleteCategory = () => {
     return;
   }
 
-  // 打开删除确认弹窗
-  isBatchDelete.value = true;
-  batchDeleteCount.value = selectedCategoryKeys.value.length;
-  batchDeleteType.value = 'category';
-  batchDeleteKeys.value = [...selectedCategoryKeys.value];
-  deleteModalVisible.value = true;
+  Modal.confirm({
+    title: '确认删除',
+    width: 400,
+    content: h('div', null, [
+      h('p', null, `确定要删除选中的 ${selectedCategoryKeys.value.length} 个分类吗？`),
+      h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+    ]),
+    okText: '确认',
+    cancelText: '取消',
+    okType: 'danger',
+    onOk: () => {
+      const deleteCount = selectedCategoryKeys.value.length;
+      categoryData.value = categoryData.value.filter(category => !selectedCategoryKeys.value.includes(category.id));
+      selectedCategoryKeys.value = [];
+      message.success(`批量删除 ${deleteCount} 个分类成功`);
+    }
+  });
 };
 
 // 批量启用业务对象
@@ -1148,12 +1117,23 @@ const handleBatchDeleteBusiness = () => {
     return;
   }
 
-  // 打开删除确认弹窗
-  isBatchDelete.value = true;
-  batchDeleteCount.value = selectedBusinessKeys.value.length;
-  batchDeleteType.value = 'business';
-  batchDeleteKeys.value = [...selectedBusinessKeys.value];
-  deleteModalVisible.value = true;
+  Modal.confirm({
+    title: '确认删除',
+    width: 400,
+    content: h('div', null, [
+      h('p', null, `确定要删除选中的 ${selectedBusinessKeys.value.length} 个业务对象吗？`),
+      h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+    ]),
+    okText: '确认',
+    cancelText: '取消',
+    okType: 'danger',
+    onOk: () => {
+      const deleteCount = selectedBusinessKeys.value.length;
+      businessData.value = businessData.value.filter(business => !selectedBusinessKeys.value.includes(business.id));
+      selectedBusinessKeys.value = [];
+      message.success(`批量删除 ${deleteCount} 个业务对象成功`);
+    }
+  });
 };
 
 // 批量启用模板
@@ -1207,22 +1187,55 @@ const handleBatchDeleteTemplate = () => {
     return;
   }
 
-  // 打开删除确认弹窗
-  isBatchDelete.value = true;
-  batchDeleteCount.value = selectedTemplateKeys.value.length;
-  batchDeleteType.value = 'template';
-  batchDeleteKeys.value = [...selectedTemplateKeys.value];
-  deleteModalVisible.value = true;
+  Modal.confirm({
+    title: '确认删除',
+    width: 400,
+    content: h('div', null, [
+      h('p', null, `确定要删除选中的 ${selectedTemplateKeys.value.length} 个模板吗？`),
+      h('p', { style: { color: '#ff4d4f', marginTop: '12px' } }, '删除后将无法恢复，请谨慎操作。')
+    ]),
+    okText: '确认',
+    cancelText: '取消',
+    okType: 'danger',
+    onOk: () => {
+      const deleteCount = selectedTemplateKeys.value.length;
+      templateData.value = templateData.value.filter(template => !selectedTemplateKeys.value.includes(template.id));
+      selectedTemplateKeys.value = [];
+      message.success(`批量删除 ${deleteCount} 个模板成功`);
+    }
+  });
 };
 </script>
 
 <style scoped>
 .system-setting {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
+}
+
+.system-setting-page {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
 }
 
 .setting-tabs {
-  margin-top: 16px;
+  margin-top: 0;
+}
+
+/* 卡片样式 */
+.system-setting-page :deep(.ant-card) {
+  border-radius: 8px;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 24px;
 }
 
 .section-content {

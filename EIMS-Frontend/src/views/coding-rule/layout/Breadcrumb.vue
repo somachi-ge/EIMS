@@ -25,8 +25,8 @@ const breadcrumbItems = computed(() => {
     items.push({ title: '编码概览', path: '/coding-rule' });
     
     const currentPath = route.path;
-    // 特殊处理规则编辑和新增页面，添加规则列表
-    if (currentPath.startsWith('/coding-rule/rule-management/edit/') || currentPath === '/coding-rule/rule-management/add') {
+    // 特殊处理规则编辑、详情和新增页面，添加规则列表
+    if (currentPath.startsWith('/coding-rule/rule-management/edit/') || currentPath.startsWith('/coding-rule/rule-management/detail/') || currentPath === '/coding-rule/rule-management/add') {
         items.push({ title: '规则列表', path: '/coding-rule/rule-management/list' });
     }
     

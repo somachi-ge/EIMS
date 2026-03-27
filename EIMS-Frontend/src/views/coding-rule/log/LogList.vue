@@ -2,7 +2,11 @@
   <a-config-provider :locale="zhCN">
     <AppLayout>
       <div class="log-container">
-        <a-card class="log-card">
+        <div class="log-page">
+          <!-- 页面标题 -->
+          <h2 class="page-title">日志管理</h2>
+          
+          <a-card class="log-card">
         <!-- 搜索和筛选 -->
         <div class="log-filter" style="overflow-x: auto;">
           <div style="width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
@@ -69,9 +73,10 @@
             </template>
           </template>
         </a-table>
-      </a-card>
-    </div>
-  </AppLayout>
+          </a-card>
+        </div>
+      </div>
+    </AppLayout>
 </a-config-provider>
 </template>
 
@@ -251,11 +256,28 @@ const handleReset = () => {
 
 <style scoped>
 .log-container {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
+}
+
+.log-page {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
 }
 
 .log-card {
-  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 24px;
 }
 
 .log-filter {

@@ -1,7 +1,11 @@
 <template>
-  <AppLayout title="编码解析">
+  <AppLayout>
     <div class="parse-container">
-      <a-card title="编码解析" class="parse-card">
+      <div class="parse-page">
+        <!-- 页面标题 -->
+        <h2 class="page-title">编码解析</h2>
+        
+        <a-card class="parse-card">
         <div class="parse-input-section">
           <a-input
             v-model:value="formState.code"
@@ -44,7 +48,8 @@
             </div>
           </div>
         </div>
-      </a-card>
+        </a-card>
+      </div>
     </div>
   </AppLayout>
 </template>
@@ -82,11 +87,28 @@ const handleParse = () => {
 
 <style scoped>
 .parse-container {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
+}
+
+.parse-page {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
 }
 
 .parse-card {
-  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 24px;
 }
 
 .parse-input-section {

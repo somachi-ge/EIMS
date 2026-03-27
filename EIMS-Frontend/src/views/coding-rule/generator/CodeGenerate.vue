@@ -2,8 +2,22 @@
   <AppLayout>
     <a-config-provider :locale="zhCN">
       <div class="code-generate-container">
-        
-        <a-card class="generate-card">
+        <div class="code-generate-page">
+          <!-- 页面标题 -->
+          <h2 class="page-title">编码生成</h2>
+          
+          <!-- 状态筛选标签 -->
+          <div class="status-filter">
+            <a-radio-group v-model:value="statusFilter" button-style="solid" @change="handleStatusFilterChange">
+              <a-radio-button value="all">全部</a-radio-button>
+              <a-radio-button value="bound">已绑定</a-radio-button>
+              <a-radio-button value="unbound">未绑定</a-radio-button>
+              <a-radio-button value="invalid">已作废</a-radio-button>
+            </a-radio-group>
+            <span class="filter-count">共 {{ filteredResults.length }} 条记录</span>
+          </div>
+
+          <a-card class="generate-card">
           <a-form layout="vertical">
             <!-- 选择编码规则 -->
             <a-form-item label="选择编码规则">
@@ -46,6 +60,9 @@
           <div class="result-section">
             <h3 class="result-title">生成结果</h3>
             <a-table :columns="columns" :data-source="paginatedResults" row-key="id" size="small" :pagination="false">
+            <template #status="{ record }">
+              <a-tag :color="getStatusColor(record.status)" :bordered="false">{{ getStatusText(record.status) }}</a-tag>
+            </template>
             <template #action="{ record }">
               <a-button size="small" @click="handleCopyCode(record.code)">复制</a-button>
             </template>
@@ -56,7 +73,7 @@
               <a-pagination
                 v-model:current="pagination.current"
                 v-model:pageSize="pagination.pageSize"
-                :total="generatedResults.length"
+                :total="filteredResults.length"
                 :showSizeChanger="true"
                 :pageSizeOptions="PAGE_SIZE_OPTIONS"
                 :showTotal="showTotal"
@@ -66,33 +83,35 @@
             </div>
           </div>
         </a-card>
+        </div>
       </div>
     </a-config-provider>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import AppLayout from '../layout/AppLayout.vue';
 
-// 常量定义
+const route = useRoute();
+
 const PAGE_SIZE_OPTIONS = ['10', '30', '50'] as const;
 
-// 表单数据
 const formData = ref({
   ruleId: '1',
   generateType: 'single',
   batchCount: 10
 });
 
-// 分页数据
+const statusFilter = ref('all');
+
 const pagination = ref({
   current: 1,
   pageSize: 10
 });
 
-// 生成结果列定义
 const columns = [
   {
     title: '编码',
@@ -103,6 +122,12 @@ const columns = [
     title: '规则名称',
     dataIndex: 'ruleName',
     key: 'ruleName'
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    key: 'status',
+    slots: { customRender: 'status' }
   },
   {
     title: '生成时间',
@@ -116,42 +141,64 @@ const columns = [
   }
 ];
 
-// 生成结果数据
 const generatedResults = ref([
   {
     id: '1',
     code: 'EQ-CN01-2602-0045',
     ruleName: '设备编码规则',
+    status: 'bound',
     generateTime: '2026-02-23 10:00:00'
   }
 ]);
 
-// 分页后的结果
+const filteredResults = computed(() => {
+  if (statusFilter.value === 'all') {
+    return generatedResults.value;
+  }
+  return generatedResults.value.filter(item => item.status === statusFilter.value);
+});
+
 const paginatedResults = computed(() => {
   const start = (pagination.value.current - 1) * pagination.value.pageSize;
   const end = start + pagination.value.pageSize;
-  return generatedResults.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
-// 显示总数
 const showTotal = (total: number) => `共 ${total} 条记录`;
 
-// 生成编码
+const getStatusColor = (status: string) => {
+  const colorMap: Record<string, string> = {
+    bound: 'green',
+    unbound: 'blue',
+    invalid: 'red'
+  };
+  return colorMap[status] || 'default';
+};
+
+const getStatusText = (status: string) => {
+  const textMap: Record<string, string> = {
+    bound: '已绑定',
+    unbound: '未绑定',
+    invalid: '已作废'
+  };
+  return textMap[status] || status;
+};
+
+const handleStatusFilterChange = () => {
+  pagination.value.current = 1;
+};
+
 const handleGenerateCode = () => {
-  // 模拟生成编码
   const newCodes = [];
   const count = formData.value.generateType === 'batch' ? formData.value.batchCount : 1;
   
   for (let i = 0; i < count; i++) {
-    // 生成时间戳部分
     const now = new Date();
     const year = now.getFullYear().toString().slice(2);
     const month = String(now.getMonth() + 1).padStart(2, '0');
     
-    // 生成序号部分
     const sequence = String(generatedResults.value.length + i + 1).padStart(4, '0');
     
-    // 根据选择的规则生成编码
     let code = '';
     if (formData.value.ruleId === '1') {
       code = `EQ-CN01-${year}${month}-${sequence}`;
@@ -161,69 +208,69 @@ const handleGenerateCode = () => {
       code = `ORD-${year}${month}-${sequence}`;
     }
     
-    // 添加到结果中
     newCodes.push({
       id: String(generatedResults.value.length + i + 1),
       code: code,
       ruleName: formData.value.ruleId === '1' ? '设备编码规则' : 
                 formData.value.ruleId === '2' ? '产品编码规则' : '订单编码规则',
+      status: 'unbound',
       generateTime: now.toLocaleString('zh-CN')
     });
   }
   
-  // 添加到生成结果中
   generatedResults.value = [...generatedResults.value, ...newCodes];
   console.log('生成编码成功:', newCodes);
 };
 
-// 导出结果
 const handleExportResult = () => {
-  if (generatedResults.value.length === 0) {
+  if (filteredResults.value.length === 0) {
     console.log('没有可导出的数据');
     return;
   }
   
-  // 准备CSV内容
-  const headers = ['编码', '规则名称', '生成时间'];
+  const headers = ['编码', '规则名称', '状态', '生成时间'];
   const csvContent = [
     headers.join(','),
-    ...generatedResults.value.map(item => [
+    ...filteredResults.value.map(item => [
       item.code,
       item.ruleName,
+      getStatusText(item.status),
       item.generateTime
     ].join(','))
   ].join('\n');
   
-  // 创建Blob对象
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
   
-  // 设置下载属性
   link.setAttribute('href', url);
   link.setAttribute('download', `编码生成结果_${new Date().toISOString().slice(0, 10)}.csv`);
   link.style.visibility = 'hidden';
   
-  // 触发下载
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   
-  console.log('导出结果成功:', generatedResults.value.length, '条记录');
+  console.log('导出结果成功:', filteredResults.value.length, '条记录');
 };
 
-// 清空
 const handleClear = () => {
   generatedResults.value = [];
   pagination.value.current = 1;
 };
 
-// 复制编码
 const handleCopyCode = (code: string) => {
   navigator.clipboard.writeText(code).then(() => {
     console.log('复制成功:', code);
   });
 };
+
+onMounted(() => {
+  const status = route.query.status as string;
+  if (status && ['bound', 'unbound', 'invalid'].includes(status)) {
+    statusFilter.value = status;
+  }
+});
 </script>
 
 <style scoped>
@@ -232,14 +279,39 @@ const handleCopyCode = (code: string) => {
   padding: 1.5%;
 }
 
+.code-generate-page {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  padding: 24px;
+}
+
 .page-title {
-  margin: 0 0 24px 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #262626;
+  margin-bottom: 16px;
+}
+
+.status-filter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
+.filter-count {
+  font-size: 14px;
+  color: #8c8c8c;
 }
 
 .generate-card {
+  border-radius: 8px;
+  box-shadow: none;
+  border: none;
   margin-bottom: 24px;
 }
 

@@ -1,8 +1,12 @@
 <template>
     <AppLayout>
         <a-config-provider :locale="zhCN">
-            <div class="rule-add-container">
-                <div class="rule-add-page">
+            <div class="rule-list-container">
+                <div class="rule-page">
+                <!-- 页面标题 -->
+                <h2 class="page-title">新增规则</h2>
+                <!-- 规则管理卡片 -->
+                <a-card class="rule-card">
                     <!-- 步骤条 -->
                     <div class="steps-wrapper">
                         <a-steps :current="currentStep" size="small" @change="handleStepChange">
@@ -103,6 +107,7 @@
 
                         <!-- 步骤2：基本信息 -->
                         <div v-show="currentStep === 1" class="step-content">
+                            <h3 class="binding-title">基本信息</h3>
                             <a-form :model="formData" layout="vertical" class="edit-form">
                                 <a-row :gutter="24">
                                     <a-col :span="8">
@@ -239,7 +244,7 @@
                         <!-- 步骤3：绑定对象 -->
                         <div v-show="currentStep === 2" class="step-content">
                             <div class="binding-content">
-                                <h3 class="binding-title">绑定业务对象（智改数转）</h3>
+                                <h3 class="binding-title">绑定业务对象</h3>
                                 <div class="binding-options">
                                     <a-checkbox-group v-model:value="formData.bindingObjects">
                                         <a-checkbox value="equipment">设备</a-checkbox>
@@ -371,8 +376,9 @@
                         <a-button type="primary" @click="handleSubmit">提交</a-button>
                         <a-button @click="handleCancel">取消</a-button>
                     </div>
-                </div>
+                </a-card>
             </div>
+        </div>
         </a-config-provider>
     </AppLayout>
 </template>
@@ -636,20 +642,37 @@ const handleStepChange = (current: number) => {
 </script>
 
 <style scoped>
-.rule-add-container {
+.rule-list-container {
     width: 100%;
     padding: 1.5%;
 }
 
-.rule-add-page {
+.rule-page {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
     padding: 24px;
 }
 
+.rule-card {
+    border-radius: 8px;
+    box-shadow: none;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.rule-card:hover {
+    box-shadow: none;
+}
+
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+}
+
 .steps-wrapper {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     padding: 0 16px;
 }
 
@@ -707,13 +730,25 @@ const handleStepChange = (current: number) => {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-top: 32px;
     padding-top: 24px;
     border-top: 1px solid #f0f0f0;
 }
 
+.form-footer :deep(.ant-btn) {
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-footer :deep(.ant-btn:hover) {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
 .binding-content {
-    padding: 24px 0;
+    padding: 0;
 }
 
 .binding-title {
@@ -868,8 +903,14 @@ const handleStepChange = (current: number) => {
 }
 
 /* 响应式设计 */
+@media (max-width: 1200px) {
+    .rule-page {
+        padding: 20px;
+    }
+}
+
 @media (max-width: 992px) {
-    .rule-add-page {
+    .rule-page {
         padding: 16px;
     }
     
@@ -914,7 +955,7 @@ const handleStepChange = (current: number) => {
 }
 
 @media (max-width: 768px) {
-    .rule-add-container {
+    .rule-page {
         padding: 12px;
     }
     
@@ -924,6 +965,12 @@ const handleStepChange = (current: number) => {
     
     .form-footer :deep(.ant-btn) {
         width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .rule-page {
+        padding: 12px;
     }
 }
 </style>

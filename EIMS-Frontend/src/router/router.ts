@@ -172,10 +172,46 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '编辑规则' }
   },
   {
+    path: '/coding-rule/rule-management/detail/:id',
+    name: 'RuleDetail',
+    component: () => import('../views/coding-rule/rule-management/RuleDetail.vue'),
+    meta: { title: '规则详情' }
+  },
+  {
+    path: '/coding-rule/rule-management/history/:id',
+    name: 'RuleHistory',
+    component: () => import('../views/coding-rule/rule-management/RuleHistory.vue'),
+    meta: { title: '规则历史版本' }
+  },
+  {
+    path: '/coding-rule/rule-management/import-export',
+    name: 'RuleImportExport',
+    component: () => import('../views/coding-rule/rule-management/RuleImportExport.vue'),
+    meta: { title: '规则导入导出' }
+  },
+  {
     path: '/coding-rule/generator',
     name: 'CodeGenerate',
     component: () => import('../views/coding-rule/generator/CodeGenerate.vue'),
     meta: { title: '编码生成' }
+  },
+  {
+    path: '/coding-rule/generator/complement',
+    name: 'CodeComplement',
+    component: () => import('../views/coding-rule/generator/CodeComplement.vue'),
+    meta: { title: '编码补号' }
+  },
+  {
+    path: '/coding-rule/generator/bind',
+    name: 'CodeBind',
+    component: () => import('../views/coding-rule/generator/CodeBind.vue'),
+    meta: { title: '编码绑定/解绑' }
+  },
+  {
+    path: '/coding-rule/generator/recovery',
+    name: 'CodeRecovery',
+    component: () => import('../views/coding-rule/generator/CodeRecovery.vue'),
+    meta: { title: '编码作废恢复' }
   },
   {
     path: '/coding-rule/parse',

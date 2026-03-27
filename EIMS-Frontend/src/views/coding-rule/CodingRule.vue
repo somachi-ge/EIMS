@@ -52,37 +52,37 @@
             <div class="quick-actions">
               <h2 class="section-title">快捷操作</h2>
               <div class="action-grid">
-                <div class="action-item blue">
+                <div class="action-item blue" @click="navigateToRuleManagement">
                   <div class="action-icon">
                     <UnorderedListOutlined />
                   </div>
                   <span class="action-label">规则管理</span>
                 </div>
-                <div class="action-item cyan">
+                <div class="action-item cyan" @click="navigateToCodeGenerate">
                   <div class="action-icon">
                     <CodeOutlined />
                   </div>
                   <span class="action-label">编码生成</span>
                 </div>
-                <div class="action-item purple">
+                <div class="action-item purple" @click="navigateToCodeParse">
                   <div class="action-icon">
                     <SearchOutlined />
                   </div>
                   <span class="action-label">编码解析</span>
                 </div>
-                <div class="action-item orange">
+                <div class="action-item orange" @click="navigateToImportExport">
                   <div class="action-icon">
                     <ImportOutlined />
                   </div>
                   <span class="action-label">批量导入导出</span>
                 </div>
-                <div class="action-item green">
+                <div class="action-item green" @click="navigateToCodeComplement">
                   <div class="action-icon">
                     <EditOutlined />
                   </div>
                   <span class="action-label">编码补号</span>
                 </div>
-                <div class="action-item pink">
+                <div class="action-item pink" @click="navigateToCodeBind">
                   <div class="action-icon">
                     <LinkOutlined />
                   </div>
@@ -107,7 +107,7 @@
                     <span class="cell">968</span>
                     <span class="cell">75.3%</span>
                     <span class="cell">
-                      <a-button type="link" size="small">查看</a-button>
+                      <a-button type="link" size="small" @click="viewCodeByStatus('bound')">查看</a-button>
                     </span>
                   </div>
                   <div class="table-row">
@@ -117,7 +117,7 @@
                     <span class="cell">318</span>
                     <span class="cell">24.7%</span>
                     <span class="cell">
-                      <a-button type="link" size="small">查看</a-button>
+                      <a-button type="link" size="small" @click="viewCodeByStatus('unbound')">查看</a-button>
                     </span>
                   </div>
                   <div class="table-row">
@@ -238,7 +238,7 @@
                 </div>
               </div>
               <div class="view-all">
-                <a-button type="link">查看全部日志</a-button>
+                <a-button type="link" @click="navigateToLogList">查看全部日志</a-button>
               </div>
             </div>
           </div>
@@ -255,7 +255,7 @@
               <div class="notice-content">
                 <span class="notice-type">提醒：</span>
                 <span class="notice-text">当前有3条编码断号待补录，请及时处理</span>
-                <a-button type="link" size="small" class="notice-action">立即处理</a-button>
+                <a-button type="link" size="small" class="notice-action" @click="handleComplementCode">立即处理</a-button>
               </div>
             </div>
             <div class="notice-item">
@@ -265,7 +265,7 @@
               <div class="notice-content">
                 <span class="notice-type">提醒：</span>
                 <span class="notice-text">编码规则「EQ-RULE-003」将于3天后失效，请检查更新</span>
-                <a-button type="link" size="small" class="notice-action">检查规则</a-button>
+                <a-button type="link" size="small" class="notice-action" @click="handleCheckRule('EQ-RULE-003')">检查规则</a-button>
               </div>
             </div>
             <div class="notice-item">
@@ -287,6 +287,7 @@
 <script setup lang="ts">
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import AppLayout from './layout/AppLayout.vue'
+import { useRouter } from 'vue-router'
 import {
   UnorderedListOutlined,
   CodeOutlined,
@@ -298,6 +299,65 @@ import {
   BellOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons-vue'
+
+// 路由
+const router = useRouter();
+
+// 导航到规则管理页面
+const navigateToRuleManagement = () => {
+  router.push('/coding-rule/rule-management/list');
+};
+
+// 导航到编码生成页面
+const navigateToCodeGenerate = () => {
+  router.push('/coding-rule/generator');
+};
+
+// 导航到编码解析页面
+const navigateToCodeParse = () => {
+  router.push('/coding-rule/parse');
+};
+
+// 导航到批量导入导出页面
+const navigateToImportExport = () => {
+  router.push('/coding-rule/rule-management/import-export');
+};
+
+// 导航到编码补号页面
+const navigateToCodeComplement = () => {
+  router.push('/coding-rule/generator/complement');
+};
+
+// 导航到编码绑定/解绑页面
+const navigateToCodeBind = () => {
+  router.push('/coding-rule/generator/bind');
+};
+
+// 导航到日志查询页面
+const navigateToLogList = () => {
+  router.push('/coding-rule/log');
+};
+
+// 按状态查看编码列表
+const viewCodeByStatus = (status: string) => {
+  router.push({
+    path: '/coding-rule/generator',
+    query: { status }
+  });
+};
+
+// 处理编码断号补录
+const handleComplementCode = () => {
+  router.push('/coding-rule/generator/complement');
+};
+
+// 检查规则详情
+const handleCheckRule = (ruleCode: string) => {
+  router.push({
+    path: '/coding-rule/rule-management/list',
+    query: { ruleCode }
+  });
+};
 </script>
 
 <style scoped>

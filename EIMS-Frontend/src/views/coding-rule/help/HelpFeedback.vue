@@ -1,7 +1,11 @@
 <template>
   <AppLayout>
-    <div class="help-feedback">
-      <a-card>
+      <div class="help-feedback">
+        <div class="help-feedback-page">
+          <!-- 页面标题 -->
+          <h2 class="page-title">帮助与反馈</h2>
+          
+          <a-card>
         <a-tabs default-active-key="help" class="help-tabs">
           <a-tab-pane key="help" tab="使用帮助">
             <div class="section-title">使用帮助</div>
@@ -76,8 +80,9 @@
             </div>
           </a-tab-pane>
         </a-tabs>
-      </a-card>
-    </div>
+          </a-card>
+        </div>
+      </div>
   </AppLayout>
 </template>
 
@@ -110,11 +115,33 @@ const handleSubmit = () => {
 
 <style scoped>
 .help-feedback {
-  padding: 20px;
+  width: 100%;
+  padding: 1.5%;
+}
+
+.help-feedback-page {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
 }
 
 .help-tabs {
-  margin-top: 16px;
+  margin-top: 0;
+}
+
+/* 卡片样式 */
+.help-feedback-page :deep(.ant-card) {
+  border-radius: 8px;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 24px;
 }
 
 .section-title {

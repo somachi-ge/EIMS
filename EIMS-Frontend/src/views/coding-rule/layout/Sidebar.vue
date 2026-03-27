@@ -22,15 +22,19 @@
         </template>
         <a-menu-item key="rule-list">规则列表</a-menu-item>
         <a-menu-item key="rule-add">新增规则</a-menu-item>
+        <a-menu-item key="rule-import-export">导入导出</a-menu-item>
       </a-sub-menu>
-      <a-sub-menu key="generator">
+      <a-sub-menu key="coding">
         <template #title>
           <span>
             <CodeOutlined />
-            <span>编码生成</span>
+            <span>编码管理</span>
           </span>
         </template>
-        <a-menu-item key="generator-code">编码生成</a-menu-item>
+        <a-menu-item key="coding-generate">编码生成</a-menu-item>
+        <a-menu-item key="coding-complement">编码补号</a-menu-item>
+        <a-menu-item key="coding-bind">绑定解绑</a-menu-item>
+        <a-menu-item key="coding-recovery">作废恢复</a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="parse">
         <template #title>
@@ -45,7 +49,7 @@
         <template #title>
           <span>
             <FileTextOutlined />
-            <span>操作日志</span>
+            <span>日志管理</span>
           </span>
         </template>
         <a-menu-item key="log-list">操作日志</a-menu-item>
@@ -112,7 +116,11 @@ const routeMap: Record<string, string> = {
   'dashboard': '/coding-rule',
   'rule-list': '/coding-rule/rule-management/list',
   'rule-add': '/coding-rule/rule-management/add',
-  'generator-code': '/coding-rule/generator',
+  'rule-import-export': '/coding-rule/rule-management/import-export',
+  'coding-generate': '/coding-rule/generator',
+  'coding-complement': '/coding-rule/generator/complement',
+  'coding-bind': '/coding-rule/generator/bind',
+  'coding-recovery': '/coding-rule/generator/recovery',
   'parse-single': '/coding-rule/parse',
   'log-list': '/coding-rule/log',
   'setting-system': '/coding-rule/setting',
@@ -122,8 +130,8 @@ const routeMap: Record<string, string> = {
 // 根据当前路由设置选中状态
 const updateSelectedKeys = () => {
     const currentPath = route.path;
-    // 特殊处理规则编辑页面，激活规则列表
-    if (currentPath.startsWith('/coding-rule/rule-management/edit/')) {
+    // 特殊处理规则编辑、详情页面，激活规则列表
+    if (currentPath.startsWith('/coding-rule/rule-management/edit/') || currentPath.startsWith('/coding-rule/rule-management/detail/')) {
         selectedKeys.value = ['rule-list'];
         openKeys.value = ['rule'];
         return;
@@ -149,8 +157,8 @@ const updateSelectedKeys = () => {
             // 如果是有子菜单的项，自动展开
             if (key.startsWith('rule')) {
                 openKeys.value = ['rule'];
-            } else if (key.startsWith('generator-')) {
-                openKeys.value = ['generator'];
+            } else if (key.startsWith('coding-')) {
+                openKeys.value = ['coding'];
             } else if (key.startsWith('parse-')) {
                 openKeys.value = ['parse'];
             } else if (key.startsWith('log-')) {
