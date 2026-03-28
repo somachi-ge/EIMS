@@ -530,10 +530,6 @@ const handleBindSearch = () => {
   bindCodes.value = mockData;
   
   const total = mockData.length;
-  const statusText = bindSearchForm.value.status === 'unbound' ? '未绑定' : 
-                    bindSearchForm.value.status === 'bound' ? '已绑定' : '编码';
-  
-  message.success(`查询成功，共找到 ${total} 条${statusText}`);
   bindPagination.value.total = total;
 };
 
@@ -674,7 +670,6 @@ const handleUnbindSearch = () => {
   unbindCodes.value = mockData;
   
   const total = mockData.length;
-  message.success(`查询成功，共找到 ${total} 条已绑定编码`);
   unbindPagination.value.total = total;
 };
 
@@ -810,7 +805,6 @@ const handleRecordSearch = () => {
   bindRecords.value = mockData;
   
   const total = mockData.length;
-  message.success(`查询成功，共找到 ${total} 条绑定记录`);
   recordPagination.value.total = total;
 };
 

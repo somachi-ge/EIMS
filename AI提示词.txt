@@ -125,7 +125,7 @@ index页面根容器间距 ：
 编辑规则→编码结构→分隔符，
 
 
-将“D:\Project\Geyc\CodingRules\Prototype\Pages\08-批量导入导出页.html”页面的主体内容，用Vue 3 + Ant Design Vue迁移到
+将“D:\Project\Geyc\Temp\008.html”页面的主体内容，用Vue 3 + Ant Design Vue迁移到
 
 
 

@@ -4,7 +4,7 @@
       <div class="system-setting">
         <div class="system-setting-page">
           <!-- 页面标题 -->
-          <h2 class="page-title">系统设置</h2>
+          <h2 class="page-title">通用设置</h2>
           
           <a-card>
           <a-tabs default-active-key="global" class="setting-tabs">

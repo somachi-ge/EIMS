@@ -235,7 +235,19 @@ const routes: RouteRecordRaw[] = [
     path: '/coding-rule/setting',
     name: 'SystemSetting',
     component: () => import('../views/coding-rule/setting/SystemSetting.vue'),
-    meta: { title: '系统设置' }
+    meta: { title: '通用设置' }
+  },
+  {
+    path: '/coding-rule/integration',
+    name: 'IntegrationSetting',
+    component: () => import('../views/coding-rule/setting/IntegrationSetting.vue'),
+    meta: { title: '系统集成' }
+  },
+  {
+    path: '/coding-rule/api',
+    name: 'ApiManagement',
+    component: () => import('../views/coding-rule/setting/ApiManagement.vue'),
+    meta: { title: 'API接口管理' }
   },
   {
     path: '/error/403',

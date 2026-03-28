@@ -58,10 +58,12 @@
         <template #title>
           <span>
             <SettingOutlined />
-            <span>系统设置</span>
+            <span>系统管理</span>
           </span>
         </template>
-        <a-menu-item key="setting-system">系统设置</a-menu-item>
+        <a-menu-item key="setting-system">通用设置</a-menu-item>
+        <a-menu-item key="setting-integration">系统集成</a-menu-item>
+        <a-menu-item key="setting-api">API接口</a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="help">
         <template #title>
@@ -124,6 +126,8 @@ const routeMap: Record<string, string> = {
   'parse-single': '/coding-rule/parse',
   'log-list': '/coding-rule/log',
   'setting-system': '/coding-rule/setting',
+  'setting-integration': '/coding-rule/integration',
+  'setting-api': '/coding-rule/api',
   'help-feedback': '/coding-rule/help'
 };
 
