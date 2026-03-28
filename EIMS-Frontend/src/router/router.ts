@@ -250,6 +250,11 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'API接口管理' }
   },
   {
+    path: '/dictionary',
+    name: 'Dictionary',
+    component: () => import('../views/dictionary/Dictionary.vue')
+  },
+  {
     path: '/error/403',
     name: 'Forbidden',
     component: () => import('../views/error/Forbidden.vue')
