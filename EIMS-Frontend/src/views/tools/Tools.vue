@@ -47,7 +47,7 @@ interface Application {
 const APPLICATIONS: readonly Application[] = [
   { id: 'code', name: '编码规则', icon: CodeOutlined, color: '#cf1322', path: '/coding-rule' },
   { id: 'dictionary', name: '数据字典', icon: BookOutlined, color: '#faad14', path: '/dictionary' },
-  { id: 'workflow', name: '工作流', icon: SwapOutlined, color: '#0958d9', path: '/workflow' },
+  { id: 'workflow', name: '工作流程', icon: SwapOutlined, color: '#0958d9', path: '/workflow' },
   { id: 'organization', name: '组织管理', icon: TeamOutlined, color: '#7cb305', path: '/system/organization' },
 ]
 
