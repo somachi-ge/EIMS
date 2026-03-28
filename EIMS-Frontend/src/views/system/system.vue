@@ -163,7 +163,7 @@
 
       <a-modal
         v-model:visible="systemSettingsModalVisible"
-        :width="'30%'"
+        :width="'40%'"
         :footer="null"
         :mask-closable="false"
         :closable="true"
@@ -192,6 +192,18 @@
               </div>
             </a-card>
             <div class="modal-system-name">邮件配置</div>
+          </div>
+          <div class="modal-system-item" @click="handleSmsConfig">
+            <a-card 
+              :style="{ backgroundColor: '#fa8c16', border: 'none' }" 
+              class="modal-system-card"
+              hoverable
+            >
+              <div class="modal-system-icon">
+                <MessageOutlined />
+              </div>
+            </a-card>
+            <div class="modal-system-name">短信配置</div>
           </div>
           <div class="modal-system-item" @click="handleNotificationConfig">
             <a-card 
@@ -276,7 +288,8 @@ import {
   MonitorOutlined,
   AreaChartOutlined,
   BellOutlined,
-  MailOutlined
+  MailOutlined,
+  MessageOutlined
 } from '@ant-design/icons-vue'
 
 interface System {
@@ -318,6 +331,7 @@ const ROUTE_MAP: Record<string, string> = {
   '用户活动': '/system/monitor/user',
   '基础配置': '/system/config/basic',
   '邮件配置': '/system/config/email',
+  '短信配置': '/system/config/sms',
   '通知配置': '/system/config/notification',
   '帮助中心': '/help'
 }
@@ -477,6 +491,17 @@ const handleBasicConfig = () => {
 
 const handleEmailConfig = () => {
   const path = ROUTE_MAP['邮件配置']
+  if (path) {
+    try {
+      window.open(path, '_blank')
+    } catch (error) {
+      console.error('页面打开失败:', error)
+    }
+  }
+}
+
+const handleSmsConfig = () => {
+  const path = ROUTE_MAP['短信配置']
   if (path) {
     try {
       window.open(path, '_blank')
