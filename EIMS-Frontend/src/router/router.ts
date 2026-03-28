@@ -61,6 +61,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/system/config/EmailConfig.vue')
       },
       {
+        path: 'config/sms',
+        name: 'SmsConfig',
+        component: () => import('../views/system/config/SmsConfig.vue')
+      },
+      {
         path: 'config/notification',
         name: 'NotificationConfig',
         component: () => import('../views/system/config/NotificationConfig.vue')

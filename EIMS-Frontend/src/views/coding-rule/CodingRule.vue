@@ -89,47 +89,47 @@
                   <span class="action-label">编码绑定/解绑</span>
                 </div>
               </div>
+            </div>
 
-              <!-- 编码状态分布 -->
-              <div class="status-distribution">
-                <h2 class="section-title">状态分布</h2>
-                <div class="status-table">
-                  <div class="table-header">
-                    <span class="header-cell">状态</span>
-                    <span class="header-cell">数量</span>
-                    <span class="header-cell">占比</span>
-                    <span class="header-cell">操作</span>
-                  </div>
-                  <div class="table-row">
-                    <span class="cell">
-                      <a-tag color="green" :bordered="false">有效（已绑定）</a-tag>
-                    </span>
-                    <span class="cell">968</span>
-                    <span class="cell">75.3%</span>
-                    <span class="cell">
-                      <a-button type="link" size="small" @click="viewCodeByStatus('bound')">查看</a-button>
-                    </span>
-                  </div>
-                  <div class="table-row">
-                    <span class="cell">
-                      <a-tag color="green" :bordered="false">有效（未绑定）</a-tag>
-                    </span>
-                    <span class="cell">318</span>
-                    <span class="cell">24.7%</span>
-                    <span class="cell">
-                      <a-button type="link" size="small" @click="viewCodeByStatus('unbound')">查看</a-button>
-                    </span>
-                  </div>
-                  <div class="table-row">
-                    <span class="cell">
-                      <a-tag color="red" :bordered="false">已作废</a-tag>
-                    </span>
-                    <span class="cell">0</span>
-                    <span class="cell">0.0%</span>
-                    <span class="cell">
-                      <span class="no-data">无数据</span>
-                    </span>
-                  </div>
+            <!-- 编码状态分布 -->
+            <div class="status-distribution-card">
+              <h2 class="section-title">状态分布</h2>
+              <div class="status-table">
+                <div class="table-header">
+                  <span class="header-cell">状态</span>
+                  <span class="header-cell">数量</span>
+                  <span class="header-cell">占比</span>
+                  <span class="header-cell">操作</span>
+                </div>
+                <div class="table-row">
+                  <span class="cell">
+                    <a-tag color="green" :bordered="false">有效（已绑定）</a-tag>
+                  </span>
+                  <span class="cell">968</span>
+                  <span class="cell">75.3%</span>
+                  <span class="cell">
+                    <a-button type="link" size="small" @click="viewCodeByStatus('bound')">查看</a-button>
+                  </span>
+                </div>
+                <div class="table-row">
+                  <span class="cell">
+                    <a-tag color="green" :bordered="false">有效（未绑定）</a-tag>
+                  </span>
+                  <span class="cell">318</span>
+                  <span class="cell">24.7%</span>
+                  <span class="cell">
+                    <a-button type="link" size="small" @click="viewCodeByStatus('unbound')">查看</a-button>
+                  </span>
+                </div>
+                <div class="table-row">
+                  <span class="cell">
+                    <a-tag color="red" :bordered="false">已作废</a-tag>
+                  </span>
+                  <span class="cell">0</span>
+                  <span class="cell">0.0%</span>
+                  <span class="cell">
+                    <span class="no-data">无数据</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -455,6 +455,7 @@ const handleCheckRule = (ruleCode: string) => {
 .left-content {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
 .right-content {
@@ -468,7 +469,6 @@ const handleCheckRule = (ruleCode: string) => {
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -581,9 +581,11 @@ const handleCheckRule = (ruleCode: string) => {
 }
 
 /* 编码状态分布 */
-.status-distribution {
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
+.status-distribution-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .status-table {

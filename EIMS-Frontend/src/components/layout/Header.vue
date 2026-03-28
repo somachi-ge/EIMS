@@ -93,6 +93,10 @@
           <a-menu-item class="nav-divider">|</a-menu-item>
           <a-menu-item key="notification-config" @click="navigateTo('/system/config/notification')">通知配置</a-menu-item>
         </template>
+        <template v-if="isSmsConfigPage">
+          <a-menu-item class="nav-divider">|</a-menu-item>
+          <a-menu-item key="sms-config" @click="navigateTo('/system/config/sms')">短信配置</a-menu-item>
+        </template>
         <template v-if="isSystemMonitorPage">
           <a-menu-item class="nav-divider">|</a-menu-item>
           <a-menu-item key="system-monitor" @click="navigateTo('/system/monitor/system')">系统监控</a-menu-item>
@@ -178,6 +182,7 @@ const selectedKey = computed(() => {
   if (path === '/system/config/basic') return 'basic-config'
   if (path === '/system/config/email') return 'email-config'
   if (path === '/system/config/notification') return 'notification-config'
+  if (path === '/system/config/sms') return 'sms-config'
   if (path === '/system/monitor/system') return 'system-monitor'
   if (path === '/system/monitor/service') return 'service-monitor'
   if (path === '/system/monitor/user') return 'user-activity'
@@ -279,6 +284,11 @@ const isEmailConfigPage = computed(() => {
 // 判断是否在通知配置页面
 const isNotificationConfigPage = computed(() => {
   return route.path === '/system/config/notification'
+})
+
+// 判断是否在短信配置页面
+const isSmsConfigPage = computed(() => {
+  return route.path === '/system/config/sms'
 })
 
 // 判断是否在系统监控页面
